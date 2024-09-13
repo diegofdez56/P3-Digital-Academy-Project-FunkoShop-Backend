@@ -1,5 +1,6 @@
 package org.factoriaf5.digital_academy.funko_shop.profile;
 
+import org.factoriaf5.digital_academy.funko_shop.address.Address;
 import org.factoriaf5.digital_academy.funko_shop.user.User;
 
 import jakarta.persistence.*;
@@ -42,5 +43,9 @@ public class Profile {
     @OneToOne
     @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false)
     private User user;
+
+    @OneToOne
+    @JoinColumn(name = "address_id", referencedColumnName = "address_id")
+    private Address address;
 
 }

@@ -4,6 +4,8 @@ import java.util.Set;
 
 import org.factoriaf5.digital_academy.funko_shop.user.User;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,7 +22,7 @@ public class Role {
     @Column(name = "role_id")
     private long id;
     private String name;
-
+    @JsonIgnore
     @ManyToMany(mappedBy = "roles")
     Set<User> users;
 }

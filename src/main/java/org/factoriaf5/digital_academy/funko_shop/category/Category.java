@@ -18,10 +18,11 @@ public class Category {
     @GeneratedValue
     @Column(name = "category_id")
     private Long id;
+    @NonNull
     private String name;
     private Optional<String> imageHash;
 
-    @OneToMany(mappedBy = "category")
-    private Set<Product> products;
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
+    private List<Product> products;
 
 }
