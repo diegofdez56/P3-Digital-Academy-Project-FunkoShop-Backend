@@ -5,10 +5,13 @@ import java.util.Set;
 import org.factoriaf5.digital_academy.funko_shop.user.User;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
-@Data
 @Entity
+@Builder
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "roles")
 public class Role {
 

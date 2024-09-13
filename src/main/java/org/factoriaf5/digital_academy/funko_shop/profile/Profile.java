@@ -22,17 +22,17 @@ public class Profile {
     private String firstName;
     @Column(name = "last_name")
     private String lastName;
-    @Column(name = "phone")
+
     private String phoneNumber;
-    @Column(name = "street")
+
     private String street;
-    @Column(name = "city")
+
     private String city;
-    @Column(name = "region")
+
     private String region;
     @Column(name = "postal_code")
     private String postalCode;
-    @Column(name = "country")
+
     private String country;
     @Column(name = "is_shipping")
     private boolean isShipping;
