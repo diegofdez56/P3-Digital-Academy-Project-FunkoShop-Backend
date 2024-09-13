@@ -18,7 +18,7 @@ public class AccountSettings {
     @Column(name = "account_settings_id")
     private long id;
 
-    private String language;
+    private String language; // en, es
 
     @OneToOne
     @JoinColumn(name = "user_id", referencedColumnName = "user_id")

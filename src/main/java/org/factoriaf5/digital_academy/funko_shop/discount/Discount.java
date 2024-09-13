@@ -11,7 +11,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "discounts")
-public class Discout {
+public class Discount {
     
     @Id
     @GeneratedValue

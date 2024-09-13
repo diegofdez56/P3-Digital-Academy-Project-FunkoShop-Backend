@@ -16,20 +16,24 @@ import lombok.*;
 @AllArgsConstructor
 @Table(name = "shipping_address")
 public class Address {
-    
+
     @Id
     @GeneratedValue
     @Column(name = "address_id")
     private long id;
+    @NonNull
     private String street;
-    private String city;  
+    @NonNull
+    private String city;
+    @NonNull
     private String region;
+    @NonNull
     private String postalCode;
-    private String country;      
+    @NonNull
+    private String country;
 
     @OneToOne
     @JoinColumn(name = "profile_id", referencedColumnName = "profile_id", nullable = false)
     private Profile profile;
-
 
 }
