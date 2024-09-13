@@ -2,7 +2,7 @@ package org.factoriaf5.digital_academy.funko_shop.cart;
 
 import java.util.List;
 
-import org.factoriaf5.digital_academy.funko_shop.order_item.OrderItem;
+import org.factoriaf5.digital_academy.funko_shop.cart_item.CartItem;
 import org.factoriaf5.digital_academy.funko_shop.user.User;
 
 import jakarta.persistence.*;
@@ -24,7 +24,7 @@ public class Cart {
     private User user;
 
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL)
-    private List<OrderItem> orderItems;
+    private List<CartItem> cart_items;
 
     private float totalPrice;
 }

@@ -20,7 +20,7 @@ public class Category {
     private Long id;
     @NonNull
     private String name;
-    private Optional<String> imageHash;
+    private String imageHash;
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
     private List<Product> products;

@@ -1,7 +1,6 @@
 package org.factoriaf5.digital_academy.funko_shop.product;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.factoriaf5.digital_academy.funko_shop.category.Category;
 import org.factoriaf5.digital_academy.funko_shop.discount.Discount;
@@ -25,7 +24,7 @@ public class Product {
     @NonNull
     private String name;
     @Column(name = "image")
-    private Optional<String> imageHash;
+    private String imageHash;
     @NonNull
     private String description;
     private float price;
