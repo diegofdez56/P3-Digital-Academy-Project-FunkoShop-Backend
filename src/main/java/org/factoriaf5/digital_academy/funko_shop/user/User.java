@@ -2,7 +2,7 @@ package org.factoriaf5.digital_academy.funko_shop.user;
 
 import java.util.Set;
 
-import org.factoriaf5.digital_academy.funko_shop.roles.Role;
+import org.factoriaf5.digital_academy.funko_shop.role.Role;
 import org.springframework.context.annotation.Profile;
 
 import jakarta.persistence.*;

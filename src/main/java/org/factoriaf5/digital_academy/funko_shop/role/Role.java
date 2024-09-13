@@ -1,4 +1,4 @@
-package org.factoriaf5.digital_academy.funko_shop.roles;
+package org.factoriaf5.digital_academy.funko_shop.role;
 
 import java.util.Set;
 
