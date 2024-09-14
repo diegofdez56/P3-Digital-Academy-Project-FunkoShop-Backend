@@ -15,7 +15,7 @@ import lombok.*;
 public class Review {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "review_id")
     private Long id;
     private int rating;

@@ -14,7 +14,7 @@ import lombok.*;
 public class Tracking {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "tracking_id")
     private Long id;
     @Column(name = "tracking_number")

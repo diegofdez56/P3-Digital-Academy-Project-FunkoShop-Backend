@@ -16,7 +16,7 @@ import lombok.*;
 public class Discount {
     
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "discount_id")
     private Long id;
     private int percentage;
