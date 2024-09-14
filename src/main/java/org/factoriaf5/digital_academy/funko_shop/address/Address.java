@@ -1,6 +1,6 @@
 package org.factoriaf5.digital_academy.funko_shop.address;
 
-import org.factoriaf5.digital_academy.funko_shop.profile.UserProfile;
+import org.factoriaf5.digital_academy.funko_shop.profile.Profile;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -30,6 +30,6 @@ public class Address {
     private String country;
 
     @OneToOne(mappedBy = "address", cascade = CascadeType.ALL)
-    private UserProfile profile;
+    private Profile profile;
 
 }
