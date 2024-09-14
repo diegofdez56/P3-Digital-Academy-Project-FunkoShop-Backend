@@ -1,5 +1,6 @@
 package org.factoriaf5.digital_academy.funko_shop.profile;
 
+import org.factoriaf5.digital_academy.funko_shop.account_settings.AccountSettings;
 import org.factoriaf5.digital_academy.funko_shop.address.Address;
 import org.factoriaf5.digital_academy.funko_shop.user.User;
 
@@ -12,7 +13,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserProfile  {
+public class UserProfile {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,13 +36,15 @@ public class UserProfile  {
     private String postalCode;
 
     private String country;
+
     @Column(name = "is_shipping")
     private boolean isShipping;
+
     @Column(name = "is_suscribed")
     private boolean isSuscribed;
 
     @OneToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", referencedColumnName = "user_id")
     private User user;
 
     @OneToOne

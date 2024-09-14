@@ -21,7 +21,7 @@ public class Tracking {
     private String trackingNumber;
 
     @OneToOne
-    @JoinColumn(name = "order_id", referencedColumnName = "order_id")
+    @JoinColumn(name = "order_id", referencedColumnName = "order_id", nullable = false)
     private Order order;
 
 }

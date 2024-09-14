@@ -29,8 +29,7 @@ public class Address {
     @NonNull
     private String country;
 
-    @OneToOne
-    @JoinColumn(name = "profile_id", referencedColumnName = "profile_id", nullable = false)
+    @OneToOne(mappedBy = "address", cascade = CascadeType.ALL)
     private UserProfile profile;
 
 }

@@ -2,6 +2,7 @@ package org.factoriaf5.digital_academy.funko_shop.product;
 
 import java.util.List;
 
+import org.factoriaf5.digital_academy.funko_shop.cart_item.CartItem;
 import org.factoriaf5.digital_academy.funko_shop.category.Category;
 import org.factoriaf5.digital_academy.funko_shop.discount.Discount;
 import org.factoriaf5.digital_academy.funko_shop.order_item.OrderItem;
@@ -37,11 +38,13 @@ public class Product {
     private Category category;
 
     @ManyToOne
-    @JoinColumn(name = "discount_id", referencedColumnName = "discount_id")
-    private Discount discount;
+    @JoinColumn(name = "id_discount", referencedColumnName = "discount_id", nullable = false)
+    private Discount discounts;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<OrderItem> orderItems;
 
-    
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    private List<CartItem> cartItems;
+
 }
