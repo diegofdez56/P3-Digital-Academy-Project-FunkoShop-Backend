@@ -11,17 +11,17 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/products")
+@RequestMapping("${api-endpoint}/products")
 public class ProductController {
     @Autowired
     private ProductService productService;
 
-    @PostMapping("/admin/categories/{category_id}/product")
+    @PostMapping("/")
     public ResponseEntity<ProductDTO> addProduct(@Valid @RequestBody Product product, @PathVariable Long category_id) {
         return ResponseEntity.status(HttpStatus.CREATED).body(productService.addProduct(product, category_id));
     }
 
-    @GetMapping("/public/products")
+    @GetMapping("/")
     public ResponseEntity<List<ProductDTO>> getAllProducts(
             @RequestParam(defaultValue = AppConstants.PAGE_NUMBER) int pageNum,
             @RequestParam(defaultValue = AppConstants.PAGE_SIZE) int pageSize,
@@ -32,7 +32,7 @@ public class ProductController {
     }
 
 
-    @GetMapping("/public/categories/{category_id}/products")
+    @GetMapping("/{category_id}")
     public ResponseEntity<List<ProductDTO>> getProductsByCategory(
             @PathVariable Long category_id,
             @RequestParam(defaultValue = AppConstants.PAGE_NUMBER) int pageNum,
@@ -43,7 +43,7 @@ public class ProductController {
         return ResponseEntity.ok(productService.getProductsByCategory(category_id, pageNum, pageSize, sortBy, sortOrder));
     }
 
-    @GetMapping("/public/products/keyword/{keyword}")
+    @GetMapping("/keyword/{keyword}")
     public ResponseEntity<List<ProductDTO>> getProductsByKeyword(
             @PathVariable String keyword,
             @RequestParam(name = "pageNum", defaultValue = AppConstants.PAGE_NUMBER) int pageNum,
@@ -56,13 +56,13 @@ public class ProductController {
     }
 
 
-    @PutMapping("/admin/products/{product_id}")
+    @PutMapping("/{product_id}")
     public ResponseEntity<ProductDTO> updateProduct(@PathVariable Long product_id, @Valid @RequestBody Product product) {
         return ResponseEntity.ok(productService.updateProduct(product_id, product));
     }    
 
 
-    @DeleteMapping("/admin/products/{product_id}")
+    @DeleteMapping("/{product_id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long product_id) {
         productService.deleteProduct(product_id);
         return ResponseEntity.noContent().build();
