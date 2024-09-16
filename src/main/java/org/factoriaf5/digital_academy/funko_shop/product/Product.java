@@ -38,7 +38,7 @@ public class Product {
     private Category category;
 
     @ManyToOne
-    @JoinColumn(name = "id_discount", referencedColumnName = "discount_id", nullable = false)
+    @JoinColumn(name = "discount_id", referencedColumnName = "discount_id", nullable = false)
     private Discount discounts;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
