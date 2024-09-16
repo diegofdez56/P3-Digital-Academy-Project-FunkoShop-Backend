@@ -14,7 +14,7 @@ import lombok.*;
 public class AccountSettings {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "account_settings_id")
     private long id;
 

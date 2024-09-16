@@ -15,8 +15,8 @@ import lombok.*;
 public class Review {
 
     @Id
-    @GeneratedValue
-    @Column(name = "review_id") 
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "review_id")
     private Long id;
     private int rating;
 
@@ -28,5 +28,4 @@ public class Review {
     @JoinColumn(name = "user_id", referencedColumnName = "user_id")
     private User user;
 
-    
 }

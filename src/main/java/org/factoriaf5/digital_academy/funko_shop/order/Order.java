@@ -18,7 +18,7 @@ import lombok.*;
 public class Order {
     
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "order_id")
     private Long id;
     private String status;
@@ -29,15 +29,14 @@ public class Order {
     @Column(name = "is_paid")
     private boolean isPaid;
 
-    @ManyToOne //revisar esto
+    @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false)
     private User user;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItems;
 
-    @OneToOne
-    @JoinColumn(name = "tracking_id")
+    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
     private Tracking tracking;
     
     

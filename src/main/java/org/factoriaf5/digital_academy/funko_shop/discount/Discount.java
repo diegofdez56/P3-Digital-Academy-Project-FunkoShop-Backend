@@ -1,5 +1,7 @@
 package org.factoriaf5.digital_academy.funko_shop.discount;
 
+import java.util.List;
+
 import org.factoriaf5.digital_academy.funko_shop.product.Product;
 
 import jakarta.persistence.*;
@@ -14,12 +16,11 @@ import lombok.*;
 public class Discount {
     
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "discount_id")
     private Long id;
     private int percentage;
 
-    @ManyToOne
-    @JoinColumn(name = "product_id", referencedColumnName = "product_id")
-    private Product product;
+    @OneToMany(mappedBy = "discounts", cascade = CascadeType.ALL)
+    private List<Product> products;
 }

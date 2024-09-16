@@ -15,11 +15,12 @@ import lombok.*;
 @AllArgsConstructor
 @Table(name = "order_items")
 public class OrderItem {
-    
+
     @Id
-    @GeneratedValue 
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "order_item_id")
     private Long id;
+
     private int quantity;
 
     @ManyToOne
@@ -30,6 +31,7 @@ public class OrderItem {
     @JoinColumn(name = "product_id", referencedColumnName = "product_id")
     private Product product;
 
-    @OneToOne(mappedBy = "orderItem")
+    @OneToOne(mappedBy = "orderItem", cascade = CascadeType.ALL)
     private Review review;
+
 }

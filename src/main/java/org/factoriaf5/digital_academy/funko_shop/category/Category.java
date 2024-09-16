@@ -15,12 +15,12 @@ import java.util.*;
 public class Category {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "category_id")
     private Long id;
     @NonNull
     private String name;
-    private Optional<String> imageHash;
+    private String imageHash;
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
     private List<Product> products;

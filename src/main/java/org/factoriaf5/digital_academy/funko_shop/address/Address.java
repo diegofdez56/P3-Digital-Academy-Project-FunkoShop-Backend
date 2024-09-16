@@ -1,8 +1,5 @@
 package org.factoriaf5.digital_academy.funko_shop.address;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-
 import org.factoriaf5.digital_academy.funko_shop.profile.Profile;
 
 import jakarta.persistence.*;
@@ -18,7 +15,7 @@ import lombok.*;
 public class Address {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "address_id")
     private long id;
     @NonNull
@@ -32,8 +29,7 @@ public class Address {
     @NonNull
     private String country;
 
-    @OneToOne
-    @JoinColumn(name = "profile_id", referencedColumnName = "profile_id", nullable = false)
+    @OneToOne(mappedBy = "address", cascade = CascadeType.ALL)
     private Profile profile;
 
 }
