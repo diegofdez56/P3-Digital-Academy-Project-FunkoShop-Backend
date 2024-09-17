@@ -116,6 +116,7 @@ public class ProductService {
         DiscountDTO discountDTO = product.getDiscount() != null ? new DiscountDTO(
             product.getDiscount().getId(),
             product.getDiscount().getPercentage(),
+            product.getDiscount().isActive(),
             product.getDiscount().getProducts().stream()
                 .map(this::mapToDTO)
                 .collect(Collectors.toList())
