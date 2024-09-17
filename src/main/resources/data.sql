@@ -14,3 +14,15 @@ INSERT INTO user_roles (role_id, user_id) VALUES (2, 2);  -- Assign 'ROLE_ADMIN'
 INSERT INTO profiles (first_name, last_name, phone_number, street, city, region, postal_code, country, user_id) VALUES
 ('Carlos', 'Gómez', '5551234567', '123 Avenida Principal', 'Ciudad de México', 'CDMX', '01000', 'México', 1),
 ('Sofía', 'Martínez', '5559876543', '456 Calle Secundaria', 'Guadalajara', 'Jalisco', '44100', 'México', 2);
+
+-- Categories
+INSERT INTO categories (category_id, name) VALUES (default, 'Animación'),
+ (default, 'Anime & Manga'),
+ (default, 'Marvel'),
+ (default, 'DC Comics');
+
+ -- Products
+ INSERT INTO products (product_id, name, imageHash, description, price, stock, is_available, category_id, discount_id) VALUES(default, 'asdasd', 'asdasd','asdas,' 10, 10, true, 'asdasd', 1, 0);
+
+
+

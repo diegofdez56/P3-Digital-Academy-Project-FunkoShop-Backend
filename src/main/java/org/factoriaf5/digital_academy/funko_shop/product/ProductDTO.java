@@ -9,8 +9,8 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProductDTO {
-	
-	private Long id;
+    
+    private Long id;
     private String name;
     private String imageHash;
     private String description;
@@ -19,6 +19,4 @@ public class ProductDTO {
     private boolean isAvailable;
     private CategoryDTO category;
     private DiscountDTO discount;
-    
-
 }
