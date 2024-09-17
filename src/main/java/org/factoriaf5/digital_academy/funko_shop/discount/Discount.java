@@ -17,10 +17,10 @@ public class Discount {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "discount_id")
+    @Column(name = "discount_id", nullable =  true)
     private Long id;
-    private int percentage;
+    private float percentage;
 
-    @OneToMany(mappedBy = "discounts", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "discount", cascade = CascadeType.ALL)
     private List<Product> products;
 }
