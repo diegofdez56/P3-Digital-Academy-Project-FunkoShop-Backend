@@ -20,6 +20,7 @@ public class Discount {
     @Column(name = "discount_id", nullable =  true)
     private Long id;
     private float percentage;
+    private boolean isActive;
 
     @OneToMany(mappedBy = "discount", cascade = CascadeType.ALL)
     private List<Product> products;
