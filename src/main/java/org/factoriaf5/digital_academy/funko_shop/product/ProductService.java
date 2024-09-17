@@ -82,7 +82,6 @@ public class ProductService {
         existingProduct.setStock(productDto.getStock());
         existingProduct.setAvailable(productDto.isAvailable());
 
-        // Handle category and discount updates if needed
         if (productDto.getCategory() != null) {
             Category category = categoryRepository.findById(productDto.getCategory().getId())
                 .orElseThrow(() -> new IllegalArgumentException("Category not found"));
@@ -116,6 +115,9 @@ public class ProductService {
         DiscountDTO discountDTO = product.getDiscount() != null ? new DiscountDTO(
             product.getDiscount().getId(),
             product.getDiscount().getPercentage(),
+            product.getDiscount().isActive(),
+            product.getDiscount().getStartDate(),
+            product.getDiscount().getEndDate(),
             product.getDiscount().getProducts().stream()
                 .map(this::mapToDTO)
                 .collect(Collectors.toList())
