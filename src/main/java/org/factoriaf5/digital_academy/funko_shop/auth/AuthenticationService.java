@@ -4,6 +4,7 @@ import org.factoriaf5.digital_academy.funko_shop.config.JwtService;
 import org.factoriaf5.digital_academy.funko_shop.token.Token;
 import org.factoriaf5.digital_academy.funko_shop.token.TokenRepository;
 import org.factoriaf5.digital_academy.funko_shop.token.TokenType;
+import org.factoriaf5.digital_academy.funko_shop.user.Role;
 import org.factoriaf5.digital_academy.funko_shop.user.User;
 import org.factoriaf5.digital_academy.funko_shop.user.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -36,7 +37,7 @@ public class AuthenticationService {
         .lastname(request.getLastname())
         .email(request.getEmail())
         .password(passwordEncoder.encode(request.getPassword()))
-        .role(request.getRole())
+        .role(Role.USER)
         .build();
     var savedUser = repository.save(user);
     var jwtToken = jwtService.generateToken(user);
