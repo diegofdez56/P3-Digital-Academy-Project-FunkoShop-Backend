@@ -3,6 +3,8 @@ package org.factoriaf5.digital_academy.funko_shop.auth;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,26 +21,28 @@ public class AuthenticationController {
   private final AuthenticationService service;
 
   @PostMapping("/register")
-  public ResponseEntity<AuthenticationResponse> register(
-      @RequestBody RegisterRequest request
-  ) {
-    return ResponseEntity.ok(service.register(request));
+  public ResponseEntity<?> register(
+      @RequestBody RegisterRequest request) {
+    try {
+      return ResponseEntity.ok(service.register(request));
+    } catch (IllegalArgumentException e) {
+      return ResponseEntity
+          .status(HttpStatus.BAD_REQUEST)
+          .body(e.getMessage()); // Envía el mensaje de error en la respuesta
+    }
   }
 
   @PostMapping("/authenticate")
   public ResponseEntity<AuthenticationResponse> authenticate(
-      @RequestBody AuthenticationRequest request
-  ) {
+      @RequestBody AuthenticationRequest request) {
     return ResponseEntity.ok(service.authenticate(request));
   }
 
   @PostMapping("/refresh-token")
   public void refreshToken(
       HttpServletRequest request,
-      HttpServletResponse response
-  ) throws IOException {
+      HttpServletResponse response) throws IOException {
     service.refreshToken(request, response);
   }
-
 
 }
