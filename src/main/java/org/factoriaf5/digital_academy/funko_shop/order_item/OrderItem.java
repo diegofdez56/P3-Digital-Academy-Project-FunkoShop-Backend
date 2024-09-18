@@ -2,7 +2,6 @@ package org.factoriaf5.digital_academy.funko_shop.order_item;
 
 import org.factoriaf5.digital_academy.funko_shop.order.Order;
 import org.factoriaf5.digital_academy.funko_shop.product.Product;
-import org.factoriaf5.digital_academy.funko_shop.product.ProductDTO;
 import org.factoriaf5.digital_academy.funko_shop.review.Review;
 
 import jakarta.persistence.*;
