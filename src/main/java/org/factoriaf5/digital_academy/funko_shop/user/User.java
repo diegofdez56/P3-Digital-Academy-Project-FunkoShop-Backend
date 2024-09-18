@@ -11,6 +11,7 @@ import org.factoriaf5.digital_academy.funko_shop.cart.Cart;
 import org.factoriaf5.digital_academy.funko_shop.order.Order;
 import org.factoriaf5.digital_academy.funko_shop.profile.Profile;
 import org.factoriaf5.digital_academy.funko_shop.review.Review;
+import org.factoriaf5.digital_academy.funko_shop.token.Token;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -59,6 +60,9 @@ public class User implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @OneToMany(mappedBy = "user")
+    private List<Token> tokens;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
