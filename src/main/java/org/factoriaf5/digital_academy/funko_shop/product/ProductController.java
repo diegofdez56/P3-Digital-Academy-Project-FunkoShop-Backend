@@ -18,7 +18,7 @@ public class ProductController {
     private ProductService productService;
 
     @PostMapping
-public ResponseEntity<ProductDTO> addProduct(@Valid @RequestBody ProductDTO productDto) {
+public ResponseEntity<ProductDTO> createProduct(@Valid @RequestBody ProductDTO productDto) {
     Long categoryId = productDto.getCategory() != null ? productDto.getCategory().getId() : null;
     Long discountId = productDto.getDiscount() != null ? productDto.getDiscount().getId() : null;
 
@@ -31,7 +31,7 @@ public ResponseEntity<ProductDTO> addProduct(@Valid @RequestBody ProductDTO prod
     }
 
     return ResponseEntity.status(HttpStatus.CREATED)
-                         .body(productService.addProduct(productDto, categoryId, discountId));
+                         .body(productService.createProduct(productDto, categoryId, discountId));
 }
 
 
@@ -44,6 +44,13 @@ public ResponseEntity<ProductDTO> addProduct(@Valid @RequestBody ProductDTO prod
 
         return ResponseEntity.ok(productService.getAllProducts(pageNum, pageSize, sortBy, sortOrder));
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Product> getOrderById(@PathVariable Long product_id) {
+        Product product = productService.getProductById(product_id);
+        return new ResponseEntity<>(product, HttpStatus.OK);
+    }
+
 
     @GetMapping("/category/{category_id}")
     public ResponseEntity<List<ProductDTO>> getProductsByCategory(
