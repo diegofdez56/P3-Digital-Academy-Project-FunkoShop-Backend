@@ -13,6 +13,7 @@ public class DiscountDTO {
     
     private Long id;
     private float percentage;
+    private boolean isActive;
 
     private List<ProductDTO> products;
 }
