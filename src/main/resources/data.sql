@@ -24,7 +24,10 @@ INSERT INTO categories (category_id, name) VALUES (default, 'Animación'),
  -- Products
  INSERT INTO products (product_id, name, image, description, price, stock, is_available, category_id, discount_id) VALUES(default, 'asdasd', 'asdasd','asdas', 10, 10, true, 1, null);
 
-
+-- Orders
+INSERT INTO orders (order_id, status, total_price, total_items, is_paid, user_id) VALUES
+(default, 'PENDING', 19.99, 1, true, 1),
+(default, 'PENDING', 89.99, 5, true, 2);
 -- Addresses
 INSERT INTO shipping_address (address_id, street, city, region, postal_code, country, user_id) VALUES
 (default, '789 Tertiary Street', 'Monterrey', 'Nuevo León', '64000', 'México', 1),
