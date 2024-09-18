@@ -25,4 +25,7 @@ INSERT INTO categories (category_id, name) VALUES (default, 'Animación'),
  INSERT INTO products (product_id, name, image, description, price, stock, is_available, category_id, discount_id) VALUES(default, 'asdasd', 'asdasd','asdas', 10, 10, true, 1, null);
 
 
-
+-- Addresses
+INSERT INTO shipping_address (address_id, street, city, region, postal_code, country, user_id) VALUES
+(default, '789 Tertiary Street', 'Monterrey', 'Nuevo León', '64000', 'México', 1),
+(default, '101 Quaternary Avenue', 'Puebla', 'Puebla', '72000', 'México', 2);

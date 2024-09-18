@@ -17,7 +17,7 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
-    @PostMapping("/")
+    @PostMapping
 public ResponseEntity<ProductDTO> addProduct(@Valid @RequestBody ProductDTO productDto) {
     Long categoryId = productDto.getCategory() != null ? productDto.getCategory().getId() : null;
     Long discountId = productDto.getDiscount() != null ? productDto.getDiscount().getId() : null;
@@ -35,7 +35,7 @@ public ResponseEntity<ProductDTO> addProduct(@Valid @RequestBody ProductDTO prod
 }
 
 
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<List<ProductDTO>> getAllProducts(
             @RequestParam(defaultValue = AppConstants.PAGE_NUMBER) int pageNum,
             @RequestParam(defaultValue = AppConstants.PAGE_SIZE) int pageSize,

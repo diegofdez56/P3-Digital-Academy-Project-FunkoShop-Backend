@@ -1,4 +1,4 @@
-package org.factoriaf5.digital_academy.funko_shop.profile;
+package org.factoriaf5.digital_academy.funko_shop.profile.profile_exceptions;
 
 public class ProfileNotFoundException extends ProfileException {
     public ProfileNotFoundException(String message) {
