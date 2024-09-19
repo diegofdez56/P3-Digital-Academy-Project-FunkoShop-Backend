@@ -11,9 +11,9 @@ INSERT INTO user_roles (role_id, user_id) VALUES (1, 1);  -- Assign 'ROLE_USER' 
 INSERT INTO user_roles (role_id, user_id) VALUES (2, 2);  -- Assign 'ROLE_ADMIN' to user 'pepa'
 
 -- Profiles
-INSERT INTO profiles (first_name, last_name, phone_number, street, city, region, postal_code, country, user_id) VALUES
-('Carlos', 'Gómez', '5551234567', '123 Avenida Principal', 'Ciudad de México', 'CDMX', '01000', 'México', 1),
-('Sofía', 'Martínez', '5559876543', '456 Calle Secundaria', 'Guadalajara', 'Jalisco', '44100', 'México', 2);
+INSERT INTO profiles (first_name, last_name, phone_number, street, city, region, postal_code, country, user_id, is_shipping, is_subscribed) VALUES
+('Carlos', 'Gómez', '5551234567', '123 Avenida Principal', 'Ciudad de México', 'CDMX', '01000', 'México', 1, false, false),
+('Sofía', 'Martínez', '5559876543', '456 Calle Secundaria', 'Guadalajara', 'Jalisco', '44100', 'México', 2, true, true);
 
 -- Categories
 INSERT INTO categories (category_id, name) VALUES (default, 'Animación'),

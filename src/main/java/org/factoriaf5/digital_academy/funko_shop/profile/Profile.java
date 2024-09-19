@@ -40,8 +40,8 @@ public class Profile {
     @Column(name = "is_shipping")
     private boolean isShipping;
 
-    @Column(name = "is_suscribed")
-    private boolean isSuscribed;
+    @Column(name = "is_subscribed")
+    private boolean isSubscribed;
 
     @OneToOne
     @JoinColumn(name = "user_id", referencedColumnName = "user_id")
