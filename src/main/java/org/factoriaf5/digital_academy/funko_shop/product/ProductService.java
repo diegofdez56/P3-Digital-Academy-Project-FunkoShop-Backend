@@ -122,8 +122,6 @@ public class ProductService {
                                 product.getDiscount().getId(),
                                 product.getDiscount().getPercentage(),
                                 product.getDiscount().isActive(),
-                                product.getDiscount().getStartDate(),
-                                product.getDiscount().getEndDate(),
                                 product.getDiscount().getProducts().stream()
                                                 .map(this::mapToDTO)
                                                 .collect(Collectors.toList()))
