@@ -10,10 +10,37 @@ INSERT INTO users (user_id, email, password) VALUES (default, 'admin@gmail.com',
 INSERT INTO user_roles (role_id, user_id) VALUES (1, 1);  -- Assign 'ROLE_USER' to user 'pepe'
 INSERT INTO user_roles (role_id, user_id) VALUES (2, 2);  -- Assign 'ROLE_ADMIN' to user 'pepa'
 
+-- -- Profiles
+-- INSERT INTO profiles (first_name, last_name, phone_number, street, city, region, postal_code, country, user_id, is_shipping, is_subscribed) VALUES
+-- ('Carlos', 'Gómez', '5551234567', '123 Avenida Principal', 'Ciudad de México', 'CDMX', '01000', 'México', 1, false, false),
+-- ('Sofía', 'Martínez', '5559876543', '456 Calle Secundaria', 'Guadalajara', 'Jalisco', '44100', 'México', 2, true, true);
 -- Profiles
-INSERT INTO profiles (first_name, last_name, phone_number, street, city, region, postal_code, country, user_id) VALUES
-('Carlos', 'Gómez', '5551234567', '123 Avenida Principal', 'Ciudad de México', 'CDMX', '01000', 'México', 1),
-('Sofía', 'Martínez', '5559876543', '456 Calle Secundaria', 'Guadalajara', 'Jalisco', '44100', 'México', 2);
+INSERT INTO profiles (
+    first_name, 
+    last_name, 
+    phone_number, 
+    street, 
+    city, 
+    region, 
+    postal_code, 
+    country, 
+    user_id, 
+    is_shipping, 
+    is_subscribed
+) VALUES (
+    'John',              -- first_name
+    'Doe',               -- last_name
+    '123-456-7890',      -- phone_number
+    '123 Elm St',        -- street
+    'Springfield',       -- city
+    'IL',                -- region
+    '62704',             -- postal_code
+    'USA',               -- country
+    1,                   -- user_id (make sure this exists in your user table)
+    true,                -- is_shipping (true or false)
+    true                 -- is_subscribed (true or false)
+);
+
 
 -- Categories
 INSERT INTO categories (category_id, name) VALUES (default, 'Animación'),

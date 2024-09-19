@@ -12,7 +12,7 @@ import lombok.*;
 @AllArgsConstructor
 public class ProfileDTO {
     
-    private long id;
+    private Long id;
     private String firstName;
     private String lastName;
     private String phoneNumber;
@@ -22,7 +22,7 @@ public class ProfileDTO {
     private String postalCode;
     private String country;
     private boolean isShipping;
-    private boolean isSuscribed;
+    private boolean isSubscribed;
     private UserDTO user;
     private AddressDTO address;
 }
