@@ -60,7 +60,7 @@ public class OrderService {
             savedOrder.setOrderItems(orderItems);
         }
 
-        
+      
         if (orderDTO.getTracking() != null) {
             Tracking tracking = new Tracking();
             tracking.setOrder(savedOrder);
@@ -69,13 +69,16 @@ public class OrderService {
             savedOrder.setTracking(tracking);
         }
 
+        
         return mapToDTO(orderRepository.save(savedOrder));
     }
 
+   
     public OrderDTO updateOrder(Long orderId, OrderDTO orderDTO) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new OrderNotFoundException("Order not found with id: " + orderId));
 
+    
         order.setStatus(orderDTO.getStatus());
         order.setTotalPrice(orderDTO.getTotalPrice());
         order.setTotalItems(orderDTO.getTotalItems());

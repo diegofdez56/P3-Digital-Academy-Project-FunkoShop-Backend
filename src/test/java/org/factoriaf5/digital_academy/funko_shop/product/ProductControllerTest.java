@@ -35,7 +35,7 @@ public class ProductControllerTest {
     }
 
    @Test
-public void testAddProduct() throws Exception {
+public void testCreateProduct() throws Exception {
     ProductDTO productDTO = new ProductDTO();
     productDTO.setName("Funko Pop");
     productDTO.setPrice(19.99f);
@@ -45,13 +45,13 @@ public void testAddProduct() throws Exception {
     CategoryDTO categoryDTO = new CategoryDTO(1L, "Category Name", "hash123");
     productDTO.setCategory(categoryDTO);
 
-    when(productService.addProduct(any(ProductDTO.class), anyLong(), any())).thenReturn(productDTO);
+    when(productService.createProduct(any(ProductDTO.class), anyLong(), any())).thenReturn(productDTO);
 
-    ResponseEntity<ProductDTO> response = productController.addProduct(productDTO);
+    ResponseEntity<ProductDTO> response = productController.createProduct(productDTO);
 
     assertEquals(HttpStatus.CREATED, response.getStatusCode());
     assertEquals(productDTO, response.getBody());
-    verify(productService, times(1)).addProduct(any(ProductDTO.class), anyLong(), any());
+    verify(productService, times(1)).createProduct(any(ProductDTO.class), anyLong(), any());
 }
 
     @Test
