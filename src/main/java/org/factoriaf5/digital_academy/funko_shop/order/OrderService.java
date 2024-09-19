@@ -143,7 +143,7 @@ public class OrderService {
         orderRepository.delete(order);
     }
 
-    public List<OrderDTO> getOrdersByUser(Integer userId) {
+    public List<OrderDTO> getOrdersByUser(Long userId) {
         // Obtener el usuario
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found with id: " + userId));
