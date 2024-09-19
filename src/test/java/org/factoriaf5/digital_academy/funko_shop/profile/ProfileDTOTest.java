@@ -1,31 +1,99 @@
-// package org.factoriaf5.digital_academy.funko_shop.profile;
+package org.factoriaf5.digital_academy.funko_shop.profile;
 
-// import org.junit.jupiter.api.Test;
-// import static org.junit.jupiter.api.Assertions.*;
+import org.factoriaf5.digital_academy.funko_shop.address.AddressDTO;
+import org.factoriaf5.digital_academy.funko_shop.user.UserDTO;
+import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.*;
 
+class ProfileDTOTest {
 
-// class ProfileDTOTest {
+    @Test
+    void testAllArgsConstructor() {
+        UserDTO userDTO = new UserDTO(1L, "user@example.com", "password", null, null, null, null, null, null);
+        AddressDTO addressDTO = new AddressDTO(0, "123 Street", "City", "Region", "12345", "Country", null);
+        ProfileDTO profileDTO = new ProfileDTO(
+                1L,
+                "John",
+                "Doe",
+                "1234567890",
+                "123 Street",
+                "City",
+                "Region",
+                "12345",
+                "Country",
+                true,
+                true,
+                userDTO,
+                addressDTO);
 
-//     @Test
-//     void testProfileDTO() {
-//         String expectedFirstName = "John";
-//         String expectedLastName = "Doe";
-//         ProfileDTO profileDTO = new ProfileDTO();
+        assertEquals(1L, profileDTO.getId());
+        assertEquals("John", profileDTO.getFirstName());
+        assertEquals("Doe", profileDTO.getLastName());
+        assertEquals("1234567890", profileDTO.getPhoneNumber());
+        assertEquals("123 Street", profileDTO.getStreet());
+        assertEquals("City", profileDTO.getCity());
+        assertEquals("Region", profileDTO.getRegion());
+        assertEquals("12345", profileDTO.getPostalCode());
+        assertEquals("Country", profileDTO.getCountry());
+        assertTrue(profileDTO.isShipping());
+        assertTrue(profileDTO.isSubscribed());
+        assertEquals(userDTO, profileDTO.getUser());
+        assertEquals(addressDTO, profileDTO.getAddress());
+    }
 
-//         assertEquals(expectedFirstName, profileDTO.getFirstName());
-//         assertEquals(expectedLastName, profileDTO.getLastName());
-//     }
+    @Test
+    void testNoArgsConstructor() {
+        ProfileDTO profileDTO = new ProfileDTO();
 
-//     @Test
-//     void testSetName() {
-        
-//         ProfileDTO profileDTO = new ProfileDTO();
-//         String expectedFirstName = "Jane";
+        assertNull(profileDTO.getId());
+        assertNull(profileDTO.getFirstName());
+        assertNull(profileDTO.getLastName());
+        assertNull(profileDTO.getPhoneNumber());
+        assertNull(profileDTO.getStreet());
+        assertNull(profileDTO.getCity());
+        assertNull(profileDTO.getRegion());
+        assertNull(profileDTO.getPostalCode());
+        assertNull(profileDTO.getCountry());
+        assertFalse(profileDTO.isShipping());
+        assertFalse(profileDTO.isSubscribed());
+        assertNull(profileDTO.getUser());
+        assertNull(profileDTO.getAddress());
+    }
 
-//         profileDTO.setFirstName(expectedFirstName);
+    @Test
+    void testSettersAndGetters() {
+        ProfileDTO profileDTO = new ProfileDTO();
+        UserDTO userDTO = new UserDTO(2L, "another@example.com", "password", null, null, null, null, null, null);
+        AddressDTO addressDTO = new AddressDTO(0, "456 Avenue", "New City", "New Region", "67890", "New Country",
+                profileDTO);
 
-//         assertEquals(expectedFirstName, profileDTO.getFirstName());
-//     }
+        profileDTO.setId(2L);
+        profileDTO.setFirstName("Jane");
+        profileDTO.setLastName("Smith");
+        profileDTO.setPhoneNumber("0987654321");
+        profileDTO.setStreet("456 Avenue");
+        profileDTO.setCity("New City");
+        profileDTO.setRegion("New Region");
+        profileDTO.setPostalCode("67890");
+        profileDTO.setCountry("New Country");
+        profileDTO.setShipping(false);
+        profileDTO.setSubscribed(false);
+        profileDTO.setUser(userDTO);
+        profileDTO.setAddress(addressDTO);
 
-// }
+        assertEquals(2L, profileDTO.getId());
+        assertEquals("Jane", profileDTO.getFirstName());
+        assertEquals("Smith", profileDTO.getLastName());
+        assertEquals("0987654321", profileDTO.getPhoneNumber());
+        assertEquals("456 Avenue", profileDTO.getStreet());
+        assertEquals("New City", profileDTO.getCity());
+        assertEquals("New Region", profileDTO.getRegion());
+        assertEquals("67890", profileDTO.getPostalCode());
+        assertEquals("New Country", profileDTO.getCountry());
+        assertFalse(profileDTO.isShipping());
+        assertFalse(profileDTO.isSubscribed());
+        assertEquals(userDTO, profileDTO.getUser());
+        assertEquals(addressDTO, profileDTO.getAddress());
+    }
+}
