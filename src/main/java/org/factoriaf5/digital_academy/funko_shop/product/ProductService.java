@@ -6,9 +6,11 @@ import java.util.stream.Collectors;
 import org.factoriaf5.digital_academy.funko_shop.category.Category;
 import org.factoriaf5.digital_academy.funko_shop.category.CategoryDTO;
 import org.factoriaf5.digital_academy.funko_shop.category.CategoryRepository;
+import org.factoriaf5.digital_academy.funko_shop.category.category_exceptions.CategoryNotFoundException;
 import org.factoriaf5.digital_academy.funko_shop.discount.Discount;
 import org.factoriaf5.digital_academy.funko_shop.discount.DiscountDTO;
 import org.factoriaf5.digital_academy.funko_shop.discount.DiscountRepository;
+import org.factoriaf5.digital_academy.funko_shop.discount.discount_exceptions.DiscountNotFoundException;
 import org.factoriaf5.digital_academy.funko_shop.product.product_exceptions.ProductNotFoundException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -91,12 +93,12 @@ public class ProductService {
 
     private Category getCategoryById(Long categoryId) {
         return categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new IllegalArgumentException("Category not found with id: " + categoryId));
+                .orElseThrow(() -> new CategoryNotFoundException("Category not found with id: " + categoryId));
     }
 
     private Discount getDiscountById(Long discountId) {
         return discountRepository.findById(discountId)
-                .orElseThrow(() -> new IllegalArgumentException("Discount not found with id: " + discountId));
+                .orElseThrow(() -> new DiscountNotFoundException("Discount not found with id: " + discountId));
     }
 
     private PageRequest createPageRequest(int pageNum, int pageSize, String sortBy, String sortOrder) {

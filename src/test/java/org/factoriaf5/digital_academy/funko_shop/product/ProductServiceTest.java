@@ -3,9 +3,11 @@ package org.factoriaf5.digital_academy.funko_shop.product;
 import org.factoriaf5.digital_academy.funko_shop.category.Category;
 import org.factoriaf5.digital_academy.funko_shop.category.CategoryDTO;
 import org.factoriaf5.digital_academy.funko_shop.category.CategoryRepository;
+import org.factoriaf5.digital_academy.funko_shop.category.category_exceptions.CategoryNotFoundException;
 import org.factoriaf5.digital_academy.funko_shop.discount.Discount;
 import org.factoriaf5.digital_academy.funko_shop.discount.DiscountDTO;
 import org.factoriaf5.digital_academy.funko_shop.discount.DiscountRepository;
+import org.factoriaf5.digital_academy.funko_shop.discount.discount_exceptions.DiscountNotFoundException;
 import org.factoriaf5.digital_academy.funko_shop.product.product_exceptions.ProductNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -50,7 +52,8 @@ class ProductServiceTest {
     void setUp() {
         testCategory = new Category(1L, "Test Category", "category-hash", null);
         testDiscount = new Discount(1L, 10.0f, true, null);
-        testProduct = new Product(1L, "Test Product", "image-hash", "Description", 100.0f, 10, true, testCategory, testDiscount, null, null);
+        testProduct = new Product(1L, "Test Product", "image-hash", "Description", 100.0f, 10, true, testCategory,
+                testDiscount, null, null);
         testProductDTO = new ProductDTO();
         testProductDTO.setId(1L);
         testProductDTO.setName("Test Product");
@@ -80,7 +83,7 @@ class ProductServiceTest {
     void createProduct_CategoryNotFound() {
         when(categoryRepository.findById(1L)).thenReturn(Optional.empty());
 
-        assertThrows(IllegalArgumentException.class, () -> productService.createProduct(testProductDTO, 1L, 1L));
+        assertThrows(CategoryNotFoundException.class, () -> productService.createProduct(testProductDTO, 1L, 1L));
     }
 
     @Test
@@ -88,7 +91,7 @@ class ProductServiceTest {
         when(categoryRepository.findById(1L)).thenReturn(Optional.of(testCategory));
         when(discountRepository.findById(1L)).thenReturn(Optional.empty());
 
-        assertThrows(IllegalArgumentException.class, () -> productService.createProduct(testProductDTO, 1L, 1L));
+        assertThrows(DiscountNotFoundException.class, () -> productService.createProduct(testProductDTO, 1L, 1L));
     }
 
     @Test
@@ -173,38 +176,6 @@ class ProductServiceTest {
 
         assertThrows(ProductNotFoundException.class, () -> productService.updateProduct(1L, updatedDTO));
     }
-//TODO: Fix the following tests
-    // @Test
-    // void updateProduct_WithCategory() {
-    //     when(productRepository.findById(1L)).thenReturn(Optional.of(testProduct));
-    //     when(categoryRepository.findById(2L)).thenReturn(Optional.of(new Category(2L, "New Category", "new-hash", null)));
-    //     when(productRepository.save(any(Product.class))).thenReturn(testProduct);
-
-    //     ProductDTO updatedDTO = new ProductDTO();
-    //     updatedDTO.setId(1L);
-    //     updatedDTO.setCategory(new CategoryDTO(2L));
-
-    //     ProductDTO result = productService.updateProduct(1L, updatedDTO);
-
-    //     assertNotNull(result);
-    //     assertEquals(2L, result.getCategory().getId());
-    // }
-
-    // @Test
-    // void updateProduct_WithDiscount() {
-    //     when(productRepository.findById(1L)).thenReturn(Optional.of(testProduct));
-    //     when(discountRepository.findById(2L)).thenReturn(Optional.of(new Discount(2L, 20.0f, true, null)));
-    //     when(productRepository.save(any(Product.class))).thenReturn(testProduct);
-
-    //     ProductDTO updatedDTO = new ProductDTO();
-    //     updatedDTO.setId(1L);
-    //     updatedDTO.setDiscount(new DiscountDTO(2L));
-
-    //     ProductDTO result = productService.updateProduct(1L, updatedDTO);
-
-    //     assertNotNull(result);
-    //     assertEquals(2L, result.getDiscount().getId());
-    // }
 
     @Test
     void deleteProduct_Success() {
@@ -239,7 +210,8 @@ class ProductServiceTest {
     void getProductsByCategory_CategoryNotFound() {
         when(categoryRepository.findById(1L)).thenReturn(Optional.empty());
 
-        assertThrows(IllegalArgumentException.class, () -> productService.getProductsByCategory(1L, 0, 10, "name", "asc"));
+        assertThrows(CategoryNotFoundException.class,
+                () -> productService.getProductsByCategory(1L, 0, 10, "name", "asc"));
     }
 
     @Test
@@ -268,10 +240,191 @@ class ProductServiceTest {
     @Test
     void searchProductsByKeyword_NoResults() {
         Page<Product> page = new PageImpl<>(Collections.emptyList());
-        when(productRepository.findByNameContainingIgnoreCase(eq("NonExistent"), any(PageRequest.class))).thenReturn(page);
+        when(productRepository.findByNameContainingIgnoreCase(eq("NonExistent"), any(PageRequest.class)))
+                .thenReturn(page);
 
         List<ProductDTO> result = productService.searchProductsByKeyword("NonExistent", 0, 10, "name", "asc");
 
         assertTrue(result.isEmpty());
     }
+
+    @Test
+    void updateProduct_WithCategory() {
+        when(productRepository.findById(1L)).thenReturn(Optional.of(testProduct));
+        when(categoryRepository.findById(2L))
+                .thenReturn(Optional.of(new Category(2L, "New Category", "new-hash", null)));
+        when(productRepository.save(any(Product.class))).thenReturn(testProduct);
+
+        ProductDTO updatedDTO = new ProductDTO();
+        updatedDTO.setId(1L);
+        updatedDTO.setName("Updated Product");
+        updatedDTO.setImageHash("new-hash");
+        updatedDTO.setDescription("New Description");
+        updatedDTO.setPrice(200.0f);
+        updatedDTO.setStock(20);
+        updatedDTO.setAvailable(true);
+        updatedDTO.setDiscount(null);
+
+        updatedDTO.setCategory(new CategoryDTO(2L));
+
+        ProductDTO result = productService.updateProduct(1L, updatedDTO);
+
+        assertNotNull(result);
+        assertEquals(2L, result.getCategory().getId());
+    }
+
+    @Test
+    void updateProduct_WithDiscount() {
+        Product testProduct = new Product();
+        testProduct.setId(1L);
+        testProduct.setName("Sample Product");
+        testProduct.setImageHash("sampleHash");
+        testProduct.setDescription("Sample Description");
+        testProduct.setPrice(100.0f);
+        testProduct.setStock(10);
+        testProduct.setAvailable(true);
+
+        when(productRepository.findById(1L)).thenReturn(Optional.of(testProduct));
+        when(discountRepository.findById(2L)).thenReturn(Optional.of(new Discount(2L, 20.0f, true, null)));
+        when(productRepository.save(any(Product.class))).thenReturn(testProduct);
+
+        ProductDTO updatedDTO = new ProductDTO();
+        updatedDTO.setId(1L);
+        updatedDTO.setName("Sample Product");
+        updatedDTO.setDescription("Sample Description");
+        updatedDTO.setDiscount(new DiscountDTO(2L));
+
+        ProductDTO result = productService.updateProduct(1L, updatedDTO);
+
+        assertNotNull(result);
+        assertEquals(2L, result.getDiscount().getId());
+    }
+
+    @Test
+    void updateProduct_WithCategoryNotFound() {
+        Product testProduct = new Product();
+        testProduct.setId(1L);
+        testProduct.setName("Sample Product");
+        testProduct.setImageHash("sampleHash");
+        testProduct.setDescription("Sample Description");
+        testProduct.setPrice(100.0f);
+        testProduct.setStock(10);
+        testProduct.setAvailable(true);
+
+        when(productRepository.findById(1L)).thenReturn(Optional.of(testProduct));
+        when(categoryRepository.findById(2L)).thenReturn(Optional.empty());
+
+        ProductDTO updatedDTO = new ProductDTO();
+        updatedDTO.setId(1L);
+        updatedDTO.setName("Updated Product");
+        updatedDTO.setDescription("Updated Description");
+        updatedDTO.setCategory(new CategoryDTO(2L));
+
+        assertThrows(CategoryNotFoundException.class, () -> productService.updateProduct(1L, updatedDTO));
+    }
+
+    @Test
+    void updateProduct_WithDiscountNotFound() {
+        Product testProduct = new Product();
+        testProduct.setId(1L);
+        testProduct.setName("Sample Product"); 
+        testProduct.setImageHash("sampleHash");
+        testProduct.setDescription("Sample Description"); 
+        testProduct.setPrice(100.0f);
+        testProduct.setStock(10);
+        testProduct.setAvailable(true);
+    
+        when(productRepository.findById(1L)).thenReturn(Optional.of(testProduct));
+        when(discountRepository.findById(2L)).thenReturn(Optional.empty());
+    
+        ProductDTO updatedDTO = new ProductDTO();
+        updatedDTO.setId(1L);
+        updatedDTO.setName("Updated Product"); 
+        updatedDTO.setDescription("Updated Description"); 
+        updatedDTO.setDiscount(new DiscountDTO(2L)); 
+    
+        assertThrows(DiscountNotFoundException.class, () -> productService.updateProduct(1L, updatedDTO));
+    }
+
+    @Test
+    void updateProduct_WithNullCategory() {
+        Product testProduct = new Product();
+        testProduct.setId(1L);
+        testProduct.setName("Sample Product");
+        testProduct.setImageHash("sampleHash");
+        testProduct.setDescription("Sample Description");
+        testProduct.setPrice(100.0f);
+        testProduct.setStock(10);
+        testProduct.setAvailable(true);
+
+        when(productRepository.findById(1L)).thenReturn(Optional.of(testProduct));
+        when(productRepository.save(any(Product.class))).thenReturn(testProduct);
+
+        ProductDTO updatedDTO = new ProductDTO();
+        updatedDTO.setId(1L);
+        updatedDTO.setName("Updated Product");
+        updatedDTO.setDescription("Updated Description");
+        updatedDTO.setCategory(null);
+
+        ProductDTO result = productService.updateProduct(1L, updatedDTO);
+
+        assertNotNull(result);
+        assertNull(result.getCategory());
+    }
+
+    @Test
+    void updateProduct_WithNullDiscount() {
+        Product testProduct = new Product();
+        testProduct.setId(1L);
+        testProduct.setName("Sample Product");
+        testProduct.setImageHash("sampleHash");
+        testProduct.setDescription("Sample Description");
+        testProduct.setPrice(100.0f);
+        testProduct.setStock(10);
+        testProduct.setAvailable(true);
+
+        when(productRepository.findById(1L)).thenReturn(Optional.of(testProduct));
+        when(productRepository.save(any(Product.class))).thenReturn(testProduct);
+
+        ProductDTO updatedDTO = new ProductDTO();
+        updatedDTO.setId(1L);
+        updatedDTO.setName("Updated Product");
+        updatedDTO.setDescription("Updated Description");
+        updatedDTO.setDiscount(null);
+
+        ProductDTO result = productService.updateProduct(1L, updatedDTO);
+
+        assertNotNull(result);
+        assertNull(result.getDiscount());
+    }
+
+    @Test
+    void updateProduct_WithNullCategoryAndDiscount() {
+        Product testProduct = new Product();
+        testProduct.setId(1L);
+        testProduct.setName("Sample Product");
+        testProduct.setImageHash("sampleHash");
+        testProduct.setDescription("Sample Description");
+        testProduct.setPrice(100.0f);
+        testProduct.setStock(10);
+        testProduct.setAvailable(true);
+
+        when(productRepository.findById(1L)).thenReturn(Optional.of(testProduct));
+        when(productRepository.save(any(Product.class))).thenReturn(testProduct);
+
+        ProductDTO updatedDTO = new ProductDTO();
+        updatedDTO.setId(1L);
+        updatedDTO.setName("Updated Product");
+        updatedDTO.setDescription("Updated Description");
+        updatedDTO.setCategory(null);
+        updatedDTO.setDiscount(null);
+
+        ProductDTO result = productService.updateProduct(1L, updatedDTO);
+
+        assertNotNull(result);
+        assertNull(result.getCategory());
+        assertNull(result.getDiscount());
+    }
+
+
 }
