@@ -93,6 +93,19 @@ public void testCreateProduct() throws Exception {
         verify(productService, times(1)).searchProductsByKeyword("Funko", 0, 10, "name", "asc");
     }
 
+    @Test
+    public void testGetProductById() {
+        when(productService.getProductById(1L)).thenReturn(productDTO);
+
+        ResponseEntity<ProductDTO> response = productController.getProductById(1L);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(productDTO, response.getBody());
+        verify(productService, times(1)).getProductById(1L);
+    }
+
+
+
   @Test
 public void testUpdateProduct() throws Exception {
     ProductDTO productDTO = new ProductDTO();

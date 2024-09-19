@@ -1,86 +1,145 @@
 package org.factoriaf5.digital_academy.funko_shop.product;
 
-import static org.junit.jupiter.api.Assertions.*;
 import org.factoriaf5.digital_academy.funko_shop.category.Category;
 import org.factoriaf5.digital_academy.funko_shop.discount.Discount;
+import org.factoriaf5.digital_academy.funko_shop.cart_item.CartItem;
+import org.factoriaf5.digital_academy.funko_shop.order_item.OrderItem;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-public class ProductTest {
+import java.util.Arrays;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
+class ProductTest {
 
     private Product product;
-    private Category category;
-    private Discount discount;
+
+    @Mock
+    private Category mockCategory;
+
+    @Mock
+    private Discount mockDiscount;
+
+    @Mock
+    private OrderItem mockOrderItem1, mockOrderItem2;
+
+    @Mock
+    private CartItem mockCartItem1, mockCartItem2;
 
     @BeforeEach
-    public void setUp() {
-        category = new Category();
-        category.setId(1L);
-        category.setName("Category 1");
-
-        discount = new Discount();
-        discount.setId(1L);
-        discount.setPercentage(10);
-
+    void setUp() {
         product = Product.builder()
                 .id(1L)
-                .name("Funko Pop")
-                .description("A Funko Pop figure")
-                .price(15.99f)
-                .stock(100)
+                .name("Test Product")
+                .imageHash("test-image-hash")
+                .description("Test Description")
+                .price(100.0f)
+                .stock(10)
                 .isAvailable(true)
-                .category(category)
-                .discount(discount)
                 .build();
     }
 
     @Test
-    public void testProductCreation() {
+    void testProductCreation() {
         assertNotNull(product);
         assertEquals(1L, product.getId());
-        assertEquals("Funko Pop", product.getName());
-        assertEquals("A Funko Pop figure", product.getDescription());
-        assertEquals(15.99f, product.getPrice());
-        assertEquals(100, product.getStock());
+        assertEquals("Test Product", product.getName());
+        assertEquals("test-image-hash", product.getImageHash());
+        assertEquals("Test Description", product.getDescription());
+        assertEquals(100.0f, product.getPrice());
+        assertEquals(10, product.getStock());
         assertTrue(product.isAvailable());
-        assertEquals(category, product.getCategory());
-        assertEquals(discount, product.getDiscount());
     }
 
     @Test
-    public void testProductSetters() {
-        product.setName("New Funko Pop");
-        product.setDescription("A new Funko Pop figure");
-        product.setPrice(20.99f);
-        product.setStock(50);
-        product.setAvailable(false);
-
-        assertEquals("New Funko Pop", product.getName());
-        assertEquals("A new Funko Pop figure", product.getDescription());
-        assertEquals(20.99f, product.getPrice());
-        assertEquals(50, product.getStock());
-        assertFalse(product.isAvailable());
+    void testGetDiscountedPriceWithNoDiscount() {
+        assertEquals(100.0f, product.getDiscountedPrice());
     }
 
     @Test
-    public void testProductCategory() {
-        Category newCategory = new Category();
-        newCategory.setId(2L);
-        newCategory.setName("Category 2");
+    void testGetDiscountedPriceWithActiveDiscount() {
+        when(mockDiscount.isActive()).thenReturn(true);
+        when(mockDiscount.getPercentage()).thenReturn(20.0f);
+        product.setDiscount(mockDiscount);
 
-        product.setCategory(newCategory);
-
-        assertEquals(newCategory, product.getCategory());
+        assertEquals(80.0f, product.getDiscountedPrice());
     }
 
     @Test
-    public void testProductDiscount() {
-        Discount newDiscount = new Discount();
-        newDiscount.setId(2L);
-        newDiscount.setPercentage(20);
+    void testGetDiscountedPriceWithInactiveDiscount() {
+        when(mockDiscount.isActive()).thenReturn(false);
+        product.setDiscount(mockDiscount);
 
-        product.setDiscount(newDiscount);
+        assertEquals(100.0f, product.getDiscountedPrice());
+        verify(mockDiscount, never()).getPercentage();
+    }
 
-        assertEquals(newDiscount, product.getDiscount());
+    @Test
+    void testCategoryAssociation() {
+        when(mockCategory.getId()).thenReturn(1L);
+        when(mockCategory.getName()).thenReturn("Test Category");
+
+        product.setCategory(mockCategory);
+
+        assertNotNull(product.getCategory());
+        assertEquals(1L, product.getCategory().getId());
+        assertEquals("Test Category", product.getCategory().getName());
+    }
+
+    @Test
+    void testOrderItemsAssociation() {
+        List<OrderItem> orderItems = Arrays.asList(mockOrderItem1, mockOrderItem2);
+        product.setOrderItems(orderItems);
+
+        assertNotNull(product.getOrderItems());
+        assertEquals(2, product.getOrderItems().size());
+    }
+
+    @Test
+    void testCartItemsAssociation() {
+        List<CartItem> cartItems = Arrays.asList(mockCartItem1, mockCartItem2);
+        product.setCartItems(cartItems);
+
+        assertNotNull(product.getCartItems());
+        assertEquals(2, product.getCartItems().size());
+    }
+
+    @Test
+    void testBuilderWithAllFields() {
+        Product fullProduct = Product.builder()
+                .id(2L)
+                .name("Full Product")
+                .imageHash("full-image-hash")
+                .description("Full Description")
+                .price(200.0f)
+                .stock(20)
+                .isAvailable(false)
+                .category(mockCategory)
+                .discount(mockDiscount)
+                .orderItems(Arrays.asList(mockOrderItem1, mockOrderItem2))
+                .cartItems(Arrays.asList(mockCartItem1, mockCartItem2))
+                .build();
+
+        assertNotNull(fullProduct);
+        assertEquals(2L, fullProduct.getId());
+        assertEquals("Full Product", fullProduct.getName());
+        assertEquals("full-image-hash", fullProduct.getImageHash());
+        assertEquals("Full Description", fullProduct.getDescription());
+        assertEquals(200.0f, fullProduct.getPrice());
+        assertEquals(20, fullProduct.getStock());
+        assertFalse(fullProduct.isAvailable());
+        assertNotNull(fullProduct.getCategory());
+        assertNotNull(fullProduct.getDiscount());
+        assertNotNull(fullProduct.getOrderItems());
+        assertEquals(2, fullProduct.getOrderItems().size());
+        assertNotNull(fullProduct.getCartItems());
+        assertEquals(2, fullProduct.getCartItems().size());
     }
 }
