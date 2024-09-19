@@ -2,7 +2,8 @@ package org.factoriaf5.digital_academy.funko_shop.category;
 
 import lombok.*;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class CategoryDTO {
