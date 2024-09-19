@@ -1,6 +1,5 @@
 package org.factoriaf5.digital_academy.funko_shop.discount;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import org.factoriaf5.digital_academy.funko_shop.product.Product;
@@ -21,9 +20,9 @@ public class Discount {
     @Column(name = "discount_id", nullable = true)
     private Long id;
     private float percentage;
+    @Column(name = "is_active")
     private boolean isActive;
-    private LocalDate startDate;
-    private LocalDate endDate;
+    
 
     @OneToMany(mappedBy = "discount", cascade = CascadeType.ALL)
     private List<Product> products;
