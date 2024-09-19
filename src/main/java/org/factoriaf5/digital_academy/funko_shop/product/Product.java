@@ -31,11 +31,11 @@ public class Product {
     private String description;
     private float price;
     private int stock;
-    @Column(name = "is_available")
+    @Column(name = "is_available", columnDefinition = "boolean default true")
     private boolean isAvailable;
 
     @ManyToOne
-    @JoinColumn(name = "category_id", referencedColumnName = "category_id", nullable = false)
+    @JoinColumn(name = "category_id", referencedColumnName = "category_id")
     private Category category;
 
     @ManyToOne

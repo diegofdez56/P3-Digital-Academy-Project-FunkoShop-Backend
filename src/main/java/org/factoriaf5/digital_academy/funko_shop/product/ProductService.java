@@ -20,10 +20,18 @@ public class ProductService {
 
         @Autowired
         private ProductRepository productRepository;
-
         private CategoryRepository categoryRepository;
-
         private DiscountRepository discountRepository;
+
+        @Autowired
+        public ProductService(ProductRepository productRepository, CategoryRepository categoryRepository,
+                        DiscountRepository discountRepository) {
+                this.productRepository = productRepository;
+                this.categoryRepository = categoryRepository;
+                this.discountRepository = discountRepository;
+        }
+
+       
 
         public ProductDTO createProduct(ProductDTO productDto, Long categoryId, Long discountId) {
                 Category category = categoryRepository.findById(categoryId)
@@ -122,9 +130,7 @@ public class ProductService {
                                 product.getDiscount().getId(),
                                 product.getDiscount().getPercentage(),
                                 product.getDiscount().isActive(),
-                                product.getDiscount().getProducts().stream()
-                                                .map(this::mapToDTO)
-                                                .collect(Collectors.toList()))
+                                null)
                                 : null;
 
                 return new ProductDTO(

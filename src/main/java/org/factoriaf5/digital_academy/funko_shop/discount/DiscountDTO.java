@@ -17,4 +17,8 @@ public class DiscountDTO {
     
 
     private List<ProductDTO> products;
+
+    public DiscountDTO(Long id) {
+      this.id = id;
+  }
 }
