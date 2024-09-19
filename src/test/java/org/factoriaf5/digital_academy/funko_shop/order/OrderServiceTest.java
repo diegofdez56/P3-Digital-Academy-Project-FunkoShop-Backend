@@ -1,7 +1,11 @@
 package org.factoriaf5.digital_academy.funko_shop.order;
 
 import org.factoriaf5.digital_academy.funko_shop.order.order_exceptions.OrderNotFoundException;
+import org.factoriaf5.digital_academy.funko_shop.order_item.OrderItem;
+import org.factoriaf5.digital_academy.funko_shop.order_item.OrderItemDTO;
 import org.factoriaf5.digital_academy.funko_shop.order_item.OrderItemRepository;
+import org.factoriaf5.digital_academy.funko_shop.product.Product;
+import org.factoriaf5.digital_academy.funko_shop.product.ProductDTO;
 import org.factoriaf5.digital_academy.funko_shop.product.ProductRepository;
 import org.factoriaf5.digital_academy.funko_shop.tracking.TrackingRepository;
 import org.factoriaf5.digital_academy.funko_shop.user.User;
@@ -14,10 +18,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.util.Collections;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 class OrderServiceTest {
@@ -142,5 +147,59 @@ class OrderServiceTest {
 
         assertThrows(UserNotFoundException.class, () -> orderService.getOrdersByUser(userId));
         verify(userRepository, times(1)).findById(userId);
+    }
+
+
+    @Test
+    void addOrderItemToOrder_ShouldReturnOrderItemDTO() {
+
+        Order order = new Order();
+        order.setId(1L);
+
+        Product product = new Product();
+        product.setId(1L);
+
+        OrderItem orderItem = new OrderItem();
+        orderItem.setId(1L);
+        orderItem.setOrder(order);
+        orderItem.setProduct(product);
+        orderItem.setQuantity(2);
+
+        OrderItemDTO orderItemDTO = new OrderItemDTO(1L, 2, null, new ProductDTO(1L, "Product", null, null, 0.0f, 0, true, null, null), null);
+
+        when(orderRepository.findById(anyLong())).thenReturn(Optional.of(order));
+        when(productRepository.findById(anyLong())).thenReturn(Optional.of(product));
+        when(orderItemRepository.save(any(OrderItem.class))).thenReturn(orderItem);
+
+        OrderItemDTO result = orderService.addOrderItemToOrder(1L, orderItemDTO);
+
+        assertNotNull(result);
+        assertEquals(1L, result.getId());
+        assertEquals(2, result.getQuantity());
+
+        verify(orderRepository, times(1)).findById(anyLong());
+        verify(productRepository, times(1)).findById(anyLong());
+        verify(orderItemRepository, times(1)).save(any(OrderItem.class));
+    }
+
+    @Test
+    void removeOrderItemFromOrder_ShouldDeleteOrderItem() {
+ 
+        Order order = new Order();
+        order.setId(1L);
+        List<OrderItem> orderItems = new ArrayList<>(); 
+        OrderItem orderItem = new OrderItem();
+        orderItem.setId(1L);
+        orderItem.setOrder(order);
+        orderItems.add(orderItem); 
+        order.setOrderItems(orderItems); 
+    
+        when(orderRepository.findById(1L)).thenReturn(Optional.of(order));
+        when(orderItemRepository.findById(1L)).thenReturn(Optional.of(orderItem));    
+        
+        orderService.removeOrderItemFromOrder(1L, 1L);
+  
+        verify(orderItemRepository).delete(orderItem);
+        verify(orderRepository).save(order);
     }
 }

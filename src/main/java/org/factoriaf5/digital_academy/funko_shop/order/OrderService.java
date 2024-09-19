@@ -7,6 +7,7 @@ import org.factoriaf5.digital_academy.funko_shop.order_item.OrderItemRepository;
 import org.factoriaf5.digital_academy.funko_shop.product.Product;
 import org.factoriaf5.digital_academy.funko_shop.product.ProductDTO;
 import org.factoriaf5.digital_academy.funko_shop.product.ProductRepository;
+import org.factoriaf5.digital_academy.funko_shop.product.product_exceptions.ProductNotFoundException;
 import org.factoriaf5.digital_academy.funko_shop.tracking.Tracking;
 import org.factoriaf5.digital_academy.funko_shop.tracking.TrackingDTO;
 import org.factoriaf5.digital_academy.funko_shop.tracking.TrackingRepository;
@@ -17,7 +18,7 @@ import org.factoriaf5.digital_academy.funko_shop.user.user_exceptions.UserNotFou
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.Collections;
 
@@ -54,14 +55,13 @@ public class OrderService {
 
         if (orderDTO.getOrderItems() != null) {
             List<OrderItem> orderItems = orderDTO.getOrderItems().stream()
-                    .map(orderItemDTO -> mapToOrderItem(orderItemDTO, savedOrder)) 
-                                                                                   
+                    .map(orderItemDTO -> mapToOrderItem(orderItemDTO, savedOrder))
+
                     .collect(Collectors.toList());
             orderItemRepository.saveAll(orderItems);
             savedOrder.setOrderItems(orderItems);
         }
 
-      
         if (orderDTO.getTracking() != null) {
             Tracking tracking = new Tracking();
             tracking.setOrder(savedOrder);
@@ -70,16 +70,13 @@ public class OrderService {
             savedOrder.setTracking(tracking);
         }
 
-        
         return mapToDTO(orderRepository.save(savedOrder));
     }
 
-   
     public OrderDTO updateOrder(Long orderId, OrderDTO orderDTO) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new OrderNotFoundException("Order not found with id: " + orderId));
 
-    
         order.setStatus(orderDTO.getStatus());
         order.setTotalPrice(orderDTO.getTotalPrice());
         order.setTotalItems(orderDTO.getTotalItems());
@@ -133,7 +130,7 @@ public class OrderService {
     public List<OrderDTO> getOrdersByUser(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found with id: " + userId));
-        
+
         List<Order> orders = orderRepository.findByUser(user);
 
         return orders.stream()
@@ -149,7 +146,7 @@ public class OrderService {
 
         if (dto.getProduct() != null) {
             Product product = productRepository.findById(dto.getProduct().getId())
-                    .orElseThrow(() -> new IllegalArgumentException("Product not found"));
+                    .orElseThrow(() -> new ProductNotFoundException("Product not found"));
             orderItem.setProduct(product);
         }
 
@@ -166,15 +163,14 @@ public class OrderService {
                 order.getTracking().getTrackingNumber(),
                 null) : null;
 
-                UserDTO userDTO = null;
-                if (order.getUser() != null) {
-                    userDTO = new UserDTO(
-                            order.getUser().getId(),
-                            order.getUser().getEmail(),
-                            order.getUser().getPassword(),
-                            null, null, null, null, null, null
-                    );
-                }
+        UserDTO userDTO = null;
+        if (order.getUser() != null) {
+            userDTO = new UserDTO(
+                    order.getUser().getId(),
+                    order.getUser().getEmail(),
+                    order.getUser().getPassword(),
+                    null, null, null, null, null, null);
+        }
 
         return new OrderDTO(
                 order.getId(),
@@ -184,10 +180,10 @@ public class OrderService {
                 order.isPaid(),
                 userDTO,
                 // new UserDTO(order.getUser().getId(),
-                //         order.getUser().getEmail(),
-                //         order.getUser().getPassword(),
-                //         null,
-                //         null, null, null, null, null),
+                // order.getUser().getEmail(),
+                // order.getUser().getPassword(),
+                // null,
+                // null, null, null, null, null),
                 orderItemsDTO,
                 trackingDTO);
     }
@@ -196,12 +192,50 @@ public class OrderService {
         return new OrderItemDTO(
                 orderItem.getId(),
                 orderItem.getQuantity(),
-                null, 
+                null,
                 new ProductDTO(orderItem.getProduct().getId(), orderItem.getProduct().getName(),
                         orderItem.getProduct().getImageHash(), orderItem.getProduct().getDescription(),
                         orderItem.getProduct().getPrice(), orderItem.getProduct().getStock(),
                         orderItem.getProduct().isAvailable(), null, null),
-                null 
-        );
+                null);
     }
+
+    // Order Item
+    public OrderItemDTO addOrderItemToOrder(Long orderId, OrderItemDTO orderItemDTO) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new OrderNotFoundException("Order not found"));
+
+        Product product = productRepository.findById(orderItemDTO.getProduct().getId())
+                .orElseThrow(() -> new ProductNotFoundException("Product not found"));
+
+        OrderItem orderItem = new OrderItem();
+        orderItem.setOrder(order);
+        orderItem.setProduct(product);
+        orderItem.setQuantity(orderItemDTO.getQuantity());
+
+        OrderItem savedOrderItem = orderItemRepository.save(orderItem);
+
+        return mapToOrderItemDTO(savedOrderItem);
+    }
+
+    public void removeOrderItemFromOrder(Long orderId, Long orderItemId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new OrderNotFoundException("Order not found"));
+
+                if (order.getOrderItems() == null) {
+                    order.setOrderItems(new ArrayList<>());
+                }
+
+        OrderItem orderItem = orderItemRepository.findById(orderItemId)
+                .orElseThrow(() -> new IllegalArgumentException("OrderItem not found"));
+
+        if (!order.getOrderItems().contains(orderItem)) {
+            throw new IllegalStateException("Order does not contain this item");
+        }
+
+        order.getOrderItems().remove(orderItem);
+        orderItemRepository.delete(orderItem);
+        orderRepository.save(order);
+    }
+
 }

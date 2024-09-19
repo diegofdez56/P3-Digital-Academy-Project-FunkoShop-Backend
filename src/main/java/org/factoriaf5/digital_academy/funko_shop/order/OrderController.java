@@ -1,5 +1,6 @@
 package org.factoriaf5.digital_academy.funko_shop.order;
 
+import org.factoriaf5.digital_academy.funko_shop.order_item.OrderItemDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -52,5 +53,19 @@ public class OrderController {
     public ResponseEntity<List<OrderDTO>> getOrdersByUser(@PathVariable Long userId) {
         List<OrderDTO> orders = orderService.getOrdersByUser(userId);
         return new ResponseEntity<>(orders, HttpStatus.OK);
+    }
+
+
+    //Order Items
+     @PostMapping("/{orderId}/items")
+    public ResponseEntity<OrderItemDTO> addOrderItemToOrder(@PathVariable Long orderId, @RequestBody OrderItemDTO orderItemDTO) {
+        OrderItemDTO addedOrderItem = orderService.addOrderItemToOrder(orderId, orderItemDTO);
+        return new ResponseEntity<>(addedOrderItem, HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("/{orderId}/items/{orderItemId}")
+    public ResponseEntity<Void> removeOrderItemFromOrder(@PathVariable Long orderId, @PathVariable Long orderItemId) {
+        orderService.removeOrderItemFromOrder(orderId, orderItemId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

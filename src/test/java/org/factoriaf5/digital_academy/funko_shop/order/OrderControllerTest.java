@@ -1,5 +1,7 @@
 package org.factoriaf5.digital_academy.funko_shop.order;
 
+import org.factoriaf5.digital_academy.funko_shop.order_item.OrderItemDTO;
+import org.factoriaf5.digital_academy.funko_shop.product.ProductDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -12,6 +14,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 class OrderControllerTest {
@@ -108,5 +113,33 @@ class OrderControllerTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(2, response.getBody().size());
         verify(orderService, times(1)).getOrdersByUser(userId);
+    }
+
+    @Test
+    void addOrderItemToOrder_ShouldReturnCreated() {
+
+        OrderItemDTO orderItemDTO = new OrderItemDTO(1L, 2, null, new ProductDTO(1L, "Funkoo", null, "cool funko", 10.0f, 10, true, null, null), null);
+
+        when(orderService.addOrderItemToOrder(anyLong(), any(OrderItemDTO.class))).thenReturn(orderItemDTO);
+
+        ResponseEntity<OrderItemDTO> response = orderController.addOrderItemToOrder(1L, orderItemDTO);
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(1L, response.getBody().getId());
+        
+        verify(orderService, times(1)).addOrderItemToOrder(anyLong(), any(OrderItemDTO.class));
+    }
+
+    @Test
+    void removeOrderItemFromOrder_ShouldReturnNoContent() {
+  
+        ResponseEntity<Void> response = orderController.removeOrderItemFromOrder(1L, 1L);
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+
+        verify(orderService, times(1)).removeOrderItemFromOrder(anyLong(), anyLong());
     }
 }
