@@ -16,7 +16,9 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import org.factoriaf5.digital_academy.funko_shop.account_settings.AccountSettings;
 import org.factoriaf5.digital_academy.funko_shop.cart.Cart;
@@ -27,8 +29,9 @@ import org.factoriaf5.digital_academy.funko_shop.token.Token;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-@Data
 @Builder
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
