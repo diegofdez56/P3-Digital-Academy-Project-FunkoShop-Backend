@@ -21,9 +21,9 @@ public class ProfileController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProfileDTO> getProfileById(@PathVariable Long profileId) {
+    public ResponseEntity<ProfileDTO> getProfileById(@PathVariable Long id) {
         try {
-            ProfileDTO profile = profileService.getProfileById(profileId);
+            ProfileDTO profile = profileService.getProfileById(id);
             return ResponseEntity.ok(profile);
         } catch (ProfileNotFoundException e) {
             return ResponseEntity.notFound().build();

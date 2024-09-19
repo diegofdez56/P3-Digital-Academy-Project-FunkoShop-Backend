@@ -45,14 +45,14 @@ public class ProfileService {
                 .collect(Collectors.toList());
     }
 
-    public ProfileDTO getProfileById(Long profileId) {
-        Profile profile = profileRepository.findById(profileId)
+    public ProfileDTO getProfileById(Long id) {
+        Profile profile = profileRepository.findById(id)
                 .orElseThrow(() -> new ProfileNotFoundException("Profile not found"));
         return mapToDTO(profile);
     }
 
-    public ProfileDTO updateProfile(Long profileId, ProfileDTO profileDTO) {
-        Profile existingProfile = profileRepository.findById(profileId)
+    public ProfileDTO updateProfile(Long id, ProfileDTO profileDTO) {
+        Profile existingProfile = profileRepository.findById(id)
                 .orElseThrow(() -> new ProfileNotFoundException("Profile not found"));
 
         existingProfile.setFirstName(profileDTO.getFirstName());
@@ -70,11 +70,11 @@ public class ProfileService {
         return mapToDTO(updatedProfile);
     }
 
-    public void deleteProfile(Long profileId) {
-        if (!profileRepository.existsById(profileId)) {
+    public void deleteProfile(Long id) {
+        if (!profileRepository.existsById(id)) {
             throw new ProfileNotFoundException("Profile not found");
         }
-        profileRepository.deleteById(profileId);
+        profileRepository.deleteById(id);
 
     }
 

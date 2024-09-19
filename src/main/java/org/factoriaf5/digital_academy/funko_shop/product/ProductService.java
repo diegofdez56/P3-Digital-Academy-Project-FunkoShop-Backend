@@ -78,8 +78,8 @@ public class ProductService {
                                 .collect(Collectors.toList());
         }
 
-        public ProductDTO updateProduct(Long productId, ProductDTO productDto) {
-                Product existingProduct = productRepository.findById(productId)
+        public ProductDTO updateProduct(Long id, ProductDTO productDto) {
+                Product existingProduct = productRepository.findById(id)
                                 .orElseThrow(() -> new IllegalArgumentException("Product not found"));
 
                 existingProduct.setName(productDto.getName());
@@ -105,11 +105,11 @@ public class ProductService {
                 return mapToDTO(updatedProduct);
         }
 
-        public void deleteProduct(Long productId) {
-                if (!productRepository.existsById(productId)) {
+        public void deleteProduct(Long id) {
+                if (!productRepository.existsById(id)) {
                         throw new IllegalArgumentException("Product not found");
                 }
-                productRepository.deleteById(productId);
+                productRepository.deleteById(id);
         }
 
         private ProductDTO mapToDTO(Product product) {
@@ -141,9 +141,9 @@ public class ProductService {
                                 discountDTO);
         }
 
-        public ProductDTO getProductById(Long productId) {
+        public ProductDTO getProductById(Long id) {
 
-                Product product = productRepository.findById(productId)
+                Product product = productRepository.findById(id)
                                 .orElseThrow(() -> new ProductNotFoundException("Product not found"));
 
                 return mapToDTO(product);
