@@ -1,44 +1,178 @@
-// package org.factoriaf5.digital_academy.funko_shop.profile;
+package org.factoriaf5.digital_academy.funko_shop.profile;
 
-// import org.junit.jupiter.api.BeforeEach;
-// import org.junit.jupiter.api.Test;
-// // import java.util.Optional;
-// import static org.junit.jupiter.api.Assertions.*;
-// import static org.mockito.Mockito.*;
+import org.factoriaf5.digital_academy.funko_shop.profile.profile_exceptions.ProfileNotFoundException;
+import org.factoriaf5.digital_academy.funko_shop.user.*;
+import org.factoriaf5.digital_academy.funko_shop.user.user_exceptions.UserNotFoundException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
-// public class ProfileServiceTest {
+class ProfileServiceTest {
 
-//     private ProfileService profileService;
-//     private ProfileRepository profileRepository;
+    @Mock
+    private ProfileRepository profileRepository;
 
-//     @BeforeEach
-//     public void setUp() {
-//         profileRepository = mock(ProfileRepository.class);
-//         profileService = new ProfileService(profileRepository);
-//     }
+    @Mock
+    private UserRepository userRepository;
 
-//     // TODO: testGetProfileById
-//     // @Test
-//     // public void testGetProfileById() {
-//     //     Profile profile = new Profile();
-//     //     profile.setId(1L);
-//     //     when(profileRepository.findById(1L)).thenReturn(profile);
-//     //     Optional<Profile> result = profileService.getProfileById(1L);
-//     //     assertTrue(result.isPresent());
-//     //     assertEquals(1L, result.get().getId());
-//     // }
+    @InjectMocks
+    private ProfileService profileService;
 
-//     @Test
-//     public void testCreateProfile() {
-//         Profile profile = new Profile();
-//         profile.setFirstName("John");
-//         when(profileRepository.save(any(Profile.class))).thenReturn(profile);
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+    }
 
-//         Profile result = profileService.createProfile(profile);
-//         assertNotNull(result);
-//         assertEquals("John", result.getFirstName());
-//     }
+    @Test
+    void createProfile_Success() {
+        UserDTO userDTO = new UserDTO(1L, "test@example.com", "password", null, null, null, null, null, null);
+        ProfileDTO profileDTO = new ProfileDTO(null, "John", "Doe", "1234567890", "123 Street", "City", "Region",
+                "12345", "Country", true, true, userDTO, null);
+        User user = new User();
+        user.setId(1L);
+        Profile profile = new Profile();
+        profile.setId(1L);
 
-// }
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(profileRepository.save(any(Profile.class))).thenReturn(profile);
+
+        ProfileDTO result = profileService.createProfile(profileDTO);
+
+        assertNotNull(result);
+        assertEquals(1L, result.getId());
+        verify(userRepository).findById(1L);
+        verify(profileRepository).save(any(Profile.class));
+    }
+
+    @Test
+    void createProfile_UserNotFound() {
+        UserDTO userDTO = new UserDTO(1L, "test@example.com", "password", null, null, null, null, null, null);
+        ProfileDTO profileDTO = new ProfileDTO(null, "John", "Doe", "1234567890", "123 Street", "City", "Region",
+                "12345", "Country", true, true, userDTO, null);
+
+        when(userRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(UserNotFoundException.class, () -> profileService.createProfile(profileDTO));
+        verify(userRepository).findById(1L);
+        verify(profileRepository, never()).save(any(Profile.class));
+    }
+
+    @Test
+    void getAllProfiles_Success() {
+        Profile profile1 = new Profile();
+        profile1.setId(1L);
+        Profile profile2 = new Profile();
+        profile2.setId(2L);
+        List<Profile> profiles = Arrays.asList(profile1, profile2);
+
+        when(profileRepository.findAll()).thenReturn(profiles);
+
+        List<ProfileDTO> result = profileService.getAllProfiles();
+
+        assertEquals(2, result.size());
+        verify(profileRepository).findAll();
+    }
+
+    @Test
+    void getProfileById_Success() {
+        Profile profile = new Profile();
+        profile.setId(1L);
+        profile.setFirstName("John");
+        profile.setLastName("Doe");
+        profile.setPhoneNumber("1234567890");
+        profile.setStreet("123 Street");
+        profile.setCity("City");
+        profile.setRegion("Region");
+        profile.setPostalCode("12345");
+        profile.setCountry("Country");
+        profile.setShipping(true);
+        profile.setSubscribed(true);
+
+        when(profileRepository.findById(1L)).thenReturn(Optional.of(profile));
+
+        ProfileDTO result = profileService.getProfileById(1L);
+
+        assertNotNull(result);
+        assertEquals(1L, result.getId());
+        assertEquals("John", result.getFirstName());
+        assertEquals("Doe", result.getLastName());
+        assertEquals("1234567890", result.getPhoneNumber());
+        assertEquals("123 Street", result.getStreet());
+        assertEquals("City", result.getCity());
+        assertEquals("Region", result.getRegion());
+        assertEquals("12345", result.getPostalCode());
+        assertEquals("Country", result.getCountry());
+        assertTrue(result.isShipping());
+        assertTrue(result.isSubscribed());
+
+        verify(profileRepository, times(1)).findById(1L);
+    }
+
+    @Test
+    void getProfileById_NotFound() {
+        when(profileRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(ProfileNotFoundException.class, () -> profileService.getProfileById(1L));
+        verify(profileRepository).findById(1L);
+    }
+
+    @Test
+    void updateProfile_Success() {
+        Profile existingProfile = new Profile();
+        existingProfile.setId(1L);
+        ProfileDTO updatedProfileDTO = new ProfileDTO(1L, "John", "Doe", "1234567890", "123 Street", "City", "Region",
+                "12345", "Country", true, true, null, null);
+
+        when(profileRepository.findById(1L)).thenReturn(Optional.of(existingProfile));
+        when(profileRepository.save(any(Profile.class))).thenReturn(existingProfile);
+
+        ProfileDTO result = profileService.updateProfile(1L, updatedProfileDTO);
+
+        assertNotNull(result);
+        assertEquals(1L, result.getId());
+        assertEquals("John", result.getFirstName());
+        verify(profileRepository).findById(1L);
+        verify(profileRepository).save(any(Profile.class));
+    }
+
+    @Test
+    void updateProfile_NotFound() {
+        ProfileDTO updatedProfileDTO = new ProfileDTO(1L, "John", "Doe", "1234567890", "123 Street", "City", "Region",
+                "12345", "Country", true, true, null, null);
+
+        when(profileRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(ProfileNotFoundException.class, () -> profileService.updateProfile(1L, updatedProfileDTO));
+        verify(profileRepository).findById(1L);
+        verify(profileRepository, never()).save(any(Profile.class));
+    }
+
+    @Test
+    void deleteProfile_Success() {
+        when(profileRepository.existsById(1L)).thenReturn(true);
+
+        profileService.deleteProfile(1L);
+
+        verify(profileRepository).existsById(1L);
+        verify(profileRepository).deleteById(1L);
+    }
+
+    @Test
+    void deleteProfile_NotFound() {
+        when(profileRepository.existsById(1L)).thenReturn(false);
+
+        assertThrows(ProfileNotFoundException.class, () -> profileService.deleteProfile(1L));
+        verify(profileRepository).existsById(1L);
+        verify(profileRepository, never()).deleteById(1L);
+    }
+}
