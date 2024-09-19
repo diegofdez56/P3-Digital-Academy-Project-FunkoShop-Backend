@@ -4,6 +4,7 @@ import org.factoriaf5.digital_academy.funko_shop.order.order_exceptions.OrderNot
 import org.factoriaf5.digital_academy.funko_shop.order_item.OrderItem;
 import org.factoriaf5.digital_academy.funko_shop.order_item.OrderItemDTO;
 import org.factoriaf5.digital_academy.funko_shop.order_item.OrderItemRepository;
+import org.factoriaf5.digital_academy.funko_shop.order_item.order_item_exceptions.OrderItemNotFoundException;
 import org.factoriaf5.digital_academy.funko_shop.product.Product;
 import org.factoriaf5.digital_academy.funko_shop.product.ProductDTO;
 import org.factoriaf5.digital_academy.funko_shop.product.ProductRepository;
@@ -227,7 +228,7 @@ public class OrderService {
                 }
 
         OrderItem orderItem = orderItemRepository.findById(orderItemId)
-                .orElseThrow(() -> new IllegalArgumentException("OrderItem not found"));
+                .orElseThrow(() -> new OrderItemNotFoundException("OrderItem not found"));
 
         if (!order.getOrderItems().contains(orderItem)) {
             throw new IllegalStateException("Order does not contain this item");

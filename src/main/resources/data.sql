@@ -26,6 +26,12 @@ INSERT INTO orders (order_id, status, total_price, total_items, is_paid, user_id
 (default, 'PENDING', 19.99, 1, true, 1),
 (default, 'PENDING', 89.99, 5, true, 2);
 
+--  OrderItems
+INSERT INTO order_items (order_item_id, quantity, order_id, product_id)
+VALUES (1, 2, 1, 1);
+INSERT INTO order_items (order_item_id, quantity, order_id, product_id)
+VALUES (2, 3, 1, 2);
+
 -- Reviews
 INSERT INTO reviews (review_id, rating, order_item_id, user_id) VALUES (1, 5, 1, 1);
 INSERT INTO reviews (review_id, rating, order_item_id, user_id) VALUES (2, 4, 2, 1);
