@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.Collections;
 
 @Service
 public class OrderService {
@@ -156,14 +157,24 @@ public class OrderService {
     }
 
     private OrderDTO mapToDTO(Order order) {
-        List<OrderItemDTO> orderItemsDTO = order.getOrderItems().stream()
+        List<OrderItemDTO> orderItemsDTO = (order.getOrderItems() != null) ? order.getOrderItems().stream()
                 .map(this::mapToOrderItemDTO)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()) : Collections.emptyList();
 
         TrackingDTO trackingDTO = order.getTracking() != null ? new TrackingDTO(
                 order.getTracking().getId(),
                 order.getTracking().getTrackingNumber(),
                 null) : null;
+
+                UserDTO userDTO = null;
+                if (order.getUser() != null) {
+                    userDTO = new UserDTO(
+                            order.getUser().getId(),
+                            order.getUser().getEmail(),
+                            order.getUser().getPassword(),
+                            null, null, null, null, null, null
+                    );
+                }
 
         return new OrderDTO(
                 order.getId(),
@@ -171,11 +182,12 @@ public class OrderService {
                 order.getTotalPrice(),
                 order.getTotalItems(),
                 order.isPaid(),
-                new UserDTO(order.getUser().getId(),
-                        order.getUser().getEmail(),
-                        order.getUser().getPassword(),
-                        null,
-                        null, null, null, null, null),
+                userDTO,
+                // new UserDTO(order.getUser().getId(),
+                //         order.getUser().getEmail(),
+                //         order.getUser().getPassword(),
+                //         null,
+                //         null, null, null, null, null),
                 orderItemsDTO,
                 trackingDTO);
     }
