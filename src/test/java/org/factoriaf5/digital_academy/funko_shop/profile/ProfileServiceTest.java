@@ -175,4 +175,77 @@ class ProfileServiceTest {
         verify(profileRepository).existsById(1L);
         verify(profileRepository, never()).deleteById(1L);
     }
+
+    @Test
+    void mapToDTO_NullUser() {
+        Profile profile = new Profile();
+        profile.setId(1L);
+        profile.setFirstName("John");
+        profile.setLastName("Doe");
+        profile.setPhoneNumber("1234567890");
+        profile.setStreet("123 Street");
+        profile.setCity("City");
+        profile.setRegion("Region");
+        profile.setPostalCode("12345");
+        profile.setCountry("Country");
+        profile.setShipping(true);
+        profile.setSubscribed(true);
+        profile.setUser(null);
+
+        ProfileDTO result = profileService.mapToDTO(profile);
+
+        assertNotNull(result);
+        assertEquals(1L, result.getId());
+        assertEquals("John", result.getFirstName());
+        assertEquals("Doe", result.getLastName());
+        assertEquals("1234567890", result.getPhoneNumber());
+        assertEquals("123 Street", result.getStreet());
+        assertEquals("City", result.getCity());
+        assertEquals("Region", result.getRegion());
+        assertEquals("12345", result.getPostalCode());
+        assertEquals("Country", result.getCountry());
+        assertTrue(result.isShipping());
+        assertTrue(result.isSubscribed());
+        assertNull(result.getUser());
+    }
+
+    @Test
+    void mapToDTO_WithUser() {
+        User user = new User();
+        user.setId(1L);
+        user.setEmail("test@example.com");
+        user.setPassword("password");
+
+        Profile profile = new Profile();
+        profile.setId(1L);
+        profile.setFirstName("John");
+        profile.setLastName("Doe");
+        profile.setPhoneNumber("1234567890");
+        profile.setStreet("123 Street");
+        profile.setCity("City");
+        profile.setRegion("Region");
+        profile.setPostalCode("12345");
+        profile.setCountry("Country");
+        profile.setShipping(true);
+        profile.setSubscribed(true);
+        profile.setUser(user);
+
+        ProfileDTO result = profileService.mapToDTO(profile);
+
+        assertNotNull(result);
+        assertEquals(1L, result.getId());
+        assertEquals("John", result.getFirstName());
+        assertEquals("Doe", result.getLastName());
+        assertEquals("1234567890", result.getPhoneNumber());
+        assertEquals("123 Street", result.getStreet());
+        assertEquals("City", result.getCity());
+        assertEquals("Region", result.getRegion());
+        assertEquals("12345", result.getPostalCode());
+        assertEquals("Country", result.getCountry());
+        assertTrue(result.isShipping());
+        assertTrue(result.isSubscribed());
+        assertNotNull(result.getUser());
+        assertEquals(1L, result.getUser().getId());
+        assertEquals("test@example.com", result.getUser().getEmail());
+    }
 }
