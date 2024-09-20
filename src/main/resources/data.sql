@@ -1,7 +1,3 @@
--- Roles
-INSERT INTO roles (role_id, name) VALUES (default, 'ROLE_USER');
-INSERT INTO roles (role_id, name) VALUES (default, 'ROLE_ADMIN');
-
 -- Users
 INSERT INTO users (user_id, email, password) VALUES (default, 'user@gmail.com', '$2a$12$8LegtLQWe717tIPvZeivjuqKnaAs5.bm0Q05.5GrAmcKzXw2NjoUO');
 INSERT INTO users (user_id, email, password) VALUES (default, 'admin@gmail.com', '$2a$12$8LegtLQWe717tIPvZeivjuqKnaAs5.bm0Q05.5GrAmcKzXw2NjoUO');
@@ -22,10 +18,36 @@ INSERT INTO categories (category_id, name) VALUES (default, 'Animación'),
  (default, 'DC Comics');
 
  -- Products
- INSERT INTO products (product_id, name, image, description, price, stock, is_available, category_id, discount_id) VALUES(default, 'asdasd', 'asdasd','asdas', 10, 10, true, 1, null);
+ INSERT INTO products (product_id, name, image, description, price, stock, is_available, category_id, discount_id) 
+                VALUES (default, 'asdasd', 'asdasd','asdas', 10, 10, true, 1, null);
 
 -- Orders
 INSERT INTO orders (order_id, status, total_price, total_items, is_paid, user_id) VALUES
 (default, 'PENDING', 19.99, 1, true, 1),
 (default, 'PENDING', 89.99, 5, true, 2);
 
+-- Discounts
+INSERT INTO discounts (discount_id, percentage, is_active) VALUES
+(default, 10, true),
+(default, 15, true),
+(default, 20, true),
+(default, 25, true),
+(default, 30, true),
+(default, 35, true),
+(default, 40, true),
+(default, 45, true),
+(default, 50, true),
+(default, 55, true),
+(default, 60, true),
+(default, 75, true),
+(default, 80, true);
+
+--  OrderItems
+INSERT INTO order_items (order_item_id, quantity, order_id, product_id)
+VALUES (1, 2, 1, 1);
+INSERT INTO order_items (order_item_id, quantity, order_id, product_id)
+VALUES (2, 3, 1, 2);
+
+-- Reviews
+INSERT INTO reviews (review_id, rating, order_item_id, user_id) VALUES (1, 5, 1, 1);
+INSERT INTO reviews (review_id, rating, order_item_id, user_id) VALUES (2, 4, 2, 1);

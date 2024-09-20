@@ -14,14 +14,17 @@ import lombok.*;
 @AllArgsConstructor
 @Table(name = "discounts")
 public class Discount {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "discount_id", nullable =  true)
+    @Column(name = "discount_id", nullable = true)
     private Long id;
     private float percentage;
+    @Column(name = "is_active")
     private boolean isActive;
+    
 
     @OneToMany(mappedBy = "discount", cascade = CascadeType.ALL)
     private List<Product> products;
+
 }

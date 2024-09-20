@@ -11,9 +11,14 @@ import lombok.*;
 @AllArgsConstructor
 public class DiscountDTO {
     
-    private Long id;
+      private Long id;
     private float percentage;
     private boolean isActive;
+    
 
     private List<ProductDTO> products;
+
+    public DiscountDTO(Long id) {
+      this.id = id;
+  }
 }
