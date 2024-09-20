@@ -1,10 +1,10 @@
 package org.factoriaf5.digital_academy.funko_shop.product;
 
-import java.util.List;
-
-import org.factoriaf5.digital_academy.funko_shop.config.AppConstants;
 import org.factoriaf5.digital_academy.funko_shop.product.product_exceptions.ProductNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,22 +27,15 @@ public class ProductController {
             throw new IllegalArgumentException("Category ID cannot be null");
         }
 
-        if (discountId == null) {
-            System.out.println("Discount ID is null, but that might be okay.");
-        }
-
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(productService.createProduct(productDto, categoryId, discountId));
     }
 
     @GetMapping
-    public ResponseEntity<List<ProductDTO>> getAllProducts(
-            @RequestParam(defaultValue = AppConstants.PAGE_NUMBER) int pageNum,
-            @RequestParam(defaultValue = AppConstants.PAGE_SIZE) int pageSize,
-            @RequestParam(defaultValue = AppConstants.SORT_BY) String sortBy,
-            @RequestParam(defaultValue = AppConstants.SORT_ORDER) String sortOrder) {
-
-        return ResponseEntity.ok(productService.getAllProducts(pageNum, pageSize, sortBy, sortOrder));
+    public ResponseEntity<Page<ProductDTO>> getAllProducts(
+            @PageableDefault(size = 8, sort = {"categoryId", "name"}) Pageable pageable) {
+        Page<ProductDTO> products = productService.getAllProducts(pageable);
+        return ResponseEntity.ok(products);
     }
 
     @GetMapping("/{id}")
@@ -52,40 +45,32 @@ public class ProductController {
             return ResponseEntity.ok(product);
         } catch (ProductNotFoundException e) {
             return ResponseEntity.notFound().build();
-
         }
     }
 
-    @GetMapping("/category/{category_id}")
-    public ResponseEntity<List<ProductDTO>> getProductsByCategory(
-            @PathVariable Long id,
-            @RequestParam(defaultValue = AppConstants.PAGE_NUMBER) int pageNum,
-            @RequestParam(defaultValue = AppConstants.PAGE_SIZE) int pageSize,
-            @RequestParam(defaultValue = AppConstants.SORT_BY) String sortBy,
-            @RequestParam(defaultValue = AppConstants.SORT_ORDER) String sortOrder) {
-
-        return ResponseEntity
-                .ok(productService.getProductsByCategory(id, pageNum, pageSize, sortBy, sortOrder));
+    @GetMapping("/category/{categoryId}")
+    public ResponseEntity<Page<ProductDTO>> getProductsByCategory(
+            @PathVariable Long categoryId,
+            @PageableDefault(size = 8, sort = {"categoryId", "name"}) Pageable pageable) {
+        Page<ProductDTO> products = productService.getProductsByCategory(categoryId, pageable);
+        return ResponseEntity.ok(products);
     }
 
     @GetMapping("/keyword/{keyword}")
-    public ResponseEntity<List<ProductDTO>> getProductsByKeyword(
+    public ResponseEntity<Page<ProductDTO>> getProductsByKeyword(
             @PathVariable String keyword,
-            @RequestParam(name = "pageNum", defaultValue = AppConstants.PAGE_NUMBER) int pageNum,
-            @RequestParam(name = "pageSize", defaultValue = AppConstants.PAGE_SIZE) int pageSize,
-            @RequestParam(name = "sortBy", defaultValue = AppConstants.SORT_BY) String sortBy,
-            @RequestParam(name = "sortOrder", defaultValue = AppConstants.SORT_ORDER) String sortOrder) {
-
-        return ResponseEntity.ok(productService.searchProductsByKeyword(keyword, pageNum, pageSize, sortBy, sortOrder));
+            @PageableDefault(size = 8, sort = {"categoryId", "name"}) Pageable pageable) {
+        Page<ProductDTO> products = productService.searchProductsByKeyword(keyword, pageable);
+        return ResponseEntity.ok(products);
     }
 
-    @PutMapping("/{product_id}")
+    @PutMapping("/{id}")
     public ResponseEntity<ProductDTO> updateProduct(@PathVariable Long id,
             @Valid @RequestBody ProductDTO productDto) {
         return ResponseEntity.ok(productService.updateProduct(id, productDto));
     }
 
-    @DeleteMapping("/{product_id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
         productService.deleteProduct(id);
         return ResponseEntity.noContent().build();
