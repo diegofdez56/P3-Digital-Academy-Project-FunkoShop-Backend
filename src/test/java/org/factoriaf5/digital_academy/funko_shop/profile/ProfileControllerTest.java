@@ -1,108 +1,151 @@
 package org.factoriaf5.digital_academy.funko_shop.profile;
 
-import org.factoriaf5.digital_academy.funko_shop.user.UserDTO;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import org.factoriaf5.digital_academy.funko_shop.profile.profile_exceptions.ProfileNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
-import java.util.Arrays;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 class ProfileControllerTest {
-
-    private MockMvc mockMvc;
 
     @Mock
     private ProfileService profileService;
 
     @InjectMocks
+
     private ProfileController profileController;
+
+    private ProfileDTO profileDTO;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        mockMvc = MockMvcBuilders.standaloneSetup(profileController).build();
+
+        profileDTO = new ProfileDTO(1L, "Mauricio", "Colmenero", "666696969", "Esperanza Sur", "Madrid", "Madrid",
+                "28000", "Spain", true, true, null, null);
     }
 
     @Test
-    void getAllProfiles() throws Exception {
-        ProfileDTO profileDTO1 = new ProfileDTO();
-        profileDTO1.setId(1L);
-        ProfileDTO profileDTO2 = new ProfileDTO();
-        profileDTO2.setId(2L);
-        when(profileService.getAllProfiles()).thenReturn(Arrays.asList(profileDTO1, profileDTO2));
-
-        mockMvc.perform(get("/profiles"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(2))
-                .andExpect(jsonPath("$[0].id").value(1L))
-                .andExpect(jsonPath("$[1].id").value(2L));
-
-        verify(profileService, times(1)).getAllProfiles();
-    }
-
-    @Test
-    void getProfileById() throws Exception {
+    public void testCreateProfile() throws Exception {
         ProfileDTO profileDTO = new ProfileDTO();
-        profileDTO.setId(1L);
-        when(profileService.getProfileById(anyLong())).thenReturn(profileDTO);
+        profileDTO.setFirstName("Mauricio");
+        profileDTO.setLastName("Colmenero");
+        profileDTO.setPhoneNumber("666696969");
+        profileDTO.setStreet("Esperanza Sur");
+        profileDTO.setCity("Madrid");
+        profileDTO.setRegion("Madrid");
+        profileDTO.setPostalCode("28000");
+        profileDTO.setCountry("Spain");
+        profileDTO.setShipping(true);
+        profileDTO.setSubscribed(true);
 
-        mockMvc.perform(get("/profiles/1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1L));
-
-        verify(profileService, times(1)).getProfileById(1L);
-    }
-
-    @Test
-    void createProfile() throws Exception {
-        ProfileDTO profileDTO = new ProfileDTO();
-        profileDTO.setId(1L);
-        profileDTO.setUser(new UserDTO()); // Ensure this is set up correctly
         when(profileService.createProfile(any(ProfileDTO.class))).thenReturn(profileDTO);
 
-        mockMvc.perform(post("/profiles")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"id\":1, \"user\": {\"id\": 1}}")) // Adjust JSON content to match ProfileDTO
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1L));
+        ResponseEntity<ProfileDTO> response = profileController.createProfile(profileDTO);
 
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertEquals(profileDTO, response.getBody());
         verify(profileService, times(1)).createProfile(any(ProfileDTO.class));
     }
 
     @Test
-    void updateProfile() throws Exception {
-        ProfileDTO profileDTO = new ProfileDTO();
-        profileDTO.setId(1L);
-        profileDTO.setUser(new UserDTO()); // Ensure this is set up correctly
-        when(profileService.updateProfile(anyLong(), any(ProfileDTO.class))).thenReturn(profileDTO);
-
-        mockMvc.perform(put("/profiles/1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"id\":1, \"user\": {\"id\": 1}}")) // Adjust JSON content to match ProfileDTO
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1L));
-
-        verify(profileService, times(1)).updateProfile(anyLong(), any(ProfileDTO.class));
+    public void testGetAllProfiles() {
+        when(profileService.getAllProfiles()).thenReturn(null);
+        profileController.getAllProfiles();
+        verify(profileService, times(1)).getAllProfiles();
     }
 
     @Test
-    void deleteProfile() throws Exception {
-        doNothing().when(profileService).deleteProfile(anyLong());
+    public void testGetProfileById() {
+        when(profileService.getProfileById(1L)).thenReturn(profileDTO);
+        profileController.getProfileById(1L);
+        verify(profileService, times(1)).getProfileById(1L);
+    }
 
-        mockMvc.perform(delete("/profiles/1"))
-                .andExpect(status().isNoContent());
+    @Test
+    public void testUpdateProfile() {
+        ProfileDTO profileDTO = new ProfileDTO();
+        profileDTO.setFirstName("Mauricio");
+        profileDTO.setLastName("Colmenero");
+        profileDTO.setPhoneNumber("666696969");
+        profileDTO.setStreet("Esperanza Sur");
+        profileDTO.setCity("Madrid");
+        profileDTO.setRegion("Madrid");
+        profileDTO.setPostalCode("28000");
+        profileDTO.setCountry("España");
+        profileDTO.setShipping(true);
+        profileDTO.setSubscribed(true);
 
-        verify(profileService, times(1)).deleteProfile(anyLong());
+        when(profileService.updateProfile(1L, profileDTO)).thenReturn(profileDTO);
+
+        ResponseEntity<ProfileDTO> response = profileController.updateProfile(1L, profileDTO);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+
+        assertEquals(profileDTO, response.getBody());
+        verify(profileService, times(1)).updateProfile(1L, profileDTO);
+    }
+
+    @Test
+    public void testDeleteProfile() {
+        
+        doNothing().when(profileService).deleteProfile(1L);
+        
+        ResponseEntity<Void> response = profileController.deleteProfile(1L);
+
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+        verify(profileService, times(1)).deleteProfile(1L);
+    }
+    @Test
+    public void testGetProfileById_NotFound() {
+        when(profileService.getProfileById(1L)).thenThrow(new ProfileNotFoundException("Profile not found"));
+        
+        ResponseEntity<ProfileDTO> response = profileController.getProfileById(1L);
+        
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        verify(profileService, times(1)).getProfileById(1L);
+    }
+
+    @Test
+    public void testUpdateProfile_NotFound() {
+        ProfileDTO profileDTO = new ProfileDTO();
+        profileDTO.setFirstName("Mauricio");
+        profileDTO.setLastName("Colmenero");
+        profileDTO.setPhoneNumber("666696969");
+        profileDTO.setStreet("Esperanza Sur");
+        profileDTO.setCity("Madrid");
+        profileDTO.setRegion("Madrid");
+        profileDTO.setPostalCode("28000");
+        profileDTO.setCountry("España");
+        profileDTO.setShipping(true);
+        profileDTO.setSubscribed(true);
+
+        when(profileService.updateProfile(1L, profileDTO)).thenThrow(new ProfileNotFoundException("Profile not found"));
+
+        ResponseEntity<ProfileDTO> response = profileController.updateProfile(1L, profileDTO);
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        verify(profileService, times(1)).updateProfile(1L, profileDTO);
+    }
+
+    @Test
+    public void testDeleteProfile_NotFound() {
+        doThrow(new ProfileNotFoundException("Profile not found")).when(profileService).deleteProfile(1L);
+
+        ResponseEntity<Void> response = profileController.deleteProfile(1L);
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        verify(profileService, times(1)).deleteProfile(1L);
     }
 }

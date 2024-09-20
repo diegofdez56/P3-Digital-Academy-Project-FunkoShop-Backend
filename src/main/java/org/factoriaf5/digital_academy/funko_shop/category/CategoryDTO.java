@@ -9,4 +9,9 @@ public class CategoryDTO {
     private Long id;
     private String name;
     private String imageHash;
+
+    public CategoryDTO(Long id) {
+        this.id = id;
+    }
+    
 }

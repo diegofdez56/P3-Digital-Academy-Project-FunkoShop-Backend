@@ -31,11 +31,11 @@ public class Product {
     private String description;
     private float price;
     private int stock;
-    @Column(name = "is_available")
+    @Column(name = "is_available", columnDefinition = "boolean default true")
     private boolean isAvailable;
 
     @ManyToOne
-    @JoinColumn(name = "category_id", referencedColumnName = "category_id", nullable = false)
+    @JoinColumn(name = "category_id", referencedColumnName = "category_id")
     private Category category;
 
     @ManyToOne
@@ -47,5 +47,12 @@ public class Product {
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<CartItem> cartItems;
+
+    public float getDiscountedPrice() {
+        if (discount == null || !discount.isActive()) {
+            return price;
+        }
+        return price * (1 - discount.getPercentage() / 100);
+    }
 
 }

@@ -38,7 +38,7 @@ public class SecurityConfiguration {
 
         private static final String[] WHITE_LIST_URL = {
                         "/api/v1/auth/**",
-                        "/api/v1/products/**"};
+                        "/api/v1/products/**",};
         private final JwtAuthenticationFilter jwtAuthFilter;
         private final AuthenticationProvider authenticationProvider;
         private final LogoutHandler logoutHandler;
@@ -47,7 +47,7 @@ public class SecurityConfiguration {
         public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
                 http
                                 .csrf(AbstractHttpConfigurer::disable)
-                                .authorizeHttpRequests(req -> req.requestMatchers(WHITE_LIST_URL)
+                                .authorizeHttpRequests(req -> req.requestMatchers(GET,WHITE_LIST_URL)
                                                 .permitAll()
                                                 .requestMatchers(POST, "/api/v1/products/**").hasAnyRole(ADMIN_READ.name(), MANAGER_READ.name())
                                                 .anyRequest()
