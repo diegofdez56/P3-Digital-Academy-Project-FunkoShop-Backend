@@ -1,6 +1,7 @@
 package org.factoriaf5.digital_academy.funko_shop.product;
 
 import org.factoriaf5.digital_academy.funko_shop.category.CategoryDTO;
+import org.factoriaf5.digital_academy.funko_shop.discount.DiscountDTO;
 import org.factoriaf5.digital_academy.funko_shop.product.product_exceptions.ProductNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -178,4 +179,28 @@ public class ProductControllerTest {
         });
     }
 
+    @Test
+    public void testCreateProductWithNullCategoryId() {
+        ProductDTO productDto = new ProductDTO();
+        productDto.setDiscount(new DiscountDTO(1L));
+
+        IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> productController.createProduct(productDto)
+        );
+
+        assertEquals("Category ID cannot be null", exception.getMessage());
+    }
+
+    @Test
+    public void testCreateProductWithNullDiscountId() {
+        ProductDTO productDto = new ProductDTO();
+        productDto.setCategory(new CategoryDTO(1L));
+
+        ResponseEntity<ProductDTO> response = productController.createProduct(productDto);
+
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+    }
 }
+
+
