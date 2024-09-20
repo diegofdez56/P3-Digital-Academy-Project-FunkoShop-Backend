@@ -78,7 +78,7 @@ public class ProfileService {
 
     }
 
-    private ProfileDTO mapToDTO(Profile profile) {
+    ProfileDTO mapToDTO(Profile profile) {
 
         UserDTO userDTO = profile.getUser() != null ? new UserDTO(
                 profile.getUser().getId(),

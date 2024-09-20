@@ -26,6 +26,22 @@ INSERT INTO orders (order_id, status, total_price, total_items, is_paid, user_id
 (default, 'PENDING', 19.99, 1, true, 1),
 (default, 'PENDING', 89.99, 5, true, 2);
 
+-- Discounts
+INSERT INTO discounts (discount_id, percentage, is_active) VALUES
+(default, 10, true),
+(default, 15, true),
+(default, 20, true),
+(default, 25, true),
+(default, 30, true),
+(default, 35, true),
+(default, 40, true),
+(default, 45, true),
+(default, 50, true),
+(default, 55, true),
+(default, 60, true),
+(default, 75, true),
+(default, 80, true);
+
 --  OrderItems
 INSERT INTO order_items (order_item_id, quantity, order_id, product_id)
 VALUES (1, 2, 1, 1);
