@@ -78,13 +78,10 @@ public class AuthenticationControllerTest {
     public void testRefreshToken() throws IOException {
         HttpServletRequest request = mock(HttpServletRequest.class);
         HttpServletResponse response = mock(HttpServletResponse.class);
-
-        // Simular comportamiento del servicio (opcional, según tu implementación)
         doNothing().when(authenticationService).refreshToken(request, response);
 
         authenticationController.refreshToken(request, response);
 
-        // Verificar que el método del servicio fue llamado
         verify(authenticationService, times(1)).refreshToken(request, response);
     }
 }
