@@ -28,7 +28,7 @@ public class AuthenticationController {
     } catch (IllegalArgumentException e) {
       return ResponseEntity
           .status(HttpStatus.BAD_REQUEST)
-          .body(e.getMessage()); // Envía el mensaje de error en la respuesta
+          .body(e.getMessage());
     }
   }
 
