@@ -29,11 +29,8 @@ public class UserTest {
 
     @Test
     public void testGetAuthorities() {
-        // Use SimpleGrantedAuthority instead of GrantedAuthority
         List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_USER"));
         when(role.getAuthorities()).thenReturn(authorities);
-
-        // Test the method
         assertEquals(authorities, user.getAuthorities());
         verify(role, times(1)).getAuthorities();
     }
