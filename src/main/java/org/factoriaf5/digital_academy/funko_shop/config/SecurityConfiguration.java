@@ -44,8 +44,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class SecurityConfiguration {
 
         private static final String[] WHITE_LIST_URL = {
-                        "/api/v1/auth/**",
-                        "/api/v1/products/**", };
+                        "/api/v1/auth/**", };
         private final JwtAuthenticationFilter jwtAuthFilter;
         private final AuthenticationProvider authenticationProvider;
         private final LogoutHandler logoutHandler;
