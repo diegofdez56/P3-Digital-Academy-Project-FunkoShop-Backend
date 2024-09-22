@@ -19,7 +19,7 @@ public class ProfileService {
     private UserRepository userRepository;
 
     public ProfileDTO createProfile(ProfileDTO profileDTO) {
-        User user = userRepository.findById(profileDTO.getUser().getId())
+        User user = userRepository.findById(profileDTO.getUser())
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         Profile profile = new Profile();
@@ -80,11 +80,11 @@ public class ProfileService {
 
     ProfileDTO mapToDTO(Profile profile) {
 
-        UserDTO userDTO = profile.getUser() != null ? new UserDTO(
+        /* UserDTO userDTO = profile.getUser() != null ? new UserDTO(
                 profile.getUser().getId(),
                 profile.getUser().getEmail(),
                 profile.getUser().getPassword(), null, null, null, null, null, null)
-                : null;
+                : null; */
 
         return new ProfileDTO(
                 profile.getId(),
@@ -98,7 +98,7 @@ public class ProfileService {
                 profile.getCountry(),
                 profile.isShipping(),
                 profile.isSubscribed(),
-                userDTO, null);
+                profile.getUser().getId(), null);
 
     }
 }

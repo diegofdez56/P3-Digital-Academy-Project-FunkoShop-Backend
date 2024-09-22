@@ -23,6 +23,6 @@ public class ProfileDTO {
     private String country;
     private boolean isShipping;
     private boolean isSubscribed;
-    private UserDTO user;
+    private Long user;
     private AddressDTO address;
 }
