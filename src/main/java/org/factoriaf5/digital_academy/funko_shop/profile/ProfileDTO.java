@@ -1,7 +1,6 @@
 package org.factoriaf5.digital_academy.funko_shop.profile;
 
 import org.factoriaf5.digital_academy.funko_shop.address.AddressDTO;
-import org.factoriaf5.digital_academy.funko_shop.user.UserDTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

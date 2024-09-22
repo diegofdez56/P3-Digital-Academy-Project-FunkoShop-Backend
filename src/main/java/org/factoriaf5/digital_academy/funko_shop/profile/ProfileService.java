@@ -80,12 +80,6 @@ public class ProfileService {
 
     ProfileDTO mapToDTO(Profile profile) {
 
-        /* UserDTO userDTO = profile.getUser() != null ? new UserDTO(
-                profile.getUser().getId(),
-                profile.getUser().getEmail(),
-                profile.getUser().getPassword(), null, null, null, null, null, null)
-                : null; */
-
         return new ProfileDTO(
                 profile.getId(),
                 profile.getFirstName(),
@@ -98,7 +92,8 @@ public class ProfileService {
                 profile.getCountry(),
                 profile.isShipping(),
                 profile.isSubscribed(),
-                profile.getUser().getId(), null);
+                profile.getUser().getId(), 
+                null);
 
     }
 }
