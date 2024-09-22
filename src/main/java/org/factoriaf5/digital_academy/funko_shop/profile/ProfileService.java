@@ -15,27 +15,18 @@ public class ProfileService {
 
     @Autowired
     private ProfileRepository profileRepository;
+    
+    @Autowired
     private UserRepository userRepository;
 
-    public ProfileDTO createProfile(ProfileDTO profileDTO) {
-        User user = userRepository.findById(profileDTO.getUser())
+    public void createProfile(Long userid) {
+        User user = userRepository.findById(userid)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         Profile profile = new Profile();
-        profile.setFirstName(profileDTO.getFirstName());
-        profile.setLastName(profileDTO.getLastName());
-        profile.setPhoneNumber(profileDTO.getPhoneNumber());
-        profile.setStreet(profileDTO.getStreet());
-        profile.setCity(profileDTO.getCity());
-        profile.setRegion(profileDTO.getRegion());
-        profile.setPostalCode(profileDTO.getPostalCode());
-        profile.setCountry(profileDTO.getCountry());
-        profile.isShipping();
-        profile.isSubscribed();
         profile.setUser(user);
 
-        Profile savedProfile = profileRepository.save(profile);
-        return mapToDTO(savedProfile);
+        profileRepository.save(profile);
     }
 
     public List<ProfileDTO> getAllProfiles() {
