@@ -2,7 +2,6 @@ package org.factoriaf5.digital_academy.funko_shop.profile;
 
 import org.factoriaf5.digital_academy.funko_shop.profile.profile_exceptions.ProfileNotFoundException;
 import org.factoriaf5.digital_academy.funko_shop.user.User;
-import org.factoriaf5.digital_academy.funko_shop.user.UserDTO;
 import org.factoriaf5.digital_academy.funko_shop.user.UserRepository;
 import org.factoriaf5.digital_academy.funko_shop.user.user_exceptions.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;

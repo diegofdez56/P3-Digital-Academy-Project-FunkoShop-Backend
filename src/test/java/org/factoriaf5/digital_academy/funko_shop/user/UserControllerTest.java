@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -30,13 +31,9 @@ public class UserControllerTest {
 
         ResponseEntity<?> response = userController.changePassword(request, connectedUser);
 
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
         verify(service).changePassword(request, connectedUser);
-
-        doThrow(new RuntimeException()).when(service).changePassword(request, connectedUser);
-        assertThrows(RuntimeException.class, () -> userController.changePassword(request, connectedUser));
     }
-
 
     @Test
     public void testExceptionThrownByService() {
