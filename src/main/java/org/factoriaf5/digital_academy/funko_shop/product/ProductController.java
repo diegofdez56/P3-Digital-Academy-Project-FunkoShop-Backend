@@ -14,7 +14,6 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("${api-endpoint}/products")
-@PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
 public class ProductController {
 
     @Autowired

@@ -2,7 +2,6 @@ package org.factoriaf5.digital_academy.funko_shop.profile;
 
 import org.factoriaf5.digital_academy.funko_shop.profile.profile_exceptions.ProfileNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -32,12 +31,6 @@ public class ProfileController {
         } catch (ProfileNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
-    }
-
-    @PostMapping
-    public ResponseEntity<ProfileDTO> createProfile(@Valid @RequestBody ProfileDTO profileDTO) {
-        ProfileDTO createdProfile = profileService.createProfile(profileDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdProfile);
     }
 
     @PutMapping("/{id}")
