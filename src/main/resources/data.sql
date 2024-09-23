@@ -19,6 +19,7 @@ INSERT INTO categories (category_id, name) VALUES (default, 'Animación'),
 
  -- Products
  INSERT INTO products (product_id, name, image, description, price, stock, is_available, category_id, discount_id) 
+                VALUES (default, 'asdasd', 'asdasd','asdas', 10, 10, true, 1, null),
                 VALUES (default, 'asdasd', 'asdasd','asdas', 10, 10, true, 1, null);
 
 -- Orders
@@ -44,10 +45,10 @@ INSERT INTO discounts (discount_id, percentage, is_active) VALUES
 
 --  OrderItems
 INSERT INTO order_items (order_item_id, quantity, order_id, product_id)
-VALUES (1, 2, 1, 1);
+VALUES (default, 2, 1, 1);
 INSERT INTO order_items (order_item_id, quantity, order_id, product_id)
-VALUES (2, 3, 1, 2);
+VALUES (default, 3, 1, 2);
 
 -- Reviews
-INSERT INTO reviews (review_id, rating, order_item_id, user_id) VALUES (1, 5, 1, 1);
-INSERT INTO reviews (review_id, rating, order_item_id, user_id) VALUES (2, 4, 2, 1);
+INSERT INTO reviews (review_id, rating, order_item_id, user_id) VALUES (default, 5, 1, 1);
+INSERT INTO reviews (review_id, rating, order_item_id, user_id) VALUES (default, 4, 2, 1);
