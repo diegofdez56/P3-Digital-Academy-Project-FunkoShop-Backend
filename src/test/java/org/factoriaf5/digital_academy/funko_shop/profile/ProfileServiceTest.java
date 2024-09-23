@@ -35,13 +35,14 @@ class ProfileServiceTest {
 
     @Test
     void createProfile_Success() {
-        UserDTO userDTO = new UserDTO(1L, "test@example.com", "password", null, null, null, null, null, null);
+        //UserDTO userDTO = new UserDTO(1L, "test@example.com", "password", null, null, null, null, null, null);
         ProfileDTO profileDTO = new ProfileDTO(null, "John", "Doe", "1234567890", "123 Street", "City", "Region",
-                "12345", "Country", true, true, userDTO, null);
+                "12345", "Country", true, true, 1L, null);
         User user = new User();
         user.setId(1L);
         Profile profile = new Profile();
         profile.setId(1L);
+        profile.setUser(user);
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         when(profileRepository.save(any(Profile.class))).thenReturn(profile);
@@ -56,9 +57,8 @@ class ProfileServiceTest {
 
     @Test
     void createProfile_UserNotFound() {
-        UserDTO userDTO = new UserDTO(1L, "test@example.com", "password", null, null, null, null, null, null);
         ProfileDTO profileDTO = new ProfileDTO(null, "John", "Doe", "1234567890", "123 Street", "City", "Region",
-                "12345", "Country", true, true, userDTO, null);
+                "12345", "Country", true, true, 1L, null);
 
         when(userRepository.findById(1L)).thenReturn(Optional.empty());
 
@@ -69,10 +69,16 @@ class ProfileServiceTest {
 
     @Test
     void getAllProfiles_Success() {
+        User user1 = new User();
+        user1.setId(1L);
+        User user2 = new User();
+        user2.setId(1L);
         Profile profile1 = new Profile();
         profile1.setId(1L);
+        profile1.setUser(user1);
         Profile profile2 = new Profile();
         profile2.setId(2L);
+        profile2.setUser(user2);
         List<Profile> profiles = Arrays.asList(profile1, profile2);
 
         when(profileRepository.findAll()).thenReturn(profiles);
@@ -97,6 +103,7 @@ class ProfileServiceTest {
         profile.setCountry("Country");
         profile.setShipping(true);
         profile.setSubscribed(true);
+        profile.setUser(new User());
 
         when(profileRepository.findById(1L)).thenReturn(Optional.of(profile));
 
@@ -130,8 +137,9 @@ class ProfileServiceTest {
     void updateProfile_Success() {
         Profile existingProfile = new Profile();
         existingProfile.setId(1L);
+        existingProfile.setUser(new User());
         ProfileDTO updatedProfileDTO = new ProfileDTO(1L, "John", "Doe", "1234567890", "123 Street", "City", "Region",
-                "12345", "Country", true, true, null, null);
+                "12345", "Country", true, true, 1L, null);
 
         when(profileRepository.findById(1L)).thenReturn(Optional.of(existingProfile));
         when(profileRepository.save(any(Profile.class))).thenReturn(existingProfile);
@@ -190,7 +198,7 @@ class ProfileServiceTest {
         profile.setCountry("Country");
         profile.setShipping(true);
         profile.setSubscribed(true);
-        profile.setUser(null);
+        profile.setUser(new User());
 
         ProfileDTO result = profileService.mapToDTO(profile);
 
@@ -245,7 +253,6 @@ class ProfileServiceTest {
         assertTrue(result.isShipping());
         assertTrue(result.isSubscribed());
         assertNotNull(result.getUser());
-        assertEquals(1L, result.getUser().getId());
-        assertEquals("test@example.com", result.getUser().getEmail());
+        assertEquals(1L, result.getUser());
     }
 }

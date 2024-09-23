@@ -1,7 +1,6 @@
 package org.factoriaf5.digital_academy.funko_shop.profile;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
@@ -35,30 +34,6 @@ class ProfileControllerTest {
         profileDTO = new ProfileDTO(1L, "Mauricio", "Colmenero", "666696969", "Esperanza Sur", "Madrid", "Madrid",
                 "28000", "Spain", true, true, null, null);
     }
-
-    @Test
-    public void testCreateProfile() throws Exception {
-        ProfileDTO profileDTO = new ProfileDTO();
-        profileDTO.setFirstName("Mauricio");
-        profileDTO.setLastName("Colmenero");
-        profileDTO.setPhoneNumber("666696969");
-        profileDTO.setStreet("Esperanza Sur");
-        profileDTO.setCity("Madrid");
-        profileDTO.setRegion("Madrid");
-        profileDTO.setPostalCode("28000");
-        profileDTO.setCountry("Spain");
-        profileDTO.setShipping(true);
-        profileDTO.setSubscribed(true);
-
-        when(profileService.createProfile(any(ProfileDTO.class))).thenReturn(profileDTO);
-
-        ResponseEntity<ProfileDTO> response = profileController.createProfile(profileDTO);
-
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        assertEquals(profileDTO, response.getBody());
-        verify(profileService, times(1)).createProfile(any(ProfileDTO.class));
-    }
-
     @Test
     public void testGetAllProfiles() {
         when(profileService.getAllProfiles()).thenReturn(null);

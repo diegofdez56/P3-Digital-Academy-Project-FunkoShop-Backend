@@ -1,6 +1,7 @@
 package org.factoriaf5.digital_academy.funko_shop.auth;
 
 import org.factoriaf5.digital_academy.funko_shop.config.JwtService;
+import org.factoriaf5.digital_academy.funko_shop.profile.ProfileService;
 import org.factoriaf5.digital_academy.funko_shop.token.Token;
 import org.factoriaf5.digital_academy.funko_shop.token.TokenRepository;
 import org.factoriaf5.digital_academy.funko_shop.token.TokenType;
@@ -11,6 +12,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -27,6 +30,8 @@ public class AuthenticationService {
   private final PasswordEncoder passwordEncoder;
   private final JwtService jwtService;
   private final AuthenticationManager authenticationManager;
+  @Autowired
+  private ProfileService profileService;
 
   public AuthenticationResponse register(RegisterRequest request) {
     if (repository.existsByEmail(request.getEmail())) {
@@ -38,10 +43,15 @@ public class AuthenticationService {
         .role(Role.USER)
         .build();
     var savedUser = repository.save(user);
+
+    profileService.createProfile(user.getId());
+
     var jwtToken = jwtService.generateToken(user);
     var refreshToken = jwtService.generateRefreshToken(user);
     saveUserToken(savedUser, jwtToken);
     return AuthenticationResponse.builder()
+        .id(user.getId())
+        .role(user.getRole().name())
         .accessToken(jwtToken)
         .refreshToken(refreshToken)
         .build();
@@ -59,6 +69,8 @@ public class AuthenticationService {
     revokeAllUserTokens(user);
     saveUserToken(user, jwtToken);
     return AuthenticationResponse.builder()
+        .id(user.getId())
+        .role(user.getRole().name())
         .accessToken(jwtToken)
         .refreshToken(refreshToken)
         .build();
@@ -105,6 +117,8 @@ public class AuthenticationService {
         revokeAllUserTokens(user);
         saveUserToken(user, accessToken);
         var authResponse = AuthenticationResponse.builder()
+            .id(user.getId())
+            .role(user.getRole().name())
             .accessToken(accessToken)
             .refreshToken(refreshToken)
             .build();

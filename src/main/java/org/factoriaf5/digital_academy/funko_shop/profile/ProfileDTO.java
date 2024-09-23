@@ -1,7 +1,6 @@
 package org.factoriaf5.digital_academy.funko_shop.profile;
 
 import org.factoriaf5.digital_academy.funko_shop.address.AddressDTO;
-import org.factoriaf5.digital_academy.funko_shop.user.UserDTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,6 +22,6 @@ public class ProfileDTO {
     private String country;
     private boolean isShipping;
     private boolean isSubscribed;
-    private UserDTO user;
+    private Long user;
     private AddressDTO address;
 }

@@ -4,12 +4,14 @@ import org.factoriaf5.digital_academy.funko_shop.order_item.OrderItemDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("${api-endpoint}/orders")
+@PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
 public class OrderController {
 
     private final OrderService orderService;
@@ -20,6 +22,7 @@ public class OrderController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAuthority('admin:read')")
     public ResponseEntity<List<OrderDTO>> getAllOrders() {
         List<OrderDTO> orders = orderService.getAllOrders();
         return new ResponseEntity<>(orders, HttpStatus.OK);
@@ -55,8 +58,6 @@ public class OrderController {
         return new ResponseEntity<>(orders, HttpStatus.OK);
     }
 
-
-    //Order Items
      @PostMapping("/{orderId}/items")
     public ResponseEntity<OrderItemDTO> addOrderItemToOrder(@PathVariable Long orderId, @RequestBody OrderItemDTO orderItemDTO) {
         OrderItemDTO addedOrderItem = orderService.addOrderItemToOrder(orderId, orderItemDTO);
