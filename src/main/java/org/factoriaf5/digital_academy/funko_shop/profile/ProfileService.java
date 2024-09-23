@@ -2,7 +2,6 @@ package org.factoriaf5.digital_academy.funko_shop.profile;
 
 import org.factoriaf5.digital_academy.funko_shop.profile.profile_exceptions.ProfileNotFoundException;
 import org.factoriaf5.digital_academy.funko_shop.user.User;
-import org.factoriaf5.digital_academy.funko_shop.user.UserDTO;
 import org.factoriaf5.digital_academy.funko_shop.user.UserRepository;
 import org.factoriaf5.digital_academy.funko_shop.user.user_exceptions.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +18,7 @@ public class ProfileService {
     private UserRepository userRepository;
 
     public ProfileDTO createProfile(ProfileDTO profileDTO) {
-        User user = userRepository.findById(profileDTO.getUser().getId())
+        User user = userRepository.findById(profileDTO.getUser())
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         Profile profile = new Profile();
@@ -80,12 +79,6 @@ public class ProfileService {
 
     ProfileDTO mapToDTO(Profile profile) {
 
-        UserDTO userDTO = profile.getUser() != null ? new UserDTO(
-                profile.getUser().getId(),
-                profile.getUser().getEmail(),
-                profile.getUser().getPassword(), null, null, null, null, null, null)
-                : null;
-
         return new ProfileDTO(
                 profile.getId(),
                 profile.getFirstName(),
@@ -98,7 +91,8 @@ public class ProfileService {
                 profile.getCountry(),
                 profile.isShipping(),
                 profile.isSubscribed(),
-                userDTO, null);
+                profile.getUser().getId(), 
+                null);
 
     }
 }

@@ -1,7 +1,6 @@
 package org.factoriaf5.digital_academy.funko_shop.profile;
 
 import org.factoriaf5.digital_academy.funko_shop.address.AddressDTO;
-import org.factoriaf5.digital_academy.funko_shop.user.UserDTO;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -10,7 +9,6 @@ class ProfileDTOTest {
 
     @Test
     void testAllArgsConstructor() {
-        UserDTO userDTO = new UserDTO(1L, "user@example.com", "password", null, null, null, null, null, null);
         AddressDTO addressDTO = new AddressDTO(0, "123 Street", "City", "Region", "12345", "Country", null);
         ProfileDTO profileDTO = new ProfileDTO(
                 1L,
@@ -24,7 +22,7 @@ class ProfileDTOTest {
                 "Country",
                 true,
                 true,
-                userDTO,
+                1L,
                 addressDTO);
 
         assertEquals(1L, profileDTO.getId());
@@ -38,7 +36,7 @@ class ProfileDTOTest {
         assertEquals("Country", profileDTO.getCountry());
         assertTrue(profileDTO.isShipping());
         assertTrue(profileDTO.isSubscribed());
-        assertEquals(userDTO, profileDTO.getUser());
+        assertEquals(1L, profileDTO.getUser());
         assertEquals(addressDTO, profileDTO.getAddress());
     }
 
@@ -64,7 +62,6 @@ class ProfileDTOTest {
     @Test
     void testSettersAndGetters() {
         ProfileDTO profileDTO = new ProfileDTO();
-        UserDTO userDTO = new UserDTO(2L, "another@example.com", "password", null, null, null, null, null, null);
         AddressDTO addressDTO = new AddressDTO(0, "456 Avenue", "New City", "New Region", "67890", "New Country",
                 profileDTO);
 
@@ -79,7 +76,7 @@ class ProfileDTOTest {
         profileDTO.setCountry("New Country");
         profileDTO.setShipping(false);
         profileDTO.setSubscribed(false);
-        profileDTO.setUser(userDTO);
+        profileDTO.setUser(2L);
         profileDTO.setAddress(addressDTO);
 
         assertEquals(2L, profileDTO.getId());
@@ -93,7 +90,7 @@ class ProfileDTOTest {
         assertEquals("New Country", profileDTO.getCountry());
         assertFalse(profileDTO.isShipping());
         assertFalse(profileDTO.isSubscribed());
-        assertEquals(userDTO, profileDTO.getUser());
+        assertEquals(2L, profileDTO.getUser());
         assertEquals(addressDTO, profileDTO.getAddress());
     }
 }
