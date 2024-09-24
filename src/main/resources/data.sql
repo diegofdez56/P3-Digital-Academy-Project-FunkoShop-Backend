@@ -14,10 +14,29 @@ INSERT INTO categories (category_id, name) VALUES (default, 'Animación'),
  (default, 'Marvel'),
  (default, 'DC Comics');
 
- -- Products
- INSERT INTO products (product_id, name, image, description, price, stock, is_available, category_id, discount_id) 
-                VALUES (default, 'asdasd', 'asdasd','asdas', 10, 10, true, 1, null)
-                ;
+ -- Additional Products
+INSERT INTO products (product_id, name, image, description, price, stock, is_available, category_id, discount_id) VALUES
+(default, 'Spider-Man Funko Pop', 'spiderman.jpg', 'A collectible Spider-Man figure from Marvel.', 12.99, 50, true, 3, null),
+(default, 'Batman Funko Pop', 'batman.jpg', 'A collectible Batman figure from DC Comics.', 11.99, 40, true, 4, null),
+(default, 'Goku Super Saiyan Funko Pop', 'goku.jpg', 'Goku in his Super Saiyan form from Dragon Ball Z.', 14.99, 30, true, 2, null),
+(default, 'Sailor Moon Funko Pop', 'sailormoon.jpg', 'Sailor Moon figure from the classic anime series.', 13.99, 20, true, 2, null),
+(default, 'Mickey Mouse Funko Pop', 'mickey.jpg', 'Classic Mickey Mouse collectible figure.', 9.99, 60, true, 1, null),
+(default, 'Iron Man Funko Pop', 'ironman.jpg', 'Iron Man figure with metallic finish.', 15.99, 25, true, 3, null),
+(default, 'Wonder Woman Funko Pop', 'wonderwoman.jpg', 'Wonder Woman figure from DC Comics.', 12.49, 35, true, 4, null),
+(default, 'Naruto Uzumaki Funko Pop', 'naruto.jpg', 'Naruto figure in his classic outfit.', 13.49, 45, true, 2, null),
+(default, 'SpongeBob SquarePants Funko Pop', 'spongebob.jpg', 'SpongeBob figure from the animated series.', 10.99, 50, true, 1, null),
+(default, 'Captain America Funko Pop', 'captainamerica.jpg', 'Captain America with his shield.', 12.99, 30, true, 3, null),
+(default, 'Thanos Funko Pop', 'thanos.jpg', 'Thanos figure with Infinity Gauntlet.', 16.99, 15, true, 3, null),
+(default, 'Joker Funko Pop', 'joker.jpg', 'Joker figure from DC Comics.', 11.49, 40, true, 4, null),
+(default, 'Luffy Funko Pop', 'luffy.jpg', 'Monkey D. Luffy from One Piece.', 14.49, 35, true, 2, null),
+(default, 'Elsa Funko Pop', 'elsa.jpg', 'Elsa figure from Frozen.', 13.99, 25, true, 1, null),
+(default, 'Deadpool Funko Pop', 'deadpool.jpg', 'Deadpool in a classic pose.', 12.99, 50, true, 3, null),
+(default, 'Superman Funko Pop', 'superman.jpg', 'Superman figure from DC Comics.', 12.99, 45, true, 4, null),
+(default, 'Vegeta Funko Pop', 'vegeta.jpg', 'Vegeta from Dragon Ball Z.', 14.99, 30, true, 2, null),
+(default, 'Pikachu Funko Pop', 'pikachu.jpg', 'Pikachu figure from Pokémon.', 11.99, 60, true, 2, null),
+(default, 'Harley Quinn Funko Pop', 'harleyquinn.jpg', 'Harley Quinn figure from DC Comics.', 12.49, 35, true, 4, null),
+(default, 'Black Panther Funko Pop', 'blackpanther.jpg', 'Black Panther figure from Marvel.', 13.99, 25, true, 3, null);
+
 
 -- Orders
 INSERT INTO orders (order_id, status, total_price, total_items, is_paid, user_id) VALUES
