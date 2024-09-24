@@ -35,8 +35,8 @@ public class ProfileService {
                 .collect(Collectors.toList());
     }
 
-    public ProfileDTO getProfileById(Long id) {
-        Profile profile = profileRepository.findById(id)
+    public ProfileDTO getProfileByUser(User user) {
+        Profile profile = profileRepository.findByUser(user)
                 .orElseThrow(() -> new ProfileNotFoundException("Profile not found"));
         return mapToDTO(profile);
     }
