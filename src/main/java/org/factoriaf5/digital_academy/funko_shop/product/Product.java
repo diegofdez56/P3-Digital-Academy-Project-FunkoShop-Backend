@@ -38,7 +38,7 @@ public class Product {
     @JoinColumn(name = "category_id", referencedColumnName = "category_id")
     private Category category;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "discount_id", referencedColumnName = "discount_id", nullable = true)
     private Discount discount;
 
