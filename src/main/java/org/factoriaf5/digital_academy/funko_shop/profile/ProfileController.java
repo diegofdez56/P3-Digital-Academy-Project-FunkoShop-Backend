@@ -2,7 +2,6 @@ package org.factoriaf5.digital_academy.funko_shop.profile;
 
 import org.factoriaf5.digital_academy.funko_shop.profile.profile_exceptions.ProfileNotFoundException;
 import org.factoriaf5.digital_academy.funko_shop.user.User;
-import org.factoriaf5.digital_academy.funko_shop.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -28,7 +27,7 @@ public class ProfileController {
     }
 
     @GetMapping("/user")
-    public ResponseEntity<ProfileDTO> getProfileById(Principal connectedUser) {
+    public ResponseEntity<ProfileDTO> getProfileByUser(Principal connectedUser) {
         try {
             var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
             ProfileDTO profile = profileService.getProfileByUser(user);
@@ -38,11 +37,12 @@ public class ProfileController {
         }
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ProfileDTO> updateProfile(@PathVariable Long id,
+    @PutMapping("/user")
+    public ResponseEntity<ProfileDTO> updateProfile(Principal connectedUser,
             @Valid @RequestBody ProfileDTO profileDTO) {
         try {
-            ProfileDTO updatedProfile = profileService.updateProfile(id, profileDTO);
+            var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
+            ProfileDTO updatedProfile = profileService.updateProfile(user, profileDTO);
             return ResponseEntity.ok(updatedProfile);
         } catch (ProfileNotFoundException e) {
             return ResponseEntity.notFound().build();

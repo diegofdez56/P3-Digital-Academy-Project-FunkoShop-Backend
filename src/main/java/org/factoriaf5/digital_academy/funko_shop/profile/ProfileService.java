@@ -15,7 +15,7 @@ public class ProfileService {
 
     @Autowired
     private ProfileRepository profileRepository;
-    
+
     @Autowired
     private UserRepository userRepository;
 
@@ -41,10 +41,9 @@ public class ProfileService {
         return mapToDTO(profile);
     }
 
-    public ProfileDTO updateProfile(Long id, ProfileDTO profileDTO) {
-        Profile existingProfile = profileRepository.findById(id)
+    public ProfileDTO updateProfile(User user, ProfileDTO profileDTO) {
+        Profile existingProfile = profileRepository.findByUser(user)
                 .orElseThrow(() -> new ProfileNotFoundException("Profile not found"));
-
         existingProfile.setFirstName(profileDTO.getFirstName());
         existingProfile.setLastName(profileDTO.getLastName());
         existingProfile.setPhoneNumber(profileDTO.getPhoneNumber());
@@ -82,7 +81,7 @@ public class ProfileService {
                 profile.getCountry(),
                 profile.isShipping(),
                 profile.isSubscribed(),
-                profile.getUser().getId(), 
+                profile.getUser().getId(),
                 null);
 
     }
