@@ -68,8 +68,8 @@ public class SecurityConfiguration {
                                                                 authentication) -> SecurityContextHolder
                                                                                 .clearContext()));
 
-                return http.build();
-        }
+        return http.build();
+    }
 
         @Bean
         public CorsConfigurationSource corsConfiguration() {

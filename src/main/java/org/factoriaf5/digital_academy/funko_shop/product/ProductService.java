@@ -1,8 +1,5 @@
 package org.factoriaf5.digital_academy.funko_shop.product;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.factoriaf5.digital_academy.funko_shop.category.Category;
 import org.factoriaf5.digital_academy.funko_shop.category.CategoryDTO;
 import org.factoriaf5.digital_academy.funko_shop.category.CategoryRepository;
@@ -12,8 +9,8 @@ import org.factoriaf5.digital_academy.funko_shop.discount.DiscountDTO;
 import org.factoriaf5.digital_academy.funko_shop.discount.DiscountRepository;
 import org.factoriaf5.digital_academy.funko_shop.discount.discount_exceptions.DiscountNotFoundException;
 import org.factoriaf5.digital_academy.funko_shop.product.product_exceptions.ProductNotFoundException;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,11 +41,10 @@ public class ProductService {
         return mapToDTO(savedProduct);
     }
 
-    public List<ProductDTO> getAllProducts(int pageNum, int pageSize, String sortBy, String sortOrder) {
-        PageRequest pageRequest = createPageRequest(pageNum, pageSize, sortBy, sortOrder);
-        return productRepository.findAll(pageRequest).stream()
-                .map(this::mapToDTO)
-                .collect(Collectors.toList());
+    public Page<ProductDTO> getAllProducts(Pageable pageable) {
+        
+        return productRepository.findAll(pageable)
+                .map(this::mapToDTO);
     }
 
     public ProductDTO getProductById(Long id) {
@@ -57,21 +53,17 @@ public class ProductService {
         return mapToDTO(product);
     }
 
-    public List<ProductDTO> getProductsByCategory(Long categoryId, int pageNum, int pageSize, String sortBy,
-                                                  String sortOrder) {
+    public Page<ProductDTO> getProductsByCategory(Long categoryId, Pageable pageable) {
         Category category = getCategoryById(categoryId);
-        PageRequest pageRequest = createPageRequest(pageNum, pageSize, sortBy, sortOrder);
-        return productRepository.findByCategory(category, pageRequest).stream()
-                .map(this::mapToDTO)
-                .collect(Collectors.toList());
+        
+        return productRepository.findByCategory(category, pageable)
+                .map(this::mapToDTO);
     }
 
-    public List<ProductDTO> searchProductsByKeyword(String keyword, int pageNum, int pageSize, String sortBy,
-                                                    String sortOrder) {
-        PageRequest pageRequest = createPageRequest(pageNum, pageSize, sortBy, sortOrder);
-        return productRepository.findByNameContainingIgnoreCase(keyword, pageRequest).stream()
-                .map(this::mapToDTO)
-                .collect(Collectors.toList());
+    public Page<ProductDTO> searchProductsByKeyword(String keyword, Pageable pageable) {
+       
+        return productRepository.findByNameContainingIgnoreCase(keyword, pageable)
+                .map(this::mapToDTO);
     }
 
     public ProductDTO updateProduct(Long id, ProductDTO productDto) {
@@ -101,10 +93,7 @@ public class ProductService {
                 .orElseThrow(() -> new DiscountNotFoundException("Discount not found with id: " + discountId));
     }
 
-    private PageRequest createPageRequest(int pageNum, int pageSize, String sortBy, String sortOrder) {
-        Sort.Direction direction = sortOrder.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
-        return PageRequest.of(pageNum, pageSize, Sort.by(direction, sortBy));
-    }
+    
 
     private void updateProductFields(Product product, ProductDTO productDto) {
         product.setName(productDto.getName());
