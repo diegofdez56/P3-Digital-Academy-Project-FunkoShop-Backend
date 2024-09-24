@@ -18,12 +18,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-
+import org.springframework.data.domain.Pageable;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
@@ -109,21 +107,21 @@ class ProductServiceTest {
     @Test
     void getAllProducts_Success() {
         Page<Product> page = new PageImpl<>(Arrays.asList(testProduct));
-        when(productRepository.findAll(any(PageRequest.class))).thenReturn(page);
+        when(productRepository.findAll(any(Pageable.class))).thenReturn(page);
 
-        List<ProductDTO> result = productService.getAllProducts(0, 10, "name", "asc");
+        Page<ProductDTO> result = productService.getAllProducts(PageRequest.of(0, 10));
 
         assertFalse(result.isEmpty());
-        assertEquals(1, result.size());
-        assertEquals(testProductDTO.getName(), result.get(0).getName());
+        assertEquals(1, result.getTotalElements());
+        assertEquals(testProductDTO.getName(), result.getContent().get(0).getName());
     }
 
     @Test
     void getAllProducts_EmptyList() {
         Page<Product> page = new PageImpl<>(Collections.emptyList());
-        when(productRepository.findAll(any(PageRequest.class))).thenReturn(page);
+        when(productRepository.findAll(any(Pageable.class))).thenReturn(page);
 
-        List<ProductDTO> result = productService.getAllProducts(0, 10, "name", "asc");
+        Page<ProductDTO> result = productService.getAllProducts(PageRequest.of(0, 10));
 
         assertTrue(result.isEmpty());
     }
@@ -197,13 +195,13 @@ class ProductServiceTest {
     void getProductsByCategory_Success() {
         when(categoryRepository.findById(1L)).thenReturn(Optional.of(testCategory));
         Page<Product> page = new PageImpl<>(Arrays.asList(testProduct));
-        when(productRepository.findByCategory(eq(testCategory), any(PageRequest.class))).thenReturn(page);
+        when(productRepository.findByCategory(eq(testCategory), any(Pageable.class))).thenReturn(page);
 
-        List<ProductDTO> result = productService.getProductsByCategory(1L, 0, 10, "name", "asc");
+        Page<ProductDTO> result = productService.getProductsByCategory(1L, PageRequest.of(0, 10));
 
         assertFalse(result.isEmpty());
-        assertEquals(1, result.size());
-        assertEquals(testProductDTO.getName(), result.get(0).getName());
+        assertEquals(1, result.getTotalElements());
+        assertEquals(testProductDTO.getName(), result.getContent().get(0).getName());
     }
 
     @Test
@@ -211,16 +209,16 @@ class ProductServiceTest {
         when(categoryRepository.findById(1L)).thenReturn(Optional.empty());
 
         assertThrows(CategoryNotFoundException.class,
-                () -> productService.getProductsByCategory(1L, 0, 10, "name", "asc"));
+                () -> productService.getProductsByCategory(1L, PageRequest.of(0, 10)));
     }
 
     @Test
     void getProductsByCategory_EmptyList() {
         when(categoryRepository.findById(1L)).thenReturn(Optional.of(testCategory));
         Page<Product> page = new PageImpl<>(Collections.emptyList());
-        when(productRepository.findByCategory(eq(testCategory), any(PageRequest.class))).thenReturn(page);
+        when(productRepository.findByCategory(eq(testCategory), any(Pageable.class))).thenReturn(page);
 
-        List<ProductDTO> result = productService.getProductsByCategory(1L, 0, 10, "name", "asc");
+        Page<ProductDTO> result = productService.getProductsByCategory(1L, PageRequest.of(0, 10));
 
         assertTrue(result.isEmpty());
     }
@@ -228,22 +226,22 @@ class ProductServiceTest {
     @Test
     void searchProductsByKeyword_Success() {
         Page<Product> page = new PageImpl<>(Arrays.asList(testProduct));
-        when(productRepository.findByNameContainingIgnoreCase(eq("Test"), any(PageRequest.class))).thenReturn(page);
+        when(productRepository.findByNameContainingIgnoreCase(eq("Test"), any(Pageable.class))).thenReturn(page);
 
-        List<ProductDTO> result = productService.searchProductsByKeyword("Test", 0, 10, "name", "asc");
+        Page<ProductDTO> result = productService.searchProductsByKeyword("Test", PageRequest.of(0, 10));
 
         assertFalse(result.isEmpty());
-        assertEquals(1, result.size());
-        assertEquals(testProductDTO.getName(), result.get(0).getName());
+        assertEquals(1, result.getTotalElements());
+        assertEquals(testProductDTO.getName(), result.getContent().get(0).getName());
     }
 
     @Test
     void searchProductsByKeyword_NoResults() {
         Page<Product> page = new PageImpl<>(Collections.emptyList());
-        when(productRepository.findByNameContainingIgnoreCase(eq("NonExistent"), any(PageRequest.class)))
+        when(productRepository.findByNameContainingIgnoreCase(eq("NonExistent"), any(Pageable.class)))
                 .thenReturn(page);
 
-        List<ProductDTO> result = productService.searchProductsByKeyword("NonExistent", 0, 10, "name", "asc");
+        Page<ProductDTO> result = productService.searchProductsByKeyword("NonExistent", PageRequest.of(0, 10));
 
         assertTrue(result.isEmpty());
     }
@@ -327,22 +325,22 @@ class ProductServiceTest {
     void updateProduct_WithDiscountNotFound() {
         Product testProduct = new Product();
         testProduct.setId(1L);
-        testProduct.setName("Sample Product"); 
+        testProduct.setName("Sample Product");
         testProduct.setImageHash("sampleHash");
-        testProduct.setDescription("Sample Description"); 
+        testProduct.setDescription("Sample Description");
         testProduct.setPrice(100.0f);
         testProduct.setStock(10);
         testProduct.setAvailable(true);
-    
+
         when(productRepository.findById(1L)).thenReturn(Optional.of(testProduct));
         when(discountRepository.findById(2L)).thenReturn(Optional.empty());
-    
+
         ProductDTO updatedDTO = new ProductDTO();
         updatedDTO.setId(1L);
-        updatedDTO.setName("Updated Product"); 
-        updatedDTO.setDescription("Updated Description"); 
-        updatedDTO.setDiscount(new DiscountDTO(2L)); 
-    
+        updatedDTO.setName("Updated Product");
+        updatedDTO.setDescription("Updated Description");
+        updatedDTO.setDiscount(new DiscountDTO(2L));
+
         assertThrows(DiscountNotFoundException.class, () -> productService.updateProduct(1L, updatedDTO));
     }
 
@@ -425,6 +423,4 @@ class ProductServiceTest {
         assertNull(result.getCategory());
         assertNull(result.getDiscount());
     }
-
-
 }
