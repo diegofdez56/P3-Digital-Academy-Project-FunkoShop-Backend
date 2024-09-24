@@ -9,7 +9,7 @@ INSERT INTO profiles (first_name, last_name, phone_number, street, city, region,
 ('Sofía', 'Martínez', '5559876543', '456 Calle Secundaria', 'Guadalajara', 'Jalisco', '44100', 'México', 2, true, true);
 
 -- Categories
-INSERT INTO categories (category_id, name) VALUES (default, 'Animación'),
+INSERT INTO categories (category_id, name) VALUES (default, 'Animation'),
  (default, 'Anime & Manga'),
  (default, 'Marvel'),
  (default, 'DC Comics');
