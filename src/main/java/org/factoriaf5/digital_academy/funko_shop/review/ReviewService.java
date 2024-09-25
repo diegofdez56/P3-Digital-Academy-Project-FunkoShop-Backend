@@ -98,7 +98,7 @@ public class ReviewService {
             product != null ? new ProductDTO(orderItem.getProduct().getId(), orderItem.getProduct().getName(), 
                 orderItem.getProduct().getImageHash(), orderItem.getProduct().getDescription(),
                 orderItem.getProduct().getPrice(), orderItem.getProduct().getStock(), 
-                orderItem.getProduct().isAvailable(), null, null) : null,
+                orderItem.getProduct().isAvailable(), orderItem.getProduct().isNew(), null, null) : null,
             null  
         );
     }

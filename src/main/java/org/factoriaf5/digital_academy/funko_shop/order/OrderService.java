@@ -197,7 +197,7 @@ public class OrderService {
                 new ProductDTO(orderItem.getProduct().getId(), orderItem.getProduct().getName(),
                         orderItem.getProduct().getImageHash(), orderItem.getProduct().getDescription(),
                         orderItem.getProduct().getPrice(), orderItem.getProduct().getStock(),
-                        orderItem.getProduct().isAvailable(), null, null),
+                        orderItem.getProduct().isAvailable(), orderItem.getProduct().isNew(), null, null),
                 null);
     }
 
