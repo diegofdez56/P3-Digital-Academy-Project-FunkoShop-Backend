@@ -16,4 +16,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
      List<Product> findByDiscountIsActiveTrue();
 
+    List<Product> findByIsNewTrue();
+
 }

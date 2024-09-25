@@ -34,6 +34,9 @@ public class Product {
     @Column(name = "is_available", columnDefinition = "boolean default true")
     private boolean isAvailable;
 
+    @Column(name = "is_new", columnDefinition = "boolean default true")
+    private boolean isNew;
+
     @ManyToOne
     @JoinColumn(name = "category_id", referencedColumnName = "category_id")
     private Category category;

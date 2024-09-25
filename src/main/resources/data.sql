@@ -14,11 +14,17 @@ INSERT INTO categories (category_id, name) VALUES (default, 'Animation'),
  (default, 'Marvel'),
  (default, 'DC Comics');
 
+-- Discounts
+INSERT INTO discounts (discount_id, percentage, is_active) VALUES
+(default, 10, true),(default, 15, true),(default, 20, true),(default, 25, true),(default, 30, true),(default, 35, true),(default, 40, true),
+(default, 45, true),(default, 50, true),(default, 55, true),(default, 60, true),(default, 75, true),(default, 80, true);
+
+
  -- Additional Products
 INSERT INTO products (product_id, name, image, description, price, stock, is_available, category_id, discount_id) VALUES
-(default, 'Spider-Man', 'spiderman.jpg', 'A collectible Spider-Man figure from Marvel.', 12.99, 50, true, 3, null),
-(default, 'Batman', 'batman.jpg', 'A collectible Batman figure from DC Comics.', 11.99, 40, true, 4, null),
-(default, 'Goku Super Saiyan ', 'goku.jpg', 'Goku in his Super Saiyan form from Dragon Ball Z.', 14.99, 30, true, 2, null),
+(default, 'Spider-Man', 'spiderman.jpg', 'A collectible Spider-Man figure from Marvel.', 12.99, 50, true, 3, 1),
+(default, 'Batman', 'batman.jpg', 'A collectible Batman figure from DC Comics.', 11.99, 40, true, 4, 2),
+(default, 'Goku Super Saiyan ', 'goku.jpg', 'Goku in his Super Saiyan form from Dragon Ball Z.', 14.99, 0, false, 2, null),
 (default, 'Sailor Moon', 'sailormoon.jpg', 'Sailor Moon figure from the classic anime series.', 13.99, 20, true, 2, null),
 (default, 'Mickey Mouse', 'mickey.jpg', 'Classic Mickey Mouse collectible figure.', 9.99, 60, true, 1, null),
 (default, 'Iron Man', 'ironman.jpg', 'Iron Man figure with metallic finish.', 15.99, 25, true, 3, null),
@@ -34,8 +40,8 @@ INSERT INTO products (product_id, name, image, description, price, stock, is_ava
 (default, 'Superman', 'superman.jpg', 'Superman figure from DC Comics.', 12.99, 45, true, 4, null),
 (default, 'Vegeta', 'vegeta.jpg', 'Vegeta from Dragon Ball Z.', 14.99, 30, true, 2, null),
 (default, 'Pikachu', 'pikachu.jpg', 'Pikachu figure from Pokémon.', 11.99, 60, true, 2, null),
-(default, 'Harley Quinn', 'harleyquinn.jpg', 'Harley Quinn figure from DC Comics.', 12.49, 35, true, 4, null),
-(default, 'Black Panther', 'blackpanther.jpg', 'Black Panther figure from Marvel.', 13.99, 25, true, 3, null);
+(default, 'Harley Quinn', 'harleyquinn.jpg', 'Harley Quinn figure from DC Comics.', 12.49, 35, true, 4, 4),
+(default, 'Black Panther', 'blackpanther.jpg', 'Black Panther figure from Marvel.', 13.99, 25, true, 3, 4);
 
 
 -- Orders
@@ -43,10 +49,6 @@ INSERT INTO orders (order_id, status, total_price, total_items, is_paid, user_id
 (default, 'PENDING', 19.99, 1, true, 1),
 (default, 'PENDING', 89.99, 5, true, 2);
 
--- Discounts
-INSERT INTO discounts (discount_id, percentage, is_active) VALUES
-(default, 10, true),(default, 15, true),(default, 20, true),(default, 25, true),(default, 30, true),(default, 35, true),(default, 40, true),
-(default, 45, true),(default, 50, true),(default, 55, true),(default, 60, true),(default, 75, true),(default, 80, true);
 
 --  OrderItems
 INSERT INTO order_items (order_item_id, quantity, order_id, product_id)

@@ -119,6 +119,13 @@ public class ProductService {
             product.setDiscount(null); 
         }
     }
+     public List<ProductDTO> getNewProducts() {
+        List<Product> newProducts = productRepository.findByIsNewTrue();
+
+        return newProducts.stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
+    }
 
     private Product mapToEntity(ProductDTO dto) {
         Product product = new Product();
@@ -128,6 +135,8 @@ public class ProductService {
         product.setPrice(dto.getPrice());
         product.setStock(dto.getStock());
         product.setAvailable(dto.isAvailable());
+        product.setNew(dto.isNew());
+        
         return product;
     }
 
@@ -158,8 +167,11 @@ public class ProductService {
                 product.getPrice(),
                 product.getStock(),
                 product.isAvailable(),
+                product.isNew(),
+                
                 categoryDTO,
                 discountDTO
         );
     }
+
 }

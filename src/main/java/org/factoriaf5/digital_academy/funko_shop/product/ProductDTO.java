@@ -22,6 +22,7 @@ public class ProductDTO {
     @Positive(message = "Stock must be positive or zero")
     private int stock;
     private boolean isAvailable;
+    private boolean isNew;
     private CategoryDTO category;
     private DiscountDTO discount;
 }
