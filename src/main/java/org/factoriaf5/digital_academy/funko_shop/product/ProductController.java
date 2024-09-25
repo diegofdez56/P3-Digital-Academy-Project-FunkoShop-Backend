@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
 
+import java.util.*;
+
 @RestController
 @RequestMapping("${api-endpoint}/products")
 public class ProductController {
@@ -79,4 +81,18 @@ public class ProductController {
         productService.deleteProduct(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/discounted")
+    public ResponseEntity<List<ProductDTO>> getDiscountedProducts() {
+    List<ProductDTO> products = productService.getDiscountedProducts();
+    return ResponseEntity.ok(products);
+}
+
+    @GetMapping("/new")
+    public ResponseEntity<List<ProductDTO>> getNewProducts() {
+        List<ProductDTO> products = productService.getNewProducts();
+        return ResponseEntity.ok(products);   
+    }
+
+
 }

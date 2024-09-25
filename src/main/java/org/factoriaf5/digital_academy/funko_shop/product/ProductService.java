@@ -1,5 +1,6 @@
 package org.factoriaf5.digital_academy.funko_shop.product;
 
+
 import org.factoriaf5.digital_academy.funko_shop.category.Category;
 import org.factoriaf5.digital_academy.funko_shop.category.CategoryDTO;
 import org.factoriaf5.digital_academy.funko_shop.category.CategoryRepository;
@@ -13,6 +14,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -42,7 +45,6 @@ public class ProductService {
     }
 
     public Page<ProductDTO> getAllProducts(Pageable pageable) {
-        
         return productRepository.findAll(pageable)
                 .map(this::mapToDTO);
     }
@@ -55,13 +57,12 @@ public class ProductService {
 
     public Page<ProductDTO> getProductsByCategory(Long categoryId, Pageable pageable) {
         Category category = getCategoryById(categoryId);
-        
+
         return productRepository.findByCategory(category, pageable)
                 .map(this::mapToDTO);
     }
 
     public Page<ProductDTO> searchProductsByKeyword(String keyword, Pageable pageable) {
-       
         return productRepository.findByNameContainingIgnoreCase(keyword, pageable)
                 .map(this::mapToDTO);
     }
@@ -93,7 +94,12 @@ public class ProductService {
                 .orElseThrow(() -> new DiscountNotFoundException("Discount not found with id: " + discountId));
     }
 
-    
+    public List<ProductDTO> getDiscountedProducts() {
+        List<Product> products = productRepository.findByDiscountIsActiveTrue();
+        return products.stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
+    }
 
     private void updateProductFields(Product product, ProductDTO productDto) {
         product.setName(productDto.getName());
@@ -109,7 +115,16 @@ public class ProductService {
 
         if (productDto.getDiscount() != null) {
             product.setDiscount(getDiscountById(productDto.getDiscount().getId()));
+        } else {
+            product.setDiscount(null); 
         }
+    }
+     public List<ProductDTO> getNewProducts() {
+        List<Product> newProducts = productRepository.findByIsNewTrue();
+
+        return newProducts.stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
     }
 
     private Product mapToEntity(ProductDTO dto) {
@@ -120,21 +135,29 @@ public class ProductService {
         product.setPrice(dto.getPrice());
         product.setStock(dto.getStock());
         product.setAvailable(dto.isAvailable());
+        product.setNew(dto.isNew());
+        
         return product;
     }
 
     private ProductDTO mapToDTO(Product product) {
-        CategoryDTO categoryDTO = product.getCategory() != null ? new CategoryDTO(
-                product.getCategory().getId(),
-                product.getCategory().getName(),
-                product.getCategory().getImageHash()) : null;
+        CategoryDTO categoryDTO = null;
+        if (product.getCategory() != null) {
+            categoryDTO = new CategoryDTO(
+                    product.getCategory().getId(),
+                    product.getCategory().getName(),
+                    product.getCategory().getImageHash()
+            );
+        }
 
-        DiscountDTO discountDTO = product.getDiscount() != null ? new DiscountDTO(
-                product.getDiscount().getId(),
-                product.getDiscount().getPercentage(),
-                product.getDiscount().isActive(),
-                null)
-                : null;
+        DiscountDTO discountDTO = null;
+        if (product.getDiscount() != null) {
+            discountDTO = new DiscountDTO(
+                    product.getDiscount().getId(),
+                    product.getDiscount().getPercentage(),
+                    product.getDiscount().isActive()
+            );
+        }
 
         return new ProductDTO(
                 product.getId(),
@@ -144,7 +167,11 @@ public class ProductService {
                 product.getPrice(),
                 product.getStock(),
                 product.isAvailable(),
+                product.isNew(),
+                
                 categoryDTO,
-                discountDTO);
+                discountDTO
+        );
     }
+
 }
