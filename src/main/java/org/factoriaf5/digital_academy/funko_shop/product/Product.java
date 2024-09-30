@@ -7,6 +7,8 @@ import org.factoriaf5.digital_academy.funko_shop.order_item.OrderItem;
 
 import jakarta.persistence.*;
 import lombok.*;
+import java.util.Date;
+
 
 @Entity
 @Builder
@@ -29,18 +31,18 @@ public class Product {
     private String description;
     private float price;
     private int stock;
-    @Column(name = "is_available", columnDefinition = "boolean default true")
-    private boolean isAvailable;
-
-    @Column(name = "is_new", columnDefinition = "boolean default true")
-    private boolean isNew;
-
+   
     @ManyToOne
     @JoinColumn(name = "category_id", referencedColumnName = "category_id")
     private Category category;
 
     @Column(nullable = true)
     private int discount;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "created_at", nullable = false, updatable = false)
+    @Setter(AccessLevel.NONE) 
+    private Date createdAt;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<OrderItem> orderItems;
