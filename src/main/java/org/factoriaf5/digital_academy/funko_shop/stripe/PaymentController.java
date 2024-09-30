@@ -16,7 +16,7 @@ public class PaymentController {
 
     private static final Logger logger = LoggerFactory.getLogger(PaymentController.class);
 
-    @PostMapping("/create-payment-intent")
+    @PostMapping
     public ResponseEntity<?> createPaymentIntent(@RequestBody PaymentRequest paymentRequest) {
         try {
             logger.info("Creating payment intent for amount: {}", paymentRequest.getAmount());
