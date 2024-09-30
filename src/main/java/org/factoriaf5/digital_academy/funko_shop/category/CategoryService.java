@@ -27,6 +27,6 @@ public class CategoryService {
     }
 
     private CategoryDTO convertToDTO(Category category) {
-        return new CategoryDTO(category.getId(), category.getName(), category.getImageHash());
+        return new CategoryDTO(category.getId(), category.getName(), category.getImageHash(), category.isHighlights());
     }
 }

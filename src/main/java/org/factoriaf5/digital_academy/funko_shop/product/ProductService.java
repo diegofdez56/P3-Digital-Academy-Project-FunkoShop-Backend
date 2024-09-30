@@ -146,7 +146,8 @@ public class ProductService {
             categoryDTO = new CategoryDTO(
                     product.getCategory().getId(),
                     product.getCategory().getName(),
-                    product.getCategory().getImageHash()
+                    product.getCategory().getImageHash(),
+                    product.getCategory().isHighlights()
             );
         }
 
