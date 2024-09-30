@@ -47,6 +47,11 @@ public class Product {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<OrderItem> orderItems;
 
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = new Date();
+    }
+
     public float getDiscountedPrice() {
         if (discount <= 0 || discount > 100) {
             return price;

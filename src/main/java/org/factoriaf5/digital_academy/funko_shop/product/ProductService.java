@@ -92,7 +92,6 @@ public class ProductService {
         product.setDescription(productDto.getDescription());
         product.setPrice(productDto.getPrice());
         product.setStock(productDto.getStock());
-        product.setAvailable(productDto.isAvailable());
         product.setDiscount(productDto.getDiscount());
 
         if (productDto.getCategory() != null) {
@@ -115,8 +114,6 @@ public class ProductService {
         product.setDescription(dto.getDescription());
         product.setPrice(dto.getPrice());
         product.setStock(dto.getStock());
-        product.setAvailable(dto.isAvailable());
-        product.setNew(dto.isNew());
         product.setDiscount(dto.getDiscount());
 
         return product;
@@ -140,11 +137,9 @@ public class ProductService {
                 product.getPrice(),
                 product.getDiscountedPrice(),
                 product.getStock(),
-                product.isAvailable(),
-                product.isNew(),
+                product.getCreatedAt(),  
                 categoryDTO,
-                product.getDiscount()  
+                product.getDiscount()
         );
     }
-
 }
