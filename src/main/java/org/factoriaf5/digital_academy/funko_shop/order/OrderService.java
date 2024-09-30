@@ -21,7 +21,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.Collections;
 
 @Service
 public class OrderService {
@@ -57,7 +56,6 @@ public class OrderService {
         if (orderDTO.getOrderItems() != null) {
             List<OrderItem> orderItems = orderDTO.getOrderItems().stream()
                     .map(orderItemDTO -> mapToOrderItem(orderItemDTO, savedOrder))
-
                     .collect(Collectors.toList());
             orderItemRepository.saveAll(orderItems);
             savedOrder.setOrderItems(orderItems);
@@ -173,7 +171,7 @@ public class OrderService {
                     null, null, null, null, null, null);
         }
 
-        return new OrderDTO(
+       return new OrderDTO(
                 order.getId(),
                 order.getStatus(),
                 order.getTotalPrice(),
@@ -196,12 +194,13 @@ public class OrderService {
                 null,
                 new ProductDTO(orderItem.getProduct().getId(), orderItem.getProduct().getName(),
                         orderItem.getProduct().getImageHash(), orderItem.getProduct().getDescription(),
-                        orderItem.getProduct().getPrice(), orderItem.getProduct().getStock(),
-                        orderItem.getProduct().isAvailable(), orderItem.getProduct().isNew(), null, null),
+                        orderItem.getProduct().getPrice(), orderItem.getProduct().getDiscountedPrice(),
+                        orderItem.getProduct().getStock(),
+                        orderItem.getProduct().isAvailable(), orderItem.getProduct().isNew(), null,
+                        orderItem.getProduct().getDiscount()),
                 null);
     }
 
-    // Order Item
     public OrderItemDTO addOrderItemToOrder(Long orderId, OrderItemDTO orderItemDTO) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new OrderNotFoundException("Order not found"));
@@ -223,9 +222,9 @@ public class OrderService {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new OrderNotFoundException("Order not found"));
 
-                if (order.getOrderItems() == null) {
-                    order.setOrderItems(new ArrayList<>());
-                }
+        if (order.getOrderItems() == null) {
+            order.setOrderItems(new ArrayList<>());
+        }
 
         OrderItem orderItem = orderItemRepository.findById(orderItemId)
                 .orElseThrow(() -> new OrderItemNotFoundException("OrderItem not found"));

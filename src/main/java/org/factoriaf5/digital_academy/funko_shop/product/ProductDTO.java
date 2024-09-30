@@ -1,7 +1,6 @@
 package org.factoriaf5.digital_academy.funko_shop.product;
 
 import org.factoriaf5.digital_academy.funko_shop.category.CategoryDTO;
-import org.factoriaf5.digital_academy.funko_shop.discount.DiscountDTO;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
@@ -19,10 +18,11 @@ public class ProductDTO {
     private String description;
     @Positive(message = "Price must be positive")
     private float price;
+    private float discountedPrice;
     @Positive(message = "Stock must be positive or zero")
     private int stock;
     private boolean isAvailable;
     private boolean isNew;
     private CategoryDTO category;
-    private DiscountDTO discount;
+    private int discount;
 }

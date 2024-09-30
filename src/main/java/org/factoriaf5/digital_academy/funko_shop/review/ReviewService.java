@@ -89,18 +89,19 @@ public class ReviewService {
                         null, null, null, null, null, null) : null
         );
     }
+
     private OrderItemDTO mapToOrderItemDTO(OrderItem orderItem) {
         Product product = orderItem.getProduct();
         return new OrderItemDTO(
             orderItem.getId(),
             orderItem.getQuantity(),
             null, 
-            product != null ? new ProductDTO(orderItem.getProduct().getId(), orderItem.getProduct().getName(), 
-                orderItem.getProduct().getImageHash(), orderItem.getProduct().getDescription(),
-                orderItem.getProduct().getPrice(), orderItem.getProduct().getStock(), 
-                orderItem.getProduct().isAvailable(), orderItem.getProduct().isNew(), null, null) : null,
+            product != null ? new ProductDTO(product.getId(), product.getName(), 
+                product.getImageHash(), product.getDescription(),
+                product.getPrice(), product.getDiscountedPrice(), 
+                product.getStock(), product.isAvailable(), product.isNew(), null,
+                product.getDiscount()) : null,
             null  
         );
     }
-    
 }

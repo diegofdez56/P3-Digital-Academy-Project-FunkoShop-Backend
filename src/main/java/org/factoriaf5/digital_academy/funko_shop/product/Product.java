@@ -2,9 +2,7 @@ package org.factoriaf5.digital_academy.funko_shop.product;
 
 import java.util.List;
 
-import org.factoriaf5.digital_academy.funko_shop.cart_item.CartItem;
 import org.factoriaf5.digital_academy.funko_shop.category.Category;
-import org.factoriaf5.digital_academy.funko_shop.discount.Discount;
 import org.factoriaf5.digital_academy.funko_shop.order_item.OrderItem;
 
 import jakarta.persistence.*;
@@ -41,21 +39,26 @@ public class Product {
     @JoinColumn(name = "category_id", referencedColumnName = "category_id")
     private Category category;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "discount_id", referencedColumnName = "discount_id", nullable = true)
-    private Discount discount;
+    @Column(nullable = true)
+    private int discount;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<OrderItem> orderItems;
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
-    private List<CartItem> cartItems;
-
     public float getDiscountedPrice() {
-        if (discount == null || !discount.isActive()) {
+        if (discount <= 0 || discount > 100) {
             return price;
         }
-        return price * (1 - discount.getPercentage() / 100);
+
+        float discountMultiplier = 1 - (discount / 100.0f);
+        float discountedPrice = price * discountMultiplier;
+
+        System.out.println("Applying discount for product: " + name +
+                ". Original price: " + price +
+                ", Discount percentage: " + discount +
+                "%, Discounted price: " + discountedPrice);
+
+        return discountedPrice;
     }
 
 }

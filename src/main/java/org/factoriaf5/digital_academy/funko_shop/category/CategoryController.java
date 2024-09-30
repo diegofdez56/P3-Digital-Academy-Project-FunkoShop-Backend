@@ -1,5 +1,6 @@
 package org.factoriaf5.digital_academy.funko_shop.category;
 
+import org.factoriaf5.digital_academy.funko_shop.product.ProductDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +24,12 @@ public class CategoryController {
     public ResponseEntity<CategoryDTO> getCategoryById(@PathVariable Long id) {
         CategoryDTO category = categoryService.getCategoryById(id);
         return ResponseEntity.ok(category);
+    }
+
+     @GetMapping("/{id}/products")
+    public ResponseEntity<List<ProductDTO>> getProductsByCategory(@PathVariable Long id) {
+        List<ProductDTO> products = categoryService.getProductsByCategoryId(id);
+        return ResponseEntity.ok(products);
     }
 
 }

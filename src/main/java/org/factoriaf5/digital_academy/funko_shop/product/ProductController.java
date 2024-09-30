@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
 
-import java.util.*;
+import java.util.List;
 
 @RestController
 @RequestMapping("${api-endpoint}/products")
@@ -25,14 +25,13 @@ public class ProductController {
     @PreAuthorize("hasAuthority('admin:create')")
     public ResponseEntity<ProductDTO> createProduct(@Valid @RequestBody ProductDTO productDto) {
         Long categoryId = productDto.getCategory() != null ? productDto.getCategory().getId() : null;
-        Long discountId = productDto.getDiscount() != null ? productDto.getDiscount().getId() : null;
 
         if (categoryId == null) {
             throw new IllegalArgumentException("Category ID cannot be null");
         }
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(productService.createProduct(productDto, categoryId, discountId));
+                .body(productService.createProduct(productDto, categoryId));
     }
 
     @GetMapping
@@ -84,15 +83,13 @@ public class ProductController {
 
     @GetMapping("/discounted")
     public ResponseEntity<List<ProductDTO>> getDiscountedProducts() {
-    List<ProductDTO> products = productService.getDiscountedProducts();
-    return ResponseEntity.ok(products);
-}
+        List<ProductDTO> products = productService.getDiscountedProducts();
+        return ResponseEntity.ok(products);
+    }
 
     @GetMapping("/new")
     public ResponseEntity<List<ProductDTO>> getNewProducts() {
         List<ProductDTO> products = productService.getNewProducts();
         return ResponseEntity.ok(products);   
     }
-
-
 }
