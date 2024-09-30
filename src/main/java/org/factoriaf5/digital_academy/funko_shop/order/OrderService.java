@@ -188,18 +188,37 @@ public class OrderService {
     }
 
     private OrderItemDTO mapToOrderItemDTO(OrderItem orderItem) {
+        Product product = orderItem.getProduct();
+        
+        float discountedPrice = product.getPrice();  
+    
+        if (product.getDiscount() > 0 && product.getDiscount() <= 100) {
+            float discountMultiplier = 1 - (product.getDiscount() / 100.0f);
+            discountedPrice = product.getPrice() * discountMultiplier;
+        }
+    
+        ProductDTO productDTO = new ProductDTO(
+                product.getId(),
+                product.getName(),
+                product.getImageHash(),
+                product.getDescription(),
+                product.getPrice(),           
+                discountedPrice,             
+                product.getStock(),
+                product.getCreatedAt(),        
+                null,                        
+                product.getDiscount()          
+        );
+    
         return new OrderItemDTO(
                 orderItem.getId(),
                 orderItem.getQuantity(),
-                null,
-                new ProductDTO(orderItem.getProduct().getId(), orderItem.getProduct().getName(),
-                        orderItem.getProduct().getImageHash(), orderItem.getProduct().getDescription(),
-                        orderItem.getProduct().getPrice(), orderItem.getProduct().getDiscountedPrice(),
-                        orderItem.getProduct().getStock(),
-                        orderItem.getProduct().isAvailable(), orderItem.getProduct().isNew(), null,
-                        orderItem.getProduct().getDiscount()),
-                null);
+                null,    
+                productDTO, 
+                null      
+        );
     }
+    
 
     public OrderItemDTO addOrderItemToOrder(Long orderId, OrderItemDTO orderItemDTO) {
         Order order = orderRepository.findById(orderId)

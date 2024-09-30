@@ -12,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.Calendar;
+import java.util.Date;
 
 @Service
 @Transactional
@@ -27,6 +29,10 @@ public class ProductService {
 
     public ProductDTO createProduct(ProductDTO productDto, Long categoryId) {
         Category category = getCategoryById(categoryId);
+
+        if (productDto.getStock() < 0) {
+            throw new IllegalArgumentException("Stock can't be negative");
+        }
 
         Product product = mapToEntity(productDto);
         product.setCategory(category);
@@ -81,9 +87,24 @@ public class ProductService {
 
     public List<ProductDTO> getDiscountedProducts() {
         List<Product> products = productRepository.findByDiscount();
+
         return products.stream()
-                .map(this::mapToDTO)
+                .map(this::mapToDTOWithDiscount)
                 .collect(Collectors.toList());
+    }
+
+    private ProductDTO mapToDTOWithDiscount(Product product) {
+        ProductDTO productDTO = mapToDTO(product);  
+
+        if (product.getDiscount() > 0 && product.getDiscount() <= 100) {
+            float discountMultiplier = 1 - (product.getDiscount() / 100.0f);
+            float discountedPrice = product.getPrice() * discountMultiplier;
+            productDTO.setDiscountedPrice(discountedPrice);
+        } else {
+            productDTO.setDiscountedPrice(product.getPrice());  
+        }
+
+        return productDTO;
     }
 
     private void updateProductFields(Product product, ProductDTO productDto) {
@@ -100,7 +121,11 @@ public class ProductService {
     }
 
     public List<ProductDTO> getNewProducts() {
-        List<Product> newProducts = productRepository.findByIsNewTrue();
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_YEAR, -30);
+        Date cutoffDate = calendar.getTime();
+
+        List<Product> newProducts = productRepository.findNewProducts(cutoffDate);
 
         return newProducts.stream()
                 .map(this::mapToDTO)
@@ -135,7 +160,7 @@ public class ProductService {
                 product.getImageHash(),
                 product.getDescription(),
                 product.getPrice(),
-                product.getDiscountedPrice(),
+                product.getPrice(),  
                 product.getStock(),
                 product.getCreatedAt(),  
                 categoryDTO,

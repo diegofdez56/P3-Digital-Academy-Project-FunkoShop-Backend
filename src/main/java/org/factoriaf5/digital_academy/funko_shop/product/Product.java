@@ -52,20 +52,4 @@ public class Product {
         this.createdAt = new Date();
     }
 
-    public float getDiscountedPrice() {
-        if (discount <= 0 || discount > 100) {
-            return price;
-        }
-
-        float discountMultiplier = 1 - (discount / 100.0f);
-        float discountedPrice = price * discountMultiplier;
-
-        System.out.println("Applying discount for product: " + name +
-                ". Original price: " + price +
-                ", Discount percentage: " + discount +
-                "%, Discounted price: " + discountedPrice);
-
-        return discountedPrice;
-    }
-
 }

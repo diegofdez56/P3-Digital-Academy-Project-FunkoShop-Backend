@@ -40,28 +40,33 @@ public class CategoryService {
             .collect(Collectors.toList());
     }
 
-   private ProductDTO mapToProductDTO(Product product) {
+    private ProductDTO mapToProductDTO(Product product) {
+        CategoryDTO categoryDTO = new CategoryDTO(
+                product.getCategory().getId(),
+                product.getCategory().getName(),
+                product.getCategory().getImageHash()
+        );
 
-    CategoryDTO categoryDTO = new CategoryDTO(
-        product.getCategory().getId(), 
-        product.getCategory().getName(), 
-        product.getCategory().getImageHash()
-    );
+        float discountedPrice = product.getPrice();  
+
+        if (product.getDiscount() > 0 && product.getDiscount() <= 100) {
+            float discountMultiplier = 1 - (product.getDiscount() / 100.0f);
+            discountedPrice = product.getPrice() * discountMultiplier;
+        }
 
     return new ProductDTO(
         product.getId(),
         product.getName(),
         product.getImageHash(),
         product.getDescription(),
-        product.getPrice(),
-        product.getDiscountedPrice(),
+        product.getPrice(),        
+        discountedPrice,           
         product.getStock(),
-        product.isAvailable(),
-        product.isNew(),
+        product.getCreatedAt(),
         categoryDTO,
-        product.getDiscount()  
-    );
-}
+        product.getDiscount()       
+);
+    }
 
     private CategoryDTO convertToDTO(Category category) {
         return new CategoryDTO(category.getId(), category.getName(), category.getImageHash());

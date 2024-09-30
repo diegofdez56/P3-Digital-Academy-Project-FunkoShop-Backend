@@ -1,5 +1,7 @@
 package org.factoriaf5.digital_academy.funko_shop.review;
 
+import org.factoriaf5.digital_academy.funko_shop.category.Category;
+import org.factoriaf5.digital_academy.funko_shop.category.CategoryDTO;
 import org.factoriaf5.digital_academy.funko_shop.order_item.OrderItem;
 import org.factoriaf5.digital_academy.funko_shop.order_item.OrderItemDTO;
 import org.factoriaf5.digital_academy.funko_shop.order_item.OrderItemRepository;
@@ -92,16 +94,47 @@ public class ReviewService {
 
     private OrderItemDTO mapToOrderItemDTO(OrderItem orderItem) {
         Product product = orderItem.getProduct();
+        
+        float discountedPrice = product.getPrice();  
+    
+        if (product.getDiscount() > 0 && product.getDiscount() <= 100) {
+            float discountMultiplier = 1 - (product.getDiscount() / 100.0f);
+            discountedPrice = product.getPrice() * discountMultiplier;
+        }
+    
+        Category category = product.getCategory();
+        CategoryDTO categoryDTO = null;
+        if (category != null) {
+            categoryDTO = new CategoryDTO(
+                category.getId(),
+                category.getName(),
+                category.getImageHash()  
+            );
+        }
+    
+        ProductDTO productDTO = new ProductDTO(
+            product.getId(),
+            product.getName(),
+            product.getImageHash(),
+            product.getDescription(),
+            product.getPrice(),           
+            discountedPrice,             
+            product.getStock(), 
+            product.getCreatedAt(),       
+            categoryDTO,                  
+            product.getDiscount()         
+        );
+    
         return new OrderItemDTO(
             orderItem.getId(),
             orderItem.getQuantity(),
-            null, 
-            product != null ? new ProductDTO(product.getId(), product.getName(), 
-                product.getImageHash(), product.getDescription(),
-                product.getPrice(), product.getDiscountedPrice(), 
-                product.getStock(), product.isAvailable(), product.isNew(), null,
-                product.getDiscount()) : null,
-            null  
+            null,      
+            productDTO, 
+            null       
         );
     }
+    
+    
+
+    
 }
