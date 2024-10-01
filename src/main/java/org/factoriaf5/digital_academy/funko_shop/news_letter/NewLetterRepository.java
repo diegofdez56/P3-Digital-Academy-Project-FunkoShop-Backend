@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 @Repository
 public interface NewLetterRepository extends JpaRepository<NewLetter, Long> {
-    
+    NewLetter findByCode(String code);
 }
