@@ -1,8 +1,12 @@
 package org.factoriaf5.digital_academy.funko_shop.category;
 
+import org.factoriaf5.digital_academy.funko_shop.profile.profile_exceptions.ProfileNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import jakarta.validation.Valid;
 
 import java.util.List;
 
@@ -23,6 +27,17 @@ public class CategoryController {
     public ResponseEntity<CategoryDTO> getCategoryById(@PathVariable Long id) {
         CategoryDTO category = categoryService.getCategoryById(id);
         return ResponseEntity.ok(category);
+    }
+
+    @PutMapping
+    @PreAuthorize("hasAuthority('admin:update')")
+    public ResponseEntity<?> updateCategory(@Valid @RequestBody CategoryDTO categoryDTO) {
+        try {
+            categoryService.updateCategory(categoryDTO);
+            return ResponseEntity.ok().build();
+        } catch (ProfileNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
 }

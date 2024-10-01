@@ -1,5 +1,6 @@
 package org.factoriaf5.digital_academy.funko_shop.category;
 
+import org.factoriaf5.digital_academy.funko_shop.category.category_exceptions.CategoryException;
 import org.factoriaf5.digital_academy.funko_shop.category.category_exceptions.CategoryNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,19 @@ public class CategoryService {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new CategoryNotFoundException("Category with id " + id + " not found"));
         return convertToDTO(category);
+    }
+
+    public CategoryDTO updateCategory(CategoryDTO categoryDTO) {
+        Category existingCategory = categoryRepository.findById(categoryDTO.getId())
+                .orElseThrow(() -> new CategoryException("Category not found"));
+
+        existingCategory.setName(categoryDTO.getName());
+        existingCategory.setImageHash(categoryDTO.getImageHash());
+        existingCategory.setHighlights(categoryDTO.isHighlights());
+
+        Category updatedCategory = categoryRepository.save(existingCategory);
+
+        return convertToDTO(updatedCategory);
     }
 
     private CategoryDTO convertToDTO(Category category) {
