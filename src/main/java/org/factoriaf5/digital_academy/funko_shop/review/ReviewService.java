@@ -108,7 +108,8 @@ public class ReviewService {
             categoryDTO = new CategoryDTO(
                 category.getId(),
                 category.getName(),
-                category.getImageHash()  
+                category.getImageHash(), 
+                category.isHighlights() 
             );
         }
     
