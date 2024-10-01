@@ -19,10 +19,15 @@ public class NewLetterService {
 
     public NewLetterDTO createNewLetter(NewLetterDTO newLetterDTO) {
 
+        if (newLetterRepository.existsByEmail(newLetterDTO.getEmail())) {
+            throw new IllegalArgumentException("Email already in use");
+        }
+
         NewLetter newLetter = mapToEntity(newLetterDTO);
 
         NewLetter savedNewLetter = newLetterRepository.save(newLetter);
         return mapToDTO(savedNewLetter);
+
     }
 
     public void deleteProduct(String code) {
