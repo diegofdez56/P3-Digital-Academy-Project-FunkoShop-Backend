@@ -46,7 +46,8 @@ public class SecurityConfiguration {
         private static final String[] WHITE_LIST_URL = {
                         "/api/v1/auth/**",
                         "/api/v1/products/**",
-                        "/api/v1/categories/**",};
+                        "/api/v1/categories/**",
+                        "/api/v1/news-letter/**" };
         private final JwtAuthenticationFilter jwtAuthFilter;
         private final AuthenticationProvider authenticationProvider;
         private final LogoutHandler logoutHandler;
@@ -69,8 +70,8 @@ public class SecurityConfiguration {
                                                                 authentication) -> SecurityContextHolder
                                                                                 .clearContext()));
 
-        return http.build();
-    }
+                return http.build();
+        }
 
         @Bean
         public CorsConfigurationSource corsConfiguration() {
@@ -84,6 +85,6 @@ public class SecurityConfiguration {
                 UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
                 source.registerCorsConfiguration("/**", configuration);
                 return source;
-               
+
         }
 }
