@@ -2,6 +2,7 @@ package org.factoriaf5.digital_academy.funko_shop.category;
 
 import org.factoriaf5.digital_academy.funko_shop.category.category_exceptions.CategoryException;
 import org.factoriaf5.digital_academy.funko_shop.category.category_exceptions.CategoryNotFoundException;
+import org.factoriaf5.digital_academy.funko_shop.category.category_exceptions.TooManyCategoriesSelectedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +29,12 @@ public class CategoryService {
     }
 
     public CategoryDTO updateCategory(CategoryDTO categoryDTO) {
+        int selectedCategoriesCount = categoryRepository.countByHighlights(true);
+
+        if (selectedCategoriesCount >= 2 && categoryDTO.isHighlights()) {
+            throw new TooManyCategoriesSelectedException("No more than 2 categories can be selected.");
+        }
+
         Category existingCategory = categoryRepository.findById(categoryDTO.getId())
                 .orElseThrow(() -> new CategoryException("Category not found"));
 
