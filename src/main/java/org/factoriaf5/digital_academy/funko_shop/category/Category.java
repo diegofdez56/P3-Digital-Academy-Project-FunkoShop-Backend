@@ -22,6 +22,10 @@ public class Category {
     private String name;
     private String imageHash;
 
+    @Column(name = "highlights", nullable = false)
+    @Builder.Default
+    private boolean highlights = false;
+
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
     private List<Product> products;
 

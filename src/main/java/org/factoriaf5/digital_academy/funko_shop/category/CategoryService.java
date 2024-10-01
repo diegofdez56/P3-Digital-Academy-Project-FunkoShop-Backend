@@ -1,9 +1,8 @@
 package org.factoriaf5.digital_academy.funko_shop.category;
 
+import org.factoriaf5.digital_academy.funko_shop.category.category_exceptions.CategoryException;
 import org.factoriaf5.digital_academy.funko_shop.category.category_exceptions.CategoryNotFoundException;
-import org.factoriaf5.digital_academy.funko_shop.product.Product;
-import org.factoriaf5.digital_academy.funko_shop.product.ProductDTO;
-import org.factoriaf5.digital_academy.funko_shop.product.ProductRepository;
+import org.factoriaf5.digital_academy.funko_shop.category.category_exceptions.TooManyCategoriesSelectedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,43 +31,26 @@ public class CategoryService {
         return convertToDTO(category);
     }
 
-    public List<ProductDTO> getProductsByCategoryId(Long categoryId) {
-        List<Product> products = productRepository.findByCategoryId(categoryId);
+    public CategoryDTO updateCategory(CategoryDTO categoryDTO) {
+        int selectedCategoriesCount = categoryRepository.countByHighlights(true);
 
-        return products.stream()
-            .map(this::mapToProductDTO)  
-            .collect(Collectors.toList());
-    }
-
-    private ProductDTO mapToProductDTO(Product product) {
-        CategoryDTO categoryDTO = new CategoryDTO(
-                product.getCategory().getId(),
-                product.getCategory().getName(),
-                product.getCategory().getImageHash()
-        );
-
-        float discountedPrice = product.getPrice();  
-
-        if (product.getDiscount() > 0 && product.getDiscount() <= 100) {
-            float discountMultiplier = 1 - (product.getDiscount() / 100.0f);
-            discountedPrice = product.getPrice() * discountMultiplier;
+        if (selectedCategoriesCount >= 2 && categoryDTO.isHighlights()) {
+            throw new TooManyCategoriesSelectedException("No more than 2 categories can be selected.");
         }
 
-    return new ProductDTO(
-        product.getId(),
-        product.getName(),
-        product.getImageHash(),
-        product.getDescription(),
-        product.getPrice(),        
-        discountedPrice,           
-        product.getStock(),
-        product.getCreatedAt(),
-        categoryDTO,
-        product.getDiscount()       
-);
+        Category existingCategory = categoryRepository.findById(categoryDTO.getId())
+                .orElseThrow(() -> new CategoryException("Category not found"));
+
+        existingCategory.setName(categoryDTO.getName());
+        existingCategory.setImageHash(categoryDTO.getImageHash());
+        existingCategory.setHighlights(categoryDTO.isHighlights());
+
+        Category updatedCategory = categoryRepository.save(existingCategory);
+
+        return convertToDTO(updatedCategory);
     }
 
     private CategoryDTO convertToDTO(Category category) {
-        return new CategoryDTO(category.getId(), category.getName(), category.getImageHash());
+        return new CategoryDTO(category.getId(), category.getName(), category.getImageHash(), category.isHighlights());
     }
 }
