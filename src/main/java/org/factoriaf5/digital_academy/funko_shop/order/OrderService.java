@@ -21,7 +21,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.Collections;
 
 @Service
 public class OrderService {
@@ -57,7 +56,6 @@ public class OrderService {
         if (orderDTO.getOrderItems() != null) {
             List<OrderItem> orderItems = orderDTO.getOrderItems().stream()
                     .map(orderItemDTO -> mapToOrderItem(orderItemDTO, savedOrder))
-
                     .collect(Collectors.toList());
             orderItemRepository.saveAll(orderItems);
             savedOrder.setOrderItems(orderItems);
@@ -173,7 +171,7 @@ public class OrderService {
                     null, null, null, null, null, null);
         }
 
-        return new OrderDTO(
+       return new OrderDTO(
                 order.getId(),
                 order.getStatus(),
                 order.getTotalPrice(),
@@ -190,18 +188,38 @@ public class OrderService {
     }
 
     private OrderItemDTO mapToOrderItemDTO(OrderItem orderItem) {
+        Product product = orderItem.getProduct();
+        
+        float discountedPrice = product.getPrice();  
+    
+        if (product.getDiscount() > 0 && product.getDiscount() <= 100) {
+            float discountMultiplier = 1 - (product.getDiscount() / 100.0f);
+            discountedPrice = product.getPrice() * discountMultiplier;
+        }
+    
+        ProductDTO productDTO = new ProductDTO(
+                product.getId(),
+                product.getName(),
+                product.getImageHash(),
+                product.getDescription(),
+                product.getPrice(),           
+                discountedPrice,             
+                product.getStock(),
+                product.getCreatedAt(),        
+                null,                        
+                product.getDiscount()          
+        );
+    
         return new OrderItemDTO(
                 orderItem.getId(),
                 orderItem.getQuantity(),
-                null,
-                new ProductDTO(orderItem.getProduct().getId(), orderItem.getProduct().getName(),
-                        orderItem.getProduct().getImageHash(), orderItem.getProduct().getDescription(),
-                        orderItem.getProduct().getPrice(), orderItem.getProduct().getStock(),
-                        orderItem.getProduct().isAvailable(), orderItem.getProduct().isNew(), null, null),
-                null);
+                null,    
+                productDTO, 
+                null      
+        );
     }
+    
 
-    // Order Item
     public OrderItemDTO addOrderItemToOrder(Long orderId, OrderItemDTO orderItemDTO) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new OrderNotFoundException("Order not found"));
@@ -223,9 +241,9 @@ public class OrderService {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new OrderNotFoundException("Order not found"));
 
-                if (order.getOrderItems() == null) {
-                    order.setOrderItems(new ArrayList<>());
-                }
+        if (order.getOrderItems() == null) {
+            order.setOrderItems(new ArrayList<>());
+        }
 
         OrderItem orderItem = orderItemRepository.findById(orderItemId)
                 .orElseThrow(() -> new OrderItemNotFoundException("OrderItem not found"));

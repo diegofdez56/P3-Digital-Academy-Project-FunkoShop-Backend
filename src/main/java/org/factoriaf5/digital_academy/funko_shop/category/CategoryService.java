@@ -15,6 +15,7 @@ public class CategoryService {
     @Autowired
     private CategoryRepository categoryRepository;
 
+
     public List<CategoryDTO> getAllCategories() {
         List<Category> categories = categoryRepository.findAll();
         return categories.stream()

@@ -14,34 +14,34 @@ INSERT INTO categories (category_id, name, highlights) VALUES (default, 'Animati
  (default, 'Marvel', true),
  (default, 'DC Comics', false);
 
--- Discounts
-INSERT INTO discounts (discount_id, percentage, is_active) VALUES
-(default, 10, true),(default, 15, true),(default, 20, true),(default, 25, true),(default, 30, true),(default, 35, true),(default, 40, true),
-(default, 45, true),(default, 50, true),(default, 55, true),(default, 60, true),(default, 75, true),(default, 80, true);
-
 
  -- Additional Products
-INSERT INTO products (product_id, name, image, description, price, stock, is_available, is_new, category_id, discount_id) VALUES
-(default, 'Spider-Man', 'spiderman.jpg', 'A collectible Spider-Man figure from Marvel.', 12.99, 50, true, false, 3, 1),
-(default, 'Batman', 'batman.jpg', 'A collectible Batman figure from DC Comics.', 11.99, 40, true, false, 4, 2),
-(default, 'Goku Super Saiyan ', 'goku.jpg', 'Goku in his Super Saiyan form from Dragon Ball Z.', 14.99, 0, true, false, 2, null),
-(default, 'Sailor Moon', 'sailormoon.jpg', 'Sailor Moon figure from the classic anime series.', 13.99, 20, true, true, 2, null),
-(default, 'Mickey Mouse', 'mickey.jpg', 'Classic Mickey Mouse collectible figure.', 9.99, 60, true, false, 1, null),
-(default, 'Iron Man', 'ironman.jpg', 'Iron Man figure with metallic finish.', 15.99, 25, true, true, 3, null),
-(default, 'Wonder Woman', 'wonderwoman.jpg', 'Wonder Woman figure from DC Comics.', 12.49, 35, true, false, 4, null),
-(default, 'Naruto Uzumaki', 'naruto.jpg', 'Naruto figure in his classic outfit.', 13.49, 45, true, true, 2, null),
-(default, 'SpongeBob SquarePants', 'spongebob.jpg', 'SpongeBob figure from the animated series.', 10.99, 50, true, true, 1, null),
-(default, 'Captain America', 'captainamerica.jpg', 'Captain America with his shield.', 12.99, 30, true, false, 3, null),
-(default, 'Thanos', 'thanos.jpg', 'Thanos figure with Infinity Gauntlet.', 16.99, 15, true, false, 3, null),
-(default, 'Joker', 'joker.jpg', 'Joker figure from DC Comics.', 11.49, 40, true, true, 4, null),
-(default, 'Luffy', 'luffy.jpg', 'Monkey D. Luffy from One Piece.', 14.49, 35, true, false, 2, null),
-(default, 'Elsa', 'elsa.jpg', 'Elsa figure from Frozen.', 13.99, 25, true, false, 1, null),
-(default, 'Deadpool', 'deadpool.jpg', 'Deadpool in a classic pose.', 12.99, 50, true, true, 3, null),
-(default, 'Superman', 'superman.jpg', 'Superman figure from DC Comics.', 12.99, 45, true, false, 4, null),
-(default, 'Vegeta', 'vegeta.jpg', 'Vegeta from Dragon Ball Z.', 14.99, 30, true, false, 2, null),
-(default, 'Pikachu', 'pikachu.jpg', 'Pikachu figure from Pokémon.', 11.99, 60, true, true, 2, null),
-(default, 'Harley Quinn', 'harleyquinn.jpg', 'Harley Quinn figure from DC Comics.', 12.49, 35, true, false, 4, 4),
-(default, 'Black Panther', 'blackpanther.jpg', 'Black Panther figure from Marvel.', 13.99, 25, true, false, 3, 4);
+INSERT INTO products (product_id, name, image, description, price, stock, category_id, discount, created_at) VALUES
+(default, 'Spider-Man', 'spiderman.jpg', 'A collectible Spider-Man figure from Marvel.', 12.99, 50, 3, 10, '2024-01-01 10:00:00'),
+(default, 'Batman', 'batman.jpg', 'A collectible Batman figure from DC Comics.', 11.99, 40, 4, 20, '2024-02-01 11:30:00'),
+(default, 'Goku Super Saiyan', 'goku.jpg', 'Goku in his Super Saiyan form from Dragon Ball Z.', 14.99, 0, 2, 0, '2024-03-01 12:00:00'),
+(default, 'Sailor Moon', 'sailormoon.jpg', 'Sailor Moon figure from the classic anime series.', 13.99, 20, 2, 0, '2024-01-15 09:00:00'),
+(default, 'Mickey Mouse', 'mickey.jpg', 'Classic Mickey Mouse collectible figure.', 9.99, 60, 1, 0, '2024-01-10 14:00:00'),
+(default, 'Iron Man', 'ironman.jpg', 'Iron Man figure with metallic finish.', 15.99, 25, 3, 0, '2024-01-20 16:45:00'),
+(default, 'Wonder Woman', 'wonderwoman.jpg', 'Wonder Woman figure from DC Comics.', 12.49, 35, 4, 0, '2024-02-05 13:15:00'),
+(default, 'Naruto Uzumaki', 'naruto.jpg', 'Naruto figure in his classic outfit.', 13.49, 45, 2, 0, '2024-01-25 11:45:00'),
+(default, 'SpongeBob SquarePants', 'spongebob.jpg', 'SpongeBob figure from the animated series.', 10.99, 50, 1, 0, '2024-03-01 10:30:00'),
+(default, 'Captain America', 'captainamerica.jpg', 'Captain America with his shield.', 12.99, 30, 3, 0, '2024-03-05 15:00:00'),
+(default, 'Thanos', 'thanos.jpg', 'Thanos figure with Infinity Gauntlet.', 16.99, 15, 3, 0, '2024-02-20 17:20:00'),
+(default, 'Joker', 'joker.jpg', 'Joker figure from DC Comics.', 11.49, 40, 4, 0, '2024-01-18 12:30:00'),
+(default, 'Luffy', 'luffy.jpg', 'Monkey D. Luffy from One Piece.', 14.49, 35, 2, 0, '2024-02-25 09:15:00'),
+(default, 'Elsa', 'elsa.jpg', 'Elsa figure from Frozen.', 13.99, 25, 1, 0, '2024-02-10 13:50:00'),
+(default, 'Deadpool', 'deadpool.jpg', 'Deadpool in a classic pose.', 12.99, 50, 3, 0, '2024-02-01 12:10:00'),
+(default, 'Superman', 'superman.jpg', 'Superman figure from DC Comics.', 12.99, 45, 4, 0, '2024-03-01 08:45:00'),
+(default, 'Vegeta', 'vegeta.jpg', 'Vegeta from Dragon Ball Z.', 14.99, 30, 2, 0, '2024-01-05 10:10:00'),
+(default, 'Pikachu', 'pikachu.jpg', 'Pikachu figure from Pokémon.', 11.99, 60, 2, 0, '2024-01-15 14:50:00'),
+(default, 'Harley Quinn', 'harleyquinn.jpg', 'Harley Quinn figure from DC Comics.', 12.49, 35, 4, 40, '2024-02-18 10:20:00'),
+(default, 'Black Panther', 'blackpanther.jpg', 'Black Panther figure from Marvel.', 13.99, 25, 3, 40, '2024-03-10 11:30:00'),
+(default, 'Thor', 'thor.jpg', 'Thor figure with Mjolnir.', 15.99, 20, 3, 0, '2024-03-01 08:45:00'),
+(default, 'Hulk', 'hulk.jpg', 'Hulk figure from Marvel.', 14.99, 30, 3, 40, '2024-03-01 08:45:00'),
+(default, 'Groot', 'groot.jpg', 'Groot figure from Guardians of the Galaxy.', 12.99, 40, 3, 40, NOW()),
+(default, 'Fluttershy', 'fluttershy.jpg', 'Fluttershy figure from My Little Pony.', 11.99, 50, 1, 20, NOW());
+
 
 
 -- Orders

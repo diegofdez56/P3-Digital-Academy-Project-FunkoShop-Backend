@@ -1,5 +1,7 @@
 package org.factoriaf5.digital_academy.funko_shop.review;
 
+import org.factoriaf5.digital_academy.funko_shop.category.Category;
+import org.factoriaf5.digital_academy.funko_shop.category.CategoryDTO;
 import org.factoriaf5.digital_academy.funko_shop.order_item.OrderItem;
 import org.factoriaf5.digital_academy.funko_shop.order_item.OrderItemDTO;
 import org.factoriaf5.digital_academy.funko_shop.order_item.OrderItemRepository;
@@ -89,18 +91,51 @@ public class ReviewService {
                         null, null, null, null, null, null) : null
         );
     }
+
     private OrderItemDTO mapToOrderItemDTO(OrderItem orderItem) {
         Product product = orderItem.getProduct();
+        
+        float discountedPrice = product.getPrice();  
+    
+        if (product.getDiscount() > 0 && product.getDiscount() <= 100) {
+            float discountMultiplier = 1 - (product.getDiscount() / 100.0f);
+            discountedPrice = product.getPrice() * discountMultiplier;
+        }
+    
+        Category category = product.getCategory();
+        CategoryDTO categoryDTO = null;
+        if (category != null) {
+            categoryDTO = new CategoryDTO(
+                category.getId(),
+                category.getName(),
+                category.getImageHash(), 
+                category.isHighlights() 
+            );
+        }
+    
+        ProductDTO productDTO = new ProductDTO(
+            product.getId(),
+            product.getName(),
+            product.getImageHash(),
+            product.getDescription(),
+            product.getPrice(),           
+            discountedPrice,             
+            product.getStock(), 
+            product.getCreatedAt(),       
+            categoryDTO,                  
+            product.getDiscount()         
+        );
+    
         return new OrderItemDTO(
             orderItem.getId(),
             orderItem.getQuantity(),
-            null, 
-            product != null ? new ProductDTO(orderItem.getProduct().getId(), orderItem.getProduct().getName(), 
-                orderItem.getProduct().getImageHash(), orderItem.getProduct().getDescription(),
-                orderItem.getProduct().getPrice(), orderItem.getProduct().getStock(), 
-                orderItem.getProduct().isAvailable(), orderItem.getProduct().isNew(), null, null) : null,
-            null  
+            null,      
+            productDTO, 
+            null       
         );
     }
+    
+    
+
     
 }
