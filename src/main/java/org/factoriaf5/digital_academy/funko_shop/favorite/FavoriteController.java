@@ -20,12 +20,12 @@ public class FavoriteController {
     @Autowired
     private FavoriteService favoriteService;
 
-    // @GetMapping
-    // public ResponseEntity<List<FavoriteDTO>> getFavorites(Principal connectedUser) {
-    //     User user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
-    //     List<FavoriteDTO> favorites = favoriteService.getFavoriteByUserId(user.getId());
-    //     return ResponseEntity.ok(favorites);
-    // }
+    @GetMapping
+    public ResponseEntity<List<FavoriteDTO>> getFavorites(Principal connectedUser) {
+        User user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
+        List<FavoriteDTO> favorites = favoriteService.getFavoriteByUserId(user.getId());
+        return ResponseEntity.ok(favorites);
+    }
 
     @PostMapping
     public ResponseEntity <List<FavoriteDTO>> addToFavorite(Principal connectedUser, @RequestBody Long productId) {

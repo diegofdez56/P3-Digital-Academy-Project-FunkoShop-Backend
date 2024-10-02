@@ -107,13 +107,12 @@ public class FavoriteService {
     // favoriteRepository.save(favorite);
     // }
 
-    // public List<FavoriteDTO> getFavoriteByUserId(Long userId) {
-    // Favorite favorite = favoriteRepository.findByUserId(userId);
-    // // Convertimos la lista de productos a FavoriteDTO
-    // return favorite.getProducts().stream()
-    // .map(this::mapProductToFavoriteDTO)
-    // .collect(Collectors.toList());
-    // }
+    public List<FavoriteDTO> getFavoriteByUserId(Long userId) {
+    //List<Favorite> favorite = favoriteRepository.findByUserId(userId);
+    return favoriteRepository.findByUserId(userId).stream()
+    .map(this::convertToFavoriteDTO)
+    .collect(Collectors.toList());
+    }
 
     // private Favorite createNewFavorite(Long userId) {
     // Favorite newFavorite = new Favorite();
