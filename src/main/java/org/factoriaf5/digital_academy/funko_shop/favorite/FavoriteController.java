@@ -13,8 +13,8 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping("${api-endpoint}/favorite")
-@PreAuthorize("hasRole('USER')")
+@RequestMapping("${api-endpoint}/favorites")
+@PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
 public class FavoriteController {
 
     @Autowired
@@ -35,11 +35,11 @@ public class FavoriteController {
     }
 
 
-    // @DeleteMapping("/{productId}")
-    // public ResponseEntity<Void> removeFromFavorite(Principal connectedUser, @PathVariable Long productId) {
-    //     User user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
+    @DeleteMapping("/{productId}")
+    public ResponseEntity<Void> removeFromFavorite(Principal connectedUser, @PathVariable Long productId) {
+        User user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
     
-    //     favoriteService.removeProductFromFavorite(user.getId(), productId);
-    //     return ResponseEntity.noContent().build();
-    // }
+        favoriteService.removeProductFromFavorite(user.getId(), productId);
+        return ResponseEntity.noContent().build();
+    }
 }
