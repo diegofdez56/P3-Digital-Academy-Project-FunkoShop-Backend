@@ -37,7 +37,8 @@ public class ProductController {
         try {
             String imageUrl = null;
             if (productDto.getImageHash().isPresent()) {
-                imageUrl = imageService.uploadBase64(productDto.getImageHash().get()).orElse(null);
+                imageUrl = imageService.uploadBase64(productDto.getImageHash().get()).orElseThrow(() ->
+                    new IllegalArgumentException("Failed to upload image"));
             }
             productDto.setImageHash(Optional.ofNullable(imageUrl));
 

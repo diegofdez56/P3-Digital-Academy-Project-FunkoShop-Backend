@@ -83,7 +83,7 @@ public class ImageService {
             return Optional.of(String.format(DOWNLOAD_URL, URLEncoder.encode(fileName, StandardCharsets.UTF_8)));
         } catch (IOException e) {
             e.printStackTrace();
-            return null;
+            return Optional.empty();
         }
     }
 }
