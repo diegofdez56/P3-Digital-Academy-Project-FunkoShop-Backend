@@ -38,8 +38,8 @@ public class FavoriteController {
     }
 
 
-    @DeleteMapping("/{productId}")
-    public ResponseEntity<Void> removeFromFavorite(Principal connectedUser, @PathVariable Long productId) {
+    @DeleteMapping
+    public ResponseEntity<Void> removeFromFavorite(Principal connectedUser, @RequestBody Long productId) {
         User user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
     
         favoriteService.removeProductFromFavorite(user.getId(), productId);
