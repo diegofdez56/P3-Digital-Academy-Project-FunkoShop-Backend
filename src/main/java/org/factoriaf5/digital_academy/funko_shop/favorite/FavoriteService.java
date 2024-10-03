@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -44,7 +45,7 @@ public class FavoriteService {
         return new ProductDTO(
                 product.getId(),
                 product.getName(),
-                product.getImageHash(),
+                Optional.ofNullable(product.getImageHash()),
                 product.getDescription(),
                 product.getPrice(),
                 calculateDiscountedPrice(product.getPrice(), product.getDiscount()),
