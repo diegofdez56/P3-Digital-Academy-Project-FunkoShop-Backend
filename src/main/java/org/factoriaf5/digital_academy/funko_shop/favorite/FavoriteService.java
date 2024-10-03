@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -90,5 +91,10 @@ public class FavoriteService {
     public Page<FavoriteDTO> getFavoriteByUserId(Long userId, Pageable pageable) {
         return favoriteRepository.findByUserId(userId, pageable)
                 .map(this::convertToFavoriteDTO);
+    }
+
+    public Boolean checkFavorite(Long userId, Long productId) {
+        Optional<Favorite> favorite = favoriteRepository.findByUserIdAndProductId(userId, productId);
+        return favorite.isPresent();  // Retorna true si existe el registro, false si no
     }
 }

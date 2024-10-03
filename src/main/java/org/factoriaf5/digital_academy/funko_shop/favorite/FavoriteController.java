@@ -30,8 +30,15 @@ public class FavoriteController {
         return ResponseEntity.ok(favorites);
     }
 
+    @GetMapping("/check")
+    public ResponseEntity<Boolean> checkFavorite(Principal connectedUser, @RequestHeader("Product-ID") Long productId) {
+        User user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
+        Boolean favorite = favoriteService.checkFavorite(user.getId(), productId);
+        return ResponseEntity.ok(favorite);
+    }
+
     @PostMapping
-    public ResponseEntity <List<FavoriteDTO>> addToFavorite(Principal connectedUser, @RequestBody Long productId) {
+    public ResponseEntity <List<FavoriteDTO>> addToFavorite(Principal connectedUser, @RequestHeader("Product-ID") Long productId) {
         User user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
         List<FavoriteDTO> addFavorite = favoriteService.addProductToFavorite(user.getId(),productId);
         return ResponseEntity.ok(addFavorite);
@@ -39,7 +46,7 @@ public class FavoriteController {
 
 
     @DeleteMapping
-    public ResponseEntity<Void> removeFromFavorite(Principal connectedUser, @RequestBody Long productId) {
+    public ResponseEntity<Void> removeFromFavorite(Principal connectedUser, @RequestHeader("Product-ID") Long productId) {
         User user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
     
         favoriteService.removeProductFromFavorite(user.getId(), productId);
