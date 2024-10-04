@@ -88,9 +88,30 @@ public class ProductController {
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('admin:update')")
     public ResponseEntity<ProductDTO> updateProduct(@PathVariable Long id,
-            @Valid @RequestBody ProductDTO productDto) {
-        return ResponseEntity.ok(productService.updateProduct(id, productDto));
+        @Valid @RequestBody ProductDTO productDto) {
+    Long categoryId = productDto.getCategory() != null ? productDto.getCategory().getId() : null;
+
+    if (categoryId == null) {
+        throw new IllegalArgumentException("Category ID cannot be null");
     }
+    try {
+        String imageUrl = null;
+        if (productDto.getImageHash().isPresent()) {
+            imageUrl = imageService.uploadBase64(productDto.getImageHash().get()).orElseThrow(() -> 
+                new IllegalArgumentException("Failed to upload image"));
+        }
+
+        productDto.setImageHash(Optional.ofNullable(imageUrl));
+
+        ProductDTO updatedProduct = productService.updateProduct(id, productDto);
+
+        return ResponseEntity.ok(updatedProduct);
+
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(null);
+    }
+}
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('admin:delete')")
