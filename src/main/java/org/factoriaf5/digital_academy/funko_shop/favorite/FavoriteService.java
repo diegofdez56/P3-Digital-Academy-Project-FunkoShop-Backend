@@ -8,11 +8,14 @@ import org.factoriaf5.digital_academy.funko_shop.product.ProductRepository;
 import org.factoriaf5.digital_academy.funko_shop.user.User;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -85,9 +88,13 @@ public class FavoriteService {
         favoriteRepository.deleteById(favoriteToRemove.getId());
     }
 
-    public List<FavoriteDTO> getFavoriteByUserId(Long userId) {
-        return favoriteRepository.findByUserId(userId).stream()
-                .map(this::convertToFavoriteDTO)
-                .collect(Collectors.toList());
+    public Page<FavoriteDTO> getFavoriteByUserId(Long userId, Pageable pageable) {
+        return favoriteRepository.findByUserId(userId, pageable)
+                .map(this::convertToFavoriteDTO);
+    }
+
+    public Boolean checkFavorite(Long userId, Long productId) {
+        Optional<Favorite> favorite = favoriteRepository.findByUserIdAndProductId(userId, productId);
+        return favorite.isPresent();  // Retorna true si existe el registro, false si no
     }
 }
