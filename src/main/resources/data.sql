@@ -9,10 +9,10 @@ INSERT INTO profiles (first_name, last_name, phone_number, street, city, region,
 ('Sofía', 'Martínez', '5559876543', '456 Calle Secundaria', 'Guadalajara', 'Jalisco', '44100', 'México', 2, true, true);
 
 -- Categories
-INSERT INTO categories (category_id, name, highlights) VALUES (default, 'Animation', false),
- (default, 'Anime & Manga', true),
- (default, 'Marvel', true),
- (default, 'DC Comics', false);
+INSERT INTO categories (category_id, name, highlights, image_hash) VALUES (default, 'Animation', false, 'http://localhost:5173/src/assets/img/Carrousel/animation.jpg'),
+ (default, 'Anime & Manga', true, 'http://localhost:5173/src/assets/img/Carrousel/anime.jpg'),
+ (default, 'Marvel', true, 'http://localhost:5173/src/assets/img/Carrousel/marvel.jpg'),
+ (default, 'DC Comics', false, 'http://localhost:5173/src/assets/img/Carrousel/dc-comics.jpg');
 
 
  -- Additional Products

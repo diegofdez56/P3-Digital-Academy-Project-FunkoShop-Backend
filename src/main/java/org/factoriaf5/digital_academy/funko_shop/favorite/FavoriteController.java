@@ -3,10 +3,13 @@ package org.factoriaf5.digital_academy.funko_shop.favorite;
 
 import org.factoriaf5.digital_academy.funko_shop.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
 
 import java.security.Principal;
 import java.util.List;
@@ -21,22 +24,29 @@ public class FavoriteController {
     private FavoriteService favoriteService;
 
     @GetMapping
-    public ResponseEntity<List<FavoriteDTO>> getFavorites(Principal connectedUser) {
+    public ResponseEntity<Page<FavoriteDTO>> getFavorites(Principal connectedUser, @PageableDefault(size = 8, sort = {"product"}) Pageable pageable) {
         User user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
-        List<FavoriteDTO> favorites = favoriteService.getFavoriteByUserId(user.getId());
+        Page<FavoriteDTO> favorites = favoriteService.getFavoriteByUserId(user.getId(), pageable);
         return ResponseEntity.ok(favorites);
     }
 
+    @GetMapping("/check")
+    public ResponseEntity<Boolean> checkFavorite(Principal connectedUser, @RequestHeader("Product-ID") Long productId) {
+        User user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
+        Boolean favorite = favoriteService.checkFavorite(user.getId(), productId);
+        return ResponseEntity.ok(favorite);
+    }
+
     @PostMapping
-    public ResponseEntity <List<FavoriteDTO>> addToFavorite(Principal connectedUser, @RequestBody Long productId) {
+    public ResponseEntity <List<FavoriteDTO>> addToFavorite(Principal connectedUser, @RequestHeader("Product-ID") Long productId) {
         User user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
         List<FavoriteDTO> addFavorite = favoriteService.addProductToFavorite(user.getId(),productId);
         return ResponseEntity.ok(addFavorite);
     }
 
 
-    @DeleteMapping("/{productId}")
-    public ResponseEntity<Void> removeFromFavorite(Principal connectedUser, @PathVariable Long productId) {
+    @DeleteMapping
+    public ResponseEntity<Void> removeFromFavorite(Principal connectedUser, @RequestHeader("Product-ID") Long productId) {
         User user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
     
         favoriteService.removeProductFromFavorite(user.getId(), productId);
