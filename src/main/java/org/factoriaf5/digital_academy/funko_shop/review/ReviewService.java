@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ReviewService {
@@ -116,7 +117,7 @@ public class ReviewService {
         ProductDTO productDTO = new ProductDTO(
             product.getId(),
             product.getName(),
-            product.getImageHash(),
+            Optional.ofNullable(product.getImageHash()),
             product.getDescription(),
             product.getPrice(),           
             discountedPrice,             
