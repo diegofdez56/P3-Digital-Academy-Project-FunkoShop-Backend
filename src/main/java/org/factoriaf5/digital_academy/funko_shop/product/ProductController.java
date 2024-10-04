@@ -1,5 +1,6 @@
 package org.factoriaf5.digital_academy.funko_shop.product;
 
+import org.factoriaf5.digital_academy.funko_shop.firebase.ImageService;
 import org.factoriaf5.digital_academy.funko_shop.product.product_exceptions.ProductNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("${api-endpoint}/products")
@@ -20,6 +22,9 @@ public class ProductController {
 
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private ImageService imageService;
 
     @PostMapping
     @PreAuthorize("hasAuthority('admin:create')")
@@ -29,14 +34,27 @@ public class ProductController {
         if (categoryId == null) {
             throw new IllegalArgumentException("Category ID cannot be null");
         }
+        try {
+            String imageUrl = null;
+            if (productDto.getImageHash().isPresent()) {
+                imageUrl = imageService.uploadBase64(productDto.getImageHash().get()).orElseThrow(() ->
+                    new IllegalArgumentException("Failed to upload image"));
+            }
+            productDto.setImageHash(Optional.ofNullable(imageUrl));
 
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(productService.createProduct(productDto, categoryId));
+            ProductDTO createdProduct = productService.createProduct(productDto, categoryId);
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdProduct);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(null);
+        }
     }
 
     @GetMapping
     public ResponseEntity<Page<ProductDTO>> getAllProducts(
-            @PageableDefault(size = 8, sort = {"categoryId", "name"}) Pageable pageable) {
+            @PageableDefault(size = 8, sort = { "categoryId", "name" }) Pageable pageable) {
         Page<ProductDTO> products = productService.getAllProducts(pageable);
         return ResponseEntity.ok(products);
     }
@@ -54,7 +72,7 @@ public class ProductController {
     @GetMapping("/category/{categoryId}")
     public ResponseEntity<Page<ProductDTO>> getProductsByCategory(
             @PathVariable Long categoryId,
-            @PageableDefault(size = 8, sort = {"categoryId", "name"}) Pageable pageable) {
+            @PageableDefault(size = 8, sort = { "categoryId", "name" }) Pageable pageable) {
         Page<ProductDTO> products = productService.getProductsByCategory(categoryId, pageable);
         return ResponseEntity.ok(products);
     }
@@ -62,7 +80,7 @@ public class ProductController {
     @GetMapping("/keyword/{keyword}")
     public ResponseEntity<Page<ProductDTO>> getProductsByKeyword(
             @PathVariable String keyword,
-            @PageableDefault(size = 8, sort = {"categoryId", "name"}) Pageable pageable) {
+            @PageableDefault(size = 8, sort = { "categoryId", "name" }) Pageable pageable) {
         Page<ProductDTO> products = productService.searchProductsByKeyword(keyword, pageable);
         return ResponseEntity.ok(products);
     }
@@ -90,6 +108,6 @@ public class ProductController {
     @GetMapping("/new")
     public ResponseEntity<List<ProductDTO>> getNewProducts() {
         List<ProductDTO> products = productService.getNewProducts();
-        return ResponseEntity.ok(products);   
+        return ResponseEntity.ok(products);
     }
 }
