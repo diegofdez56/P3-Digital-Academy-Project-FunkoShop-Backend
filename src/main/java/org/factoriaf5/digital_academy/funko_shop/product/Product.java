@@ -27,6 +27,8 @@ public class Product {
     private String name;
     @Column(name = "image")
     private String imageHash;
+    @Column(name = "image_2")
+    private String imageHash2;
     @NonNull
     private String description;
     private float price;

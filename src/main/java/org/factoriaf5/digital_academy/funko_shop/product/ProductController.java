@@ -35,20 +35,27 @@ public class ProductController {
             throw new IllegalArgumentException("Category ID cannot be null");
         }
         try {
-            String imageUrl = null;
+
+            String imageUrl1 = null;
             if (productDto.getImageHash().isPresent()) {
-                imageUrl = imageService.uploadBase64(productDto.getImageHash().get()).orElseThrow(() ->
-                    new IllegalArgumentException("Failed to upload image"));
+                imageUrl1 = imageService.uploadBase64(productDto.getImageHash().get())
+                        .orElseThrow(() -> new IllegalArgumentException("Failed to upload image 1"));
             }
-            productDto.setImageHash(Optional.ofNullable(imageUrl));
+            productDto.setImageHash(Optional.ofNullable(imageUrl1));
+
+            String imageUrl2 = null;
+            if (productDto.getImageHash2().isPresent()) {
+                imageUrl2 = imageService.uploadBase64(productDto.getImageHash2().get())
+                        .orElseThrow(() -> new IllegalArgumentException("Failed to upload image 2"));
+            }
+            productDto.setImageHash2(Optional.ofNullable(imageUrl2));
 
             ProductDTO createdProduct = productService.createProduct(productDto, categoryId);
 
             return ResponseEntity.status(HttpStatus.CREATED).body(createdProduct);
 
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(null);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
     }
 
@@ -88,30 +95,35 @@ public class ProductController {
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('admin:update')")
     public ResponseEntity<ProductDTO> updateProduct(@PathVariable Long id,
-        @Valid @RequestBody ProductDTO productDto) {
-    Long categoryId = productDto.getCategory() != null ? productDto.getCategory().getId() : null;
+            @Valid @RequestBody ProductDTO productDto) {
+        Long categoryId = productDto.getCategory() != null ? productDto.getCategory().getId() : null;
 
-    if (categoryId == null) {
-        throw new IllegalArgumentException("Category ID cannot be null");
-    }
-    try {
-        String imageUrl = null;
-        if (productDto.getImageHash().isPresent()) {
-            imageUrl = imageService.uploadBase64(productDto.getImageHash().get()).orElseThrow(() -> 
-                new IllegalArgumentException("Failed to upload image"));
+        if (categoryId == null) {
+            throw new IllegalArgumentException("Category ID cannot be null");
         }
+        try {
+            String imageUrl1 = null;
+            if (productDto.getImageHash().isPresent()) {
+                imageUrl1 = imageService.uploadBase64(productDto.getImageHash().get())
+                        .orElseThrow(() -> new IllegalArgumentException("Failed to upload image 1"));
+            }
+            productDto.setImageHash(Optional.ofNullable(imageUrl1));
 
-        productDto.setImageHash(Optional.ofNullable(imageUrl));
+            String imageUrl2 = null;
+            if (productDto.getImageHash2().isPresent()) {
+                imageUrl2 = imageService.uploadBase64(productDto.getImageHash2().get())
+                        .orElseThrow(() -> new IllegalArgumentException("Failed to upload image 2"));
+            }
+            productDto.setImageHash2(Optional.ofNullable(imageUrl2));
 
-        ProductDTO updatedProduct = productService.updateProduct(id, productDto);
+            ProductDTO updatedProduct = productService.updateProduct(id, productDto);
 
-        return ResponseEntity.ok(updatedProduct);
+            return ResponseEntity.ok(updatedProduct);
 
-    } catch (Exception e) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(null);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
     }
-}
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('admin:delete')")

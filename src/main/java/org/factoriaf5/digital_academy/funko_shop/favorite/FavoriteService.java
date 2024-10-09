@@ -48,6 +48,7 @@ public class FavoriteService {
                 product.getId(),
                 product.getName(),
                 Optional.ofNullable(product.getImageHash()),
+                Optional.ofNullable(product.getImageHash()),
                 product.getDescription(),
                 product.getPrice(),
                 calculateDiscountedPrice(product.getPrice(), product.getDiscount()),
@@ -95,6 +96,6 @@ public class FavoriteService {
 
     public Boolean checkFavorite(Long userId, Long productId) {
         Optional<Favorite> favorite = favoriteRepository.findByUserIdAndProductId(userId, productId);
-        return favorite.isPresent();  // Retorna true si existe el registro, false si no
+        return favorite.isPresent();  
     }
 }
