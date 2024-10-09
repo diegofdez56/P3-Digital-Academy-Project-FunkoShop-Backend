@@ -185,6 +185,7 @@ public class OrderService {
                 product.getId(),
                 product.getName(),
                 Optional.ofNullable(product.getImageHash()),
+                Optional.ofNullable(product.getImageHash()),
                 product.getDescription(),
                 product.getPrice(),
                 calculateDiscountedPrice(product.getPrice(), product.getDiscount()),

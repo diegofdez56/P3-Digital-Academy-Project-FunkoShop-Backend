@@ -160,6 +160,7 @@ public class ProductService {
                 product.getId(),
                 product.getName(),
                 Optional.ofNullable(product.getImageHash()),
+                Optional.ofNullable(product.getImageHash()),
                 product.getDescription(),
                 product.getPrice(),
                 product.getPrice(),  
