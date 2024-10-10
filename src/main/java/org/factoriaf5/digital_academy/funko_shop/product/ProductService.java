@@ -111,6 +111,7 @@ public class ProductService {
     private void updateProductFields(Product product, ProductDTO productDto) {
         product.setName(productDto.getName());
         product.setImageHash(productDto.getImageHash().get());
+        product.setImageHash2(productDto.getImageHash2().get());
         product.setDescription(productDto.getDescription());
         product.setPrice(productDto.getPrice());
         product.setStock(productDto.getStock());
@@ -137,6 +138,7 @@ public class ProductService {
         Product product = new Product();
         product.setName(dto.getName());
         product.setImageHash(dto.getImageHash().get());
+        product.setImageHash2(dto.getImageHash2().get());
         product.setDescription(dto.getDescription());
         product.setPrice(dto.getPrice());
         product.setStock(dto.getStock());
@@ -160,6 +162,7 @@ public class ProductService {
                 product.getId(),
                 product.getName(),
                 Optional.ofNullable(product.getImageHash()),
+                Optional.ofNullable(product.getImageHash2()),
                 product.getDescription(),
                 product.getPrice(),
                 product.getPrice(),  
