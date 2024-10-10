@@ -108,9 +108,10 @@ public class OrderService {
                 .map(this::mapToDTO);
     }
 
-    public Order getOrderById(Long orderId) {
-        return orderRepository.findById(orderId)
-                .orElseThrow(() -> new OrderNotFoundException("Order not found with id: " + orderId));
+    public OrderDTO getOrderById(Long orderId) {
+        Order order = orderRepository.findById(orderId)
+        .orElseThrow(() -> new OrderNotFoundException("Order not found with id: " + orderId));
+        return mapToDTO(order);
     }
 
     public void deleteOrder(Long orderId) {
