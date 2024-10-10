@@ -6,7 +6,6 @@ import org.factoriaf5.digital_academy.funko_shop.order.order_exceptions.OrderNot
 import org.factoriaf5.digital_academy.funko_shop.order_item.OrderItem;
 import org.factoriaf5.digital_academy.funko_shop.order_item.OrderItemDTO;
 import org.factoriaf5.digital_academy.funko_shop.order_item.OrderItemRepository;
-import org.factoriaf5.digital_academy.funko_shop.order_item.order_item_exceptions.OrderItemNotFoundException;
 import org.factoriaf5.digital_academy.funko_shop.product.Product;
 import org.factoriaf5.digital_academy.funko_shop.product.ProductDTO;
 import org.factoriaf5.digital_academy.funko_shop.product.ProductRepository;
@@ -56,7 +55,6 @@ public class OrderService {
                         newOrderItem.setOrder(savedOrder);
                         newOrderItem.setQuantity(orderItem.getQuantity());
 
-                        // Busca el producto por ID
                         Product product = productRepository.findById(orderItem.getId())
                                 .orElseThrow(() -> new IllegalArgumentException(
                                         "Producto no encontrado: " + orderItem.getId()));
@@ -70,7 +68,6 @@ public class OrderService {
             savedOrder.setOrderItems(newOrderItems);
         }
 
-        // Manejo de Tracking (si es necesario)
         if (order.getTracking() != null) {
             Tracking tracking = new Tracking();
             tracking.setOrder(savedOrder);
@@ -220,43 +217,6 @@ public class OrderService {
                 category.getName(),
                 category.getImageHash(),
                 category.isHighlights());
-    }
-
-    public OrderItemDTO addOrderItemToOrder(Long orderId, OrderItemDTO orderItemDTO) {
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new OrderNotFoundException("Order not found"));
-
-        Product product = productRepository.findById(orderItemDTO.getProduct().getId())
-                .orElseThrow(() -> new ProductNotFoundException("Product not found"));
-
-        OrderItem orderItem = new OrderItem();
-        orderItem.setOrder(order);
-        orderItem.setProduct(product);
-        orderItem.setQuantity(orderItemDTO.getQuantity());
-
-        OrderItem savedOrderItem = orderItemRepository.save(orderItem);
-
-        return mapToOrderItemDTO(savedOrderItem);
-    }
-
-    public void removeOrderItemFromOrder(Long orderId, Long orderItemId) {
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new OrderNotFoundException("Order not found"));
-
-        if (order.getOrderItems() == null) {
-            order.setOrderItems(new ArrayList<>());
-        }
-
-        OrderItem orderItem = orderItemRepository.findById(orderItemId)
-                .orElseThrow(() -> new OrderItemNotFoundException("OrderItem not found"));
-
-        if (!order.getOrderItems().contains(orderItem)) {
-            throw new IllegalStateException("Order does not contain this item");
-        }
-
-        order.getOrderItems().remove(orderItem);
-        orderItemRepository.delete(orderItem);
-        orderRepository.save(order);
     }
 
 }

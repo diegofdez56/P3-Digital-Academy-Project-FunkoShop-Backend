@@ -44,7 +44,7 @@ public class OrderController {
         return new ResponseEntity<>(createdOrder, HttpStatus.CREATED);
     }
 
-   /* @PutMapping("/{id}")
+   @PutMapping("/{id}")
     public ResponseEntity<OrderDTO> updateOrder(@PathVariable Long id, @RequestBody OrderDTO order) {
         OrderDTO updatedOrder = orderService.updateOrder(id, order);
         return new ResponseEntity<>(updatedOrder, HttpStatus.OK);
@@ -54,7 +54,7 @@ public class OrderController {
     public ResponseEntity<Void> deleteOrder(@PathVariable Long id) {
         orderService.deleteOrder(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    } */
+    }
 
     @GetMapping("/user/{userId}")
     public ResponseEntity<Page<OrderDTO>> getOrdersByUser(
@@ -64,18 +64,5 @@ public class OrderController {
         Page<OrderDTO> orders = orderService.getOrdersByUser(user, pageable);
         return new ResponseEntity<>(orders, HttpStatus.OK);
     }
-
-    //esto no hay que hacerlo aqui!!!!
-    /* @PostMapping("/{orderId}/items")
-    public ResponseEntity<OrderItemDTO> addOrderItemToOrder(@PathVariable Long orderId,
-            @RequestBody OrderItemDTO orderItemDTO) {
-        OrderItemDTO addedOrderItem = orderService.addOrderItemToOrder(orderId, orderItemDTO);
-        return new ResponseEntity<>(addedOrderItem, HttpStatus.CREATED);
-    }
-    @DeleteMapping("/{orderId}/items/{orderItemId}")
-    public ResponseEntity<Void> removeOrderItemFromOrder(@PathVariable Long orderId, @PathVariable Long orderItemId) {
-        orderService.removeOrderItemFromOrder(orderId, orderItemId);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    } */
 
 }
