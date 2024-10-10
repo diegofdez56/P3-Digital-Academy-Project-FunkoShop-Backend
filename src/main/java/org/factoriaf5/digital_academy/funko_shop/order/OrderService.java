@@ -39,7 +39,6 @@ public class OrderService {
 
     public OrderDTO addOrder(Order order, User user) {
 
-        // Crear la nueva orden
         Order newOrder = new Order();
         newOrder.setStatus(order.getStatus());
         newOrder.setTotalPrice(order.getTotalPrice());
@@ -59,7 +58,7 @@ public class OrderService {
                                 .orElseThrow(() -> new IllegalArgumentException(
                                         "Producto no encontrado: " + orderItem.getId()));
 
-                        newOrderItem.setProduct(product); // Asigna el producto
+                        newOrderItem.setProduct(product);
                         return newOrderItem;
                     })
                     .collect(Collectors.toList());
