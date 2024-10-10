@@ -2,7 +2,6 @@ package org.factoriaf5.digital_academy.funko_shop.order;
 
 import java.security.Principal;
 
-import org.factoriaf5.digital_academy.funko_shop.order_item.OrderItemDTO;
 import org.factoriaf5.digital_academy.funko_shop.user.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -38,14 +37,14 @@ public class OrderController {
         return new ResponseEntity<>(order, HttpStatus.OK);
     }
 
-   /*  @PostMapping
-    public ResponseEntity<OrderDTO> addOrder(Principal connectedUser, @RequestBody OrderDTO order) {
+    @PostMapping
+    public ResponseEntity<OrderDTO> addOrder(Principal connectedUser, @RequestBody Order order) {
         User user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
-        OrderDTO createdOrder = orderService.addOrder(order, user.getId());
+        OrderDTO createdOrder = orderService.addOrder(order, user);
         return new ResponseEntity<>(createdOrder, HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
+   /* @PutMapping("/{id}")
     public ResponseEntity<OrderDTO> updateOrder(@PathVariable Long id, @RequestBody OrderDTO order) {
         OrderDTO updatedOrder = orderService.updateOrder(id, order);
         return new ResponseEntity<>(updatedOrder, HttpStatus.OK);
