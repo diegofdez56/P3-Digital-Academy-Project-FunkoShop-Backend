@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
@@ -36,4 +37,11 @@ public class NewLetterController {
         newLetterService.deleteProduct(code);
         return ResponseEntity.noContent().build();
     }
+
+    @DeleteMapping("/unsubscribe")
+    public ResponseEntity<Void> unsubscribe(@RequestParam String code) {
+        newLetterService.deleteProduct(code);
+        return ResponseEntity.noContent().build();
+    }
+
 }

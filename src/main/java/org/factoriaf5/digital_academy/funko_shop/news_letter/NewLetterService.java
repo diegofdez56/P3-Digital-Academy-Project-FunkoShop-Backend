@@ -3,6 +3,7 @@ package org.factoriaf5.digital_academy.funko_shop.news_letter;
 import java.security.SecureRandom;
 import java.util.stream.Collectors;
 
+import org.factoriaf5.digital_academy.funko_shop.email.EmailService;
 import org.factoriaf5.digital_academy.funko_shop.product.product_exceptions.ProductNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,9 +13,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class NewLetterService {
 
     private final NewLetterRepository newLetterRepository;
+    private final EmailService emailService;
 
-    public NewLetterService(NewLetterRepository newLetterRepository) {
+    public NewLetterService(NewLetterRepository newLetterRepository, EmailService emailService) {
         this.newLetterRepository = newLetterRepository;
+        this.emailService = emailService;
     }
 
     public NewLetterDTO createNewLetter(NewLetterDTO newLetterDTO) {
@@ -26,6 +29,11 @@ public class NewLetterService {
         NewLetter newLetter = mapToEntity(newLetterDTO);
 
         NewLetter savedNewLetter = newLetterRepository.save(newLetter);
+
+        String unsubscribeLink = "http://localhost:5173/unsubscribe?code=" + savedNewLetter.getCode();
+
+        emailService.sendSubscriptionEmail(newLetterDTO.getEmail(), unsubscribeLink);
+
         return mapToDTO(savedNewLetter);
 
     }
