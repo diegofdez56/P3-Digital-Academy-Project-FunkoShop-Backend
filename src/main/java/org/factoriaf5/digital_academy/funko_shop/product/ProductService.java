@@ -17,6 +17,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 
 @Service
@@ -98,14 +99,14 @@ public class ProductService {
     }
 
     private ProductDTO mapToDTOWithDiscount(Product product) {
-        ProductDTO productDTO = mapToDTO(product);  
+        ProductDTO productDTO = mapToDTO(product);
 
         if (product.getDiscount() > 0 && product.getDiscount() <= 100) {
             float discountMultiplier = 1 - (product.getDiscount() / 100.0f);
             float discountedPrice = product.getPrice() * discountMultiplier;
             productDTO.setDiscountedPrice(discountedPrice);
         } else {
-            productDTO.setDiscountedPrice(product.getPrice());  
+            productDTO.setDiscountedPrice(product.getPrice());
         }
 
         return productDTO;
@@ -113,10 +114,12 @@ public class ProductService {
 
     private void updateProductFields(Product product, ProductDTO productDto) {
         product.setName(productDto.getName());
-        if (productDto.getImageHash() != null && productDto.getImageHash().isPresent() && productDto.getImageHash().get() != null) {
+        if (productDto.getImageHash() != null && productDto.getImageHash().isPresent()
+                && productDto.getImageHash().get() != null) {
             product.setImageHash(productDto.getImageHash().get());
         }
-        if (productDto.getImageHash2() != null && productDto.getImageHash2().isPresent() && productDto.getImageHash2().get() != null) {
+        if (productDto.getImageHash2() != null && productDto.getImageHash2().isPresent()
+                && productDto.getImageHash2().get() != null) {
             product.setImageHash2(productDto.getImageHash2().get());
         }
         product.setDescription(productDto.getDescription());
@@ -155,42 +158,42 @@ public class ProductService {
     }
 
     private ProductDTO mapToDTO(Product product) {
-    CategoryDTO categoryDTO = null;
-    if (product.getCategory() != null) {
-        categoryDTO = new CategoryDTO(
-                product.getCategory().getId(),
-                product.getCategory().getName(),
-                product.getCategory().getImageHash(),
-                product.getCategory().isHighlights()
-        );
+        CategoryDTO categoryDTO = null;
+        if (product.getCategory() != null) {
+            categoryDTO = new CategoryDTO(
+                    product.getCategory().getId(),
+                    product.getCategory().getName(),
+                    product.getCategory().getImageHash(),
+                    product.getCategory().isHighlights());
+        }
+
+        List<Review> reviews = Optional.ofNullable(product.getOrderItems())
+                .orElse(Collections.emptyList())
+                .stream()
+                .map(OrderItem::getReview)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+    
+        int totalReviews = reviews.size();
+        double averageRating = totalReviews > 0 ? reviews.stream()
+                .mapToInt(Review::getRating)
+                .average()
+                .orElse(0.0) : 0.0;
+
+        return new ProductDTO(
+                product.getId(),
+                product.getName(),
+                Optional.ofNullable(product.getImageHash()),
+                Optional.ofNullable(product.getImageHash2()),
+                product.getDescription(),
+                product.getPrice(),
+                product.getPrice(),
+                product.getStock(),
+                product.getCreatedAt(),
+                categoryDTO,
+                product.getDiscount(),
+                totalReviews,
+                averageRating);
     }
-
-    List<Review> reviews = product.getOrderItems().stream()
-            .map(OrderItem::getReview)
-            .filter(Objects::nonNull)
-            .collect(Collectors.toList());
-
-    int totalReviews = reviews.size();
-    double averageRating = totalReviews > 0 ? reviews.stream()
-            .mapToInt(Review::getRating)
-            .average()
-            .orElse(0.0) : 0.0;
-
-    return new ProductDTO(
-            product.getId(),
-            product.getName(),
-            Optional.ofNullable(product.getImageHash()),
-            Optional.ofNullable(product.getImageHash2()),
-            product.getDescription(),
-            product.getPrice(),
-            product.getPrice(),
-            product.getStock(),
-            product.getCreatedAt(),
-            categoryDTO,
-            product.getDiscount(),
-            totalReviews,
-            averageRating
-    );
-}
 
 }
