@@ -28,23 +28,20 @@ public class ReviewService {
     @Autowired
     private UserRepository userRepository;
 
-    public ReviewDTO addReview(ReviewDTO reviewDTO) {
-        OrderItem orderItem = orderItemRepository.findById(reviewDTO.getOrderItem().getId())
-                .orElseThrow(() -> new IllegalArgumentException("OrderItem not found"));
+    public void addReview(ReviewDTO reviewDTO, User user) {
 
-        User user = userRepository.findById(reviewDTO.getUser().getId())
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        OrderItem orderItem = orderItemRepository.findById(reviewDTO.getOrderItem())
+                .orElseThrow(() -> new IllegalArgumentException("OrderItem not found"));
 
         Review review = new Review();
         review.setRating(reviewDTO.getRating());
         review.setOrderItem(orderItem);
         review.setUser(user);
 
-        Review savedReview = reviewRepository.save(review);
-        return mapToDTO(savedReview);
+        reviewRepository.save(review);
     }
 
-    public ReviewDTO getReviewById(Long id) {
+    /* public ReviewDTO getReviewById(Long id) {
         Review review = reviewRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Review not found"));
         return mapToDTO(review);
@@ -54,9 +51,9 @@ public class ReviewService {
         return reviewRepository.findAll().stream()
                 .map(this::mapToDTO)
                 .toList();
-    }
+    } */
 
-    public ReviewDTO updateReview(Long id, ReviewDTO reviewDTO) {
+    /* public ReviewDTO updateReview(Long id, ReviewDTO reviewDTO) {
         Review review = reviewRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Review not found"));
 
@@ -135,9 +132,5 @@ public class ReviewService {
             productDTO, 
             null       
         );
-    }
-    
-    
-
-    
+    } */
 }

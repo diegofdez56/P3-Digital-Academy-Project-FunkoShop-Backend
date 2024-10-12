@@ -9,4 +9,5 @@ public class ReviewDTO {
     
     private Long id;
     private int rating;
+    private Long orderItem;
 }
