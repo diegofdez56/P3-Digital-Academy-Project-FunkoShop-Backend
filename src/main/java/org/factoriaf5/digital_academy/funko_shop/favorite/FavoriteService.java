@@ -2,9 +2,11 @@ package org.factoriaf5.digital_academy.funko_shop.favorite;
 
 import org.factoriaf5.digital_academy.funko_shop.category.Category;
 import org.factoriaf5.digital_academy.funko_shop.category.CategoryDTO;
+import org.factoriaf5.digital_academy.funko_shop.order_item.OrderItem;
 import org.factoriaf5.digital_academy.funko_shop.product.Product;
 import org.factoriaf5.digital_academy.funko_shop.product.ProductDTO;
 import org.factoriaf5.digital_academy.funko_shop.product.ProductRepository;
+import org.factoriaf5.digital_academy.funko_shop.review.Review;
 import org.factoriaf5.digital_academy.funko_shop.user.User;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -44,6 +47,17 @@ public class FavoriteService {
     }
 
     private ProductDTO convertToProductDTO(Product product) {
+        List<Review> reviews = product.getOrderItems().stream()
+                .map(OrderItem::getReview)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+
+        int totalReviews = reviews.size();
+        double averageRating = totalReviews > 0 ? reviews.stream()
+                .mapToInt(Review::getRating)
+                .average()
+                .orElse(0.0) : 0.0;
+
         return new ProductDTO(
                 product.getId(),
                 product.getName(),
@@ -55,7 +69,9 @@ public class FavoriteService {
                 product.getStock(),
                 product.getCreatedAt(),
                 convertToCategoryDTO(product.getCategory()),
-                product.getDiscount());
+                product.getDiscount(),
+                totalReviews,
+                averageRating);
     }
 
     private float calculateDiscountedPrice(float price, int discount) {
@@ -96,6 +112,6 @@ public class FavoriteService {
 
     public Boolean checkFavorite(Long userId, Long productId) {
         Optional<Favorite> favorite = favoriteRepository.findByUserIdAndProductId(userId, productId);
-        return favorite.isPresent();  
+        return favorite.isPresent();
     }
 }

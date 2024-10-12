@@ -4,13 +4,16 @@ import org.factoriaf5.digital_academy.funko_shop.category.Category;
 import org.factoriaf5.digital_academy.funko_shop.category.CategoryDTO;
 import org.factoriaf5.digital_academy.funko_shop.category.CategoryRepository;
 import org.factoriaf5.digital_academy.funko_shop.category.category_exceptions.CategoryNotFoundException;
+import org.factoriaf5.digital_academy.funko_shop.order_item.OrderItem;
 import org.factoriaf5.digital_academy.funko_shop.product.product_exceptions.ProductNotFoundException;
+import org.factoriaf5.digital_academy.funko_shop.review.Review;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.Calendar;
@@ -148,28 +151,42 @@ public class ProductService {
     }
 
     private ProductDTO mapToDTO(Product product) {
-        CategoryDTO categoryDTO = null;
-        if (product.getCategory() != null) {
-            categoryDTO = new CategoryDTO(
-                    product.getCategory().getId(),
-                    product.getCategory().getName(),
-                    product.getCategory().getImageHash(),
-                    product.getCategory().isHighlights()
-            );
-        }
-
-        return new ProductDTO(
-                product.getId(),
-                product.getName(),
-                Optional.ofNullable(product.getImageHash()),
-                Optional.ofNullable(product.getImageHash2()),
-                product.getDescription(),
-                product.getPrice(),
-                product.getPrice(),  
-                product.getStock(),
-                product.getCreatedAt(),  
-                categoryDTO,
-                product.getDiscount()
+    CategoryDTO categoryDTO = null;
+    if (product.getCategory() != null) {
+        categoryDTO = new CategoryDTO(
+                product.getCategory().getId(),
+                product.getCategory().getName(),
+                product.getCategory().getImageHash(),
+                product.getCategory().isHighlights()
         );
     }
+
+    List<Review> reviews = product.getOrderItems().stream()
+            .map(OrderItem::getReview)
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
+
+    int totalReviews = reviews.size();
+    double averageRating = totalReviews > 0 ? reviews.stream()
+            .mapToInt(Review::getRating)
+            .average()
+            .orElse(0.0) : 0.0;
+
+    return new ProductDTO(
+            product.getId(),
+            product.getName(),
+            Optional.ofNullable(product.getImageHash()),
+            Optional.ofNullable(product.getImageHash2()),
+            product.getDescription(),
+            product.getPrice(),
+            product.getPrice(),
+            product.getStock(),
+            product.getCreatedAt(),
+            categoryDTO,
+            product.getDiscount(),
+            totalReviews,
+            averageRating
+    );
+}
+
 }
