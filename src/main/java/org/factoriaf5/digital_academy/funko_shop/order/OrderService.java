@@ -180,8 +180,7 @@ public class OrderService {
                 orderItem.getId(),
                 orderItem.getQuantity(),
                 null,
-                productDTO,
-                null);
+                productDTO);
     }
 
     private ProductDTO mapToProductDTO(Product product) {
