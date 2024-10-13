@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -35,7 +36,7 @@ public class FavoriteService {
         Product product = productRepository.findById(productId).orElseThrow();
 
         Favorite favorite = new Favorite();
-        favorite.setUser(new User(userId, null, null, null, null, null, null, null, null, null));
+        favorite.setUser(new User(userId, null, null, null, null, null, null, null, null));
         favorite.setProduct(product);
 
         favoriteRepository.save(favorite);
@@ -47,6 +48,10 @@ public class FavoriteService {
     }
 
     private ProductDTO convertToProductDTO(Product product) {
+         @SuppressWarnings("unused")
+        List<OrderItem> orderItems = Optional.ofNullable(product.getOrderItems())
+                .orElse(Collections.emptyList());
+
         List<Review> reviews = product.getOrderItems().stream()
                 .map(OrderItem::getReview)
                 .filter(Objects::nonNull)
@@ -82,6 +87,9 @@ public class FavoriteService {
     }
 
     private CategoryDTO convertToCategoryDTO(Category category) {
+        if (category == null) {
+            return null;
+        }
         return new CategoryDTO(
                 category.getId(),
                 category.getName(),
