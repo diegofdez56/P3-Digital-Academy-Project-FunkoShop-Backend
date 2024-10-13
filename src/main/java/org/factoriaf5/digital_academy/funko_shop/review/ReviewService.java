@@ -13,8 +13,11 @@ import org.factoriaf5.digital_academy.funko_shop.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ReviewService {
@@ -25,112 +28,154 @@ public class ReviewService {
     @Autowired
     private OrderItemRepository orderItemRepository;
 
-    @Autowired
-    private UserRepository userRepository;
-
     public void addReview(ReviewDTO reviewDTO, User user) {
 
         OrderItem orderItem = orderItemRepository.findById(reviewDTO.getOrderItem())
                 .orElseThrow(() -> new IllegalArgumentException("OrderItem not found"));
 
-        Review review = new Review();
-        review.setRating(reviewDTO.getRating());
-        review.setOrderItem(orderItem);
-        review.setUser(user);
+        Review isReview = reviewRepository.findByOrderItemAndUser(orderItem, user);
 
-        reviewRepository.save(review);
+        if (isReview == null) {
+            Review review = new Review();
+            review.setRating(reviewDTO.getRating());
+            review.setOrderItem(orderItem);
+            review.setUser(user);
+
+            reviewRepository.save(review);
+        } else {
+            throw new IllegalArgumentException("Review already exists");
+        }
     }
 
-    /* public ReviewDTO getReviewById(Long id) {
-        Review review = reviewRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Review not found"));
-        return mapToDTO(review);
-    }
+    public ReviewDTO updateReview(ReviewDTO reviewDTO, User user) {
 
-    public List<ReviewDTO> getAllReviews() {
-        return reviewRepository.findAll().stream()
-                .map(this::mapToDTO)
-                .toList();
-    } */
-
-    /* public ReviewDTO updateReview(Long id, ReviewDTO reviewDTO) {
-        Review review = reviewRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Review not found"));
-
-        OrderItem orderItem = orderItemRepository.findById(reviewDTO.getOrderItem().getId())
-                .orElseThrow(() -> new IllegalArgumentException("OrderItem not found"));
-
-        User user = userRepository.findById(reviewDTO.getUser().getId())
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
-
-        review.setRating(reviewDTO.getRating());
-        review.setOrderItem(orderItem);
-        review.setUser(user);
-
+        OrderItem orderItem = orderItemRepository.findById(reviewDTO.getOrderItem()).get();
+        Review review = mapToEntity(reviewDTO, orderItem, user);
         Review updatedReview = reviewRepository.save(review);
         return mapToDTO(updatedReview);
     }
 
-    public void deleteReview(Long id) {
-        Review review = reviewRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Review not found"));
-        reviewRepository.delete(review);
+    public ReviewDTO getReviewByOrderItemIdAndUser(Long orderItemId, User user) {
+        OrderItem orderItem = orderItemRepository.findById(orderItemId)
+                .orElseThrow(() -> new IllegalArgumentException("OrderItem not found"));
+
+        Review review = reviewRepository.findByOrderItemAndUser(orderItem, user);
+
+        if (review == null) {
+            return null;
+        }
+
+        return mapToDTO(review);
     }
 
     private ReviewDTO mapToDTO(Review review) {
         return new ReviewDTO(
                 review.getId(),
                 review.getRating(),
-                review.getOrderItem() != null ? mapToOrderItemDTO(review.getOrderItem()) : null,
-                review.getUser() != null ? new UserDTO(
-                        review.getUser().getId(),
-                        review.getUser().getEmail(),
-                        review.getUser().getPassword(),
-                        null, null, null, null, null, null) : null
-        );
+                review.getOrderItem().getId());
     }
 
-    private OrderItemDTO mapToOrderItemDTO(OrderItem orderItem) {
-        Product product = orderItem.getProduct();
-        
-        float discountedPrice = product.getPrice();  
-    
-        if (product.getDiscount() > 0 && product.getDiscount() <= 100) {
-            float discountMultiplier = 1 - (product.getDiscount() / 100.0f);
-            discountedPrice = product.getPrice() * discountMultiplier;
-        }
-    
-        Category category = product.getCategory();
-        CategoryDTO categoryDTO = null;
-        if (category != null) {
-            categoryDTO = new CategoryDTO(
-                category.getId(),
-                category.getName(),
-                category.getImageHash(), 
-                category.isHighlights() 
-            );
-        }
-    
-        ProductDTO productDTO = new ProductDTO(
-            product.getId(),
-            product.getName(),
-            Optional.ofNullable(product.getImageHash()),
-            Optional.ofNullable(product.getImageHash()),
-            product.getDescription(),
-            product.getPrice(),           
-            discountedPrice,             
-            product.getStock(), 
-            product.getCreatedAt(),       
-            categoryDTO,                  
-            product.getDiscount()         
-        );
-    
-        return new OrderItemDTO(
-            orderItem.getId(),
-            orderItem.getQuantity(),
-            null,      
-            productDTO, 
-            null       
-        );
-    } */
+    private Review mapToEntity(ReviewDTO reviewDTO, OrderItem orderItem, User user) {
+        Review review = new Review();
+        review.setId(reviewDTO.getId());
+        review.setRating(reviewDTO.getRating());
+        review.setOrderItem(orderItem);
+        review.setUser(user);
+        return review;
+    }
+
+    /*
+     * private OrderItemDTO mapToOrderItemDTO(OrderItem orderItem) {
+     * Product product = orderItem.getProduct();
+     * 
+     * Category category = product.getCategory();
+     * CategoryDTO categoryDTO = null;
+     * if (category != null) {
+     * categoryDTO = new CategoryDTO(
+     * category.getId(),
+     * category.getName(),
+     * category.getImageHash(),
+     * category.isHighlights());
+     * }
+     * 
+     * List<Review> reviews = Optional.ofNullable(product.getOrderItems())
+     * .orElse(Collections.emptyList())
+     * .stream()
+     * .map(OrderItem::getReview)
+     * .filter(Objects::nonNull)
+     * .collect(Collectors.toList());
+     * 
+     * int totalReviews = reviews.size();
+     * double averageRating = totalReviews > 0 ? reviews.stream()
+     * .mapToInt(Review::getRating)
+     * .average()
+     * .orElse(0.0) : 0.0;
+     * 
+     * ProductDTO productDTO = new ProductDTO(
+     * product.getId(),
+     * product.getName(),
+     * Optional.ofNullable(product.getImageHash()),
+     * Optional.ofNullable(product.getImageHash2()),
+     * product.getDescription(),
+     * product.getPrice(),
+     * product.getPrice(),
+     * product.getStock(),
+     * product.getCreatedAt(),
+     * categoryDTO,
+     * product.getDiscount(),
+     * totalReviews,
+     * averageRating);
+     * 
+     * return new OrderItemDTO(
+     * orderItem.getId(),
+     * orderItem.getQuantity(),
+     * null,
+     * productDTO);
+     * }
+     */
+
+    /*
+     * public ReviewDTO getReviewById(Long id) {
+     * Review review = reviewRepository.findById(id)
+     * .orElseThrow(() -> new IllegalArgumentException("Review not found"));
+     * return mapToDTO(review);
+     * }
+     * 
+     * public List<ReviewDTO> getAllReviews() {
+     * return reviewRepository.findAll().stream()
+     * .map(this::mapToDTO)
+     * .toList();
+     * }
+     */
+
+    /*
+     * public ReviewDTO updateReview(Long id, ReviewDTO reviewDTO) {
+     * Review review = reviewRepository.findById(id)
+     * .orElseThrow(() -> new IllegalArgumentException("Review not found"));
+     * 
+     * OrderItem orderItem =
+     * orderItemRepository.findById(reviewDTO.getOrderItem().getId())
+     * .orElseThrow(() -> new IllegalArgumentException("OrderItem not found"));
+     * 
+     * User user = userRepository.findById(reviewDTO.getUser().getId())
+     * .orElseThrow(() -> new IllegalArgumentException("User not found"));
+     * 
+     * review.setRating(reviewDTO.getRating());
+     * review.setOrderItem(orderItem);
+     * review.setUser(user);
+     * 
+     * Review updatedReview = reviewRepository.save(review);
+     * return mapToDTO(updatedReview);
+     * }
+     * 
+     * public void deleteReview(Long id) {
+     * Review review = reviewRepository.findById(id)
+     * .orElseThrow(() -> new IllegalArgumentException("Review not found"));
+     * reviewRepository.delete(review);
+     * }
+     * 
+     * 
+     * 
+     * 
+     */
 }
