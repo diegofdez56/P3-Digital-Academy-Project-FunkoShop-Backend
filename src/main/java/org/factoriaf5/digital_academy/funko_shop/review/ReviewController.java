@@ -44,27 +44,4 @@ public class ReviewController {
         return new ResponseEntity<ReviewDTO>(reviewDTO, HttpStatus.OK);
     }
 
-    /*
-     * @GetMapping
-     * public ResponseEntity<List<ReviewDTO>> getAllReviews() {
-     * List<ReviewDTO> reviews = reviewService.getAllReviews();
-     * return new ResponseEntity<>(reviews, HttpStatus.OK);
-     * }
-     */
-
-    /*
-     * @PutMapping("/{id}")
-     * public ResponseEntity<ReviewDTO> updateReview(Principal
-     * connectedUser, @PathVariable Long id, @RequestBody ReviewDTO reviewDTO) {
-     * ReviewDTO updatedReview = reviewService.updateReview(id, reviewDTO);
-     * return new ResponseEntity<>(updatedReview, HttpStatus.OK);
-     * }
-     * 
-     * @DeleteMapping("/{id}")
-     * public ResponseEntity<Void> deleteReview(Principal
-     * connectedUser, @PathVariable Long id) {
-     * reviewService.deleteReview(id);
-     * return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-     * }
-     */
 }
