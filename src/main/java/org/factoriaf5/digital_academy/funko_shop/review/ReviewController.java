@@ -21,32 +21,27 @@ public class ReviewController {
 
     @PostMapping
     public ResponseEntity<?> addReview(Principal connectedUser, @RequestBody ReviewDTO reviewDTO) {
+        try {
+            User user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
+            reviewService.addReview(reviewDTO, user);
+            return new ResponseEntity<>(HttpStatus.CREATED);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PutMapping
+    public ResponseEntity<ReviewDTO> updateReview(Principal connectedUser, @RequestBody ReviewDTO reviewDTO) {
         User user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
-        reviewService.addReview(reviewDTO, user);
-        return new ResponseEntity<>(HttpStatus.CREATED);
-    }
-
-    /* @GetMapping("/{id}")
-    public ResponseEntity<ReviewDTO> getReviewById(@PathVariable Long id) {
-        ReviewDTO reviewDTO = reviewService.getReviewById(id);
-        return new ResponseEntity<>(reviewDTO, HttpStatus.OK);
-    }
-
-    @GetMapping
-    public ResponseEntity<List<ReviewDTO>> getAllReviews() {
-        List<ReviewDTO> reviews = reviewService.getAllReviews();
-        return new ResponseEntity<>(reviews, HttpStatus.OK);
-    } */
-
-    /* @PutMapping("/{id}")
-    public ResponseEntity<ReviewDTO> updateReview(Principal connectedUser, @PathVariable Long id, @RequestBody ReviewDTO reviewDTO) {
-        ReviewDTO updatedReview = reviewService.updateReview(id, reviewDTO);
+        ReviewDTO updatedReview = reviewService.updateReview(reviewDTO, user);
         return new ResponseEntity<>(updatedReview, HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteReview(Principal connectedUser, @PathVariable Long id) {
-        reviewService.deleteReview(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    } */
+    @GetMapping("/{orderItemId}")
+    public ResponseEntity<ReviewDTO> getReviewByIdAndUser(Principal connectedUser, @PathVariable Long orderItemId) {
+        User user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
+        ReviewDTO reviewDTO = reviewService.getReviewByOrderItemIdAndUser(orderItemId, user);
+        return new ResponseEntity<ReviewDTO>(reviewDTO, HttpStatus.OK);
+    }
+
 }
