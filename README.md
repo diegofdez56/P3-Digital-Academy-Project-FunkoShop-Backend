@@ -12,6 +12,7 @@ The admin panel allows for easy management of products, orders, and discounts, m
 - [Usage](#usage)
 - [Endpoints](#endpoints)
 - [Contributors](#contributors)
+- [Disclaimer](#disclaimer)
 
 ## Installation
 
@@ -140,29 +141,33 @@ mvn spring-boot:run
 
 api-endpoint= /api/v1
 
-### Login
+### Swagger
 
-- <p>POST /auth/register</p>
-- <p>POST /auth/authenticate</p>
-- <p>POST /auth/refresh-token</p>
+Swagger - API Documentation
+We use Swagger (OpenAPI) to provide clear, interactive documentation for our API. Swagger automatically generates up-to-date documentation based on the API code, allowing developers to explore and test endpoints directly in their browser.
+
+#### Key Benefits:
+- <strong>Comprehensive Documentation:</strong> All API routes, parameters, and responses are clearly displayed.
+- <strong>Interactive Testing:</strong> Test API calls directly through the Swagger UI without needing external tools.
+- <strong>Seamless Collaboration:</strong> Provides a common reference for developers and integrators to easily understand the API structure.
+#### How to Access:
+- Run the application.
+- Open your browser and go to:
+```bash
+http://localhost:8080/swagger-ui.html
+```
+Swagger helps streamline the development process, ensuring our API is well-documented and accessible.
+
+### Login
 
 - admin: admin@gmail.com
 - password: password
-
-### Products
-
-- <p>GET /products</p>
-- <p>POST /products (admin)</p>
-- <p>PUT /products/{id} (admin)</p>
-- <p>DELETE /products/{id} (admin)</p>
-
-
-
 
 
 ## Tools
 
 - Visual Studio Code
+- Swagger
 - Postman
 - Docker
 - MySQL Workbench
@@ -181,3 +186,11 @@ api-endpoint= /api/v1
 ## FrontEnd
 
 - Frontend Repo: [FunkoShop-Frontend](https://github.com/FactoriaF5-Asturias/P3-Digital-Academy-Project-FunkoShop-Frontend)
+
+## Disclaimer
+
+This project is developed as part of a bootcamp learning experience and is intended for educational purposes only. The creators and contributors are not responsible for any issues, damages, or losses that may occur from using this code.
+
+This project is not meant for commercial use, and any trademarks or references to third-party services (such as Funko) belong to their respective owners. By using this code, you acknowledge that it is a work in progress, created by learners, and comes without warranties or guarantees of any kind.
+
+Use at your own discretion and risk.
