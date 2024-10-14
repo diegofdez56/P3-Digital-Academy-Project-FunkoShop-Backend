@@ -1,8 +1,5 @@
 package org.factoriaf5.digital_academy.funko_shop.order;
 
-import org.factoriaf5.digital_academy.funko_shop.order_item.OrderItemDTO;
-import org.factoriaf5.digital_academy.funko_shop.product.ProductDTO;
-import org.factoriaf5.digital_academy.funko_shop.user.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -23,7 +20,6 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 class OrderControllerTest {
