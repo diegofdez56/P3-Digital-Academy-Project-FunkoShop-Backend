@@ -8,11 +8,31 @@ The admin panel allows for easy management of products, orders, and discounts, m
 
 ## Table of Contents
 
+- [PreRequisites](#prerequisites)
 - [Installation](#installation)
 - [Usage](#usage)
+- [UML Diagram](#uml-diagram)
 - [Endpoints](#endpoints)
+- [Project Structure](#project-structure)
+- [Running Test](#running-test)
+- [Tools](#tools)
+- [Known Issues](#known-issues)
+- [Future improvements](#future-improvements)
 - [Contributors](#contributors)
 - [Disclaimer](#disclaimer)
+
+## Prerequisites
+
+Before running this project, ensure you have the following installed on your machine:
+
+- Java 21 or later
+- Maven
+- MySQL
+- Docker (if using containers for databases)
+- Firebase account
+- Stripe account
+- Mailgun account
+
 
 ## Installation
 
@@ -84,17 +104,17 @@ To secure your application with JWT (JSON Web Token), you need a secret key that
 ``` powershell
 [System.Convert]::ToBase64String((1..32 | ForEach-Object {Get-Random -Maximum 256}) -join '')
 ```
-- <strong>Copy the Generated Key:</strong> After running the command, a random Base64 string will be output. This is your JWT secret key.
+- Copy the Generated Key: After running the command, a random Base64 string will be output. This is your JWT secret key.
 
 #### Linux or Mac (Terminal)
-- <strong>Generate a Key:</strong> Open the terminal and use the following command to generate a 256-bit random key:
+- Generate a Key: Open the terminal and use the following command to generate a 256-bit random key:
 
 ```bash
 openssl rand -base64 32
 ```
-- <strong>Copy the Generated Key:</strong> The terminal will display a random Base64 string. This is your JWT secret key.
+- Copy the Generated Key: The terminal will display a random Base64 string. This is your JWT secret key.
 
-- <strong>Add the Key to Your .env File (for all systems)</strong>
+- Add the Key to Your .env File (for all systems)
 
 
 Once you have generated the key, add it to your .env file in your project like this:
@@ -163,6 +183,71 @@ Swagger helps streamline the development process, ensuring our API is well-docum
 - admin: admin@gmail.com
 - password: password
 
+## Project Structure
+
+Below is an overview of the main directories and files in the FunkoShop project:
+
+
+
+```
+FunkoShop/
+│
+├── src/
+│   ├── main/
+│   │   ├── java/
+│   │   │   └── org/
+│   │   │       └── factoriaf5/
+│   │   │           └── digital_academy/
+│   │   │               └── funko_shop/
+│   │   │                   ├── account_settings/   # Account-related settings
+│   │   │                   ├── address/            # Address entity and logic
+│   │   │                   ├── auth/               # Authentication and security
+│   │   │                   ├── category/           # Product category management
+│   │   │                   ├── config/             # Application configuration
+│   │   │                   ├── email/              # Email services (Mailgun, etc.)
+│   │   │                   ├── favorite/           # Favorite items feature
+│   │   │                   ├── firebase/           # Firebase-related services
+│   │   │                   ├── news_letter/        # Newsletter subscription logic
+│   │   │                   ├── order/              # Order management logic
+│   │   │                   ├── order_item/         # Order items and details
+│   │   │                   ├── product/            # Product management
+│   │   │                   ├── profile/            # User profiles
+│   │   │                   ├── review/             # Product reviews
+│   │   │                   ├── stripe/             # Stripe payment integration
+│   │   │                   ├── token/              # JWT token management
+│   │   │                   ├── tracking/           # Order tracking
+│   │   │                   ├── user/               # User management
+│   │   │                   └── FunkoShopApplication.java # Main application class
+│   ├── resources/
+│   │   ├── META-INF/                    # Metadata and persistence configurations
+│   │   ├── templates/                   # Templates (if any)
+│   │   ├── application-mysql.properties # MySQL-specific configuration
+│   │   ├── application.properties       # General application configuration
+│   │   ├── data.sql                     # Initial database setup script
+│   │   └── firebase.json                # Firebase configuration file
+│
+├── test/                                # Test cases
+│
+├── target/                              # Compiled output files
+├── .env                                 # Environment variables (hidden)
+├── .gitignore                           # Git ignore file
+├── pom.xml                              # Maven dependencies and build file
+├── README.md                            # Project documentation
+
+```
+
+## Running Test
+
+To ensure everything is working as expected, you can run the unit and integration tests included in the project. Use the following command to execute all tests:
+```bash
+mvn test
+```
+This will automatically run all the tests defined in the src/test/ directory, validating the functionality of the different components, including services, controllers, and data layers.
+### Important Notes:
+- Make sure your database is properly set up and running if your tests depend on database interactions.
+- If you have specific test profiles or configurations (such as test databases), ensure they are correctly set up in your application-test.properties or other test-related configuration files.
+- The results of the tests will be displayed in the terminal, and you can check detailed reports in the target/surefire-reports folder after execution.
+Running the tests regularly helps ensure that new changes do not break existing functionality and keeps the codebase reliable.
 
 ## Tools
 
@@ -172,10 +257,27 @@ Swagger helps streamline the development process, ensuring our API is well-docum
 - Docker
 - MySQL Workbench
 
+## **Known Issues**
+```markdown
+### Known Issues
+
+- Issue 1: Tracking does not work as expected; there are issues with the order tracking system. This is under review for future improvements.
+
+
+Feel free to open an issue if you encounter something not listed here.
+```
+
+## Future improvements
+Here are some planned features or improvements for future versions of the project:
+
+- <strong>Enhanced Tracking System:</strong> Fix the current issues with order tracking and improve tracking accuracy.
+- <strong>Social Login:</strong> Implement login using third-party services like Google and Facebook.
+- <strong>General Improvements:</strong> Continuous refinement of the functionality and user experience
+
 ## Contributors
 
 
-#### GitHub:
+### GitHub:
 - Aitor Garcia: [aitorgarciadev](https://github.com/aitorgarciadev)
 - Bego Blanco: [begoblanco](https://github.com/begoblanco)
 - Javier Martinez: [devjmv](https://github.com/devjmv)
@@ -194,3 +296,7 @@ This project is developed as part of a bootcamp learning experience and is inten
 This project is not meant for commercial use, and any trademarks or references to third-party services (such as Funko) belong to their respective owners. By using this code, you acknowledge that it is a work in progress, created by learners, and comes without warranties or guarantees of any kind.
 
 Use at your own discretion and risk.
+
+
+
+### <strong> Thank You! </strong> ❤️
