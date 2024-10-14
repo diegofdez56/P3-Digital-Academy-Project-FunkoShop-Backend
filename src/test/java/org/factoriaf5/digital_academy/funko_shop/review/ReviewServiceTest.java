@@ -43,7 +43,6 @@ public class ReviewServiceTest {
 
     @Test
     void addReview_ShouldSaveReview() {
-        // Mock OrderItem y User
         OrderItem orderItem = new OrderItem();
         orderItem.setId(1L);
         User user = new User();
@@ -107,15 +106,12 @@ public class ReviewServiceTest {
 
     @Test
     void addReview_ShouldThrowIllegalArgumentException_WhenOrderItemNotFound() {
-        // Configurar el mock para que no se encuentre el OrderItem
         when(orderItemRepository.findById(anyLong())).thenReturn(Optional.empty());
 
         ReviewDTO reviewDTO = new ReviewDTO(1L, 5, 1L);
         User user = new User();
         user.setId(1L);
 
-        // Verificar que se lance IllegalArgumentException cuando el OrderItem no se
-        // encuentra
         assertThrows(IllegalArgumentException.class, () -> {
             reviewService.addReview(reviewDTO, user);
         });
@@ -123,11 +119,9 @@ public class ReviewServiceTest {
 
     @Test
     void addReview_ShouldThrowIllegalArgumentException_WhenReviewAlreadyExists() {
-        // Configurar el mock para que encuentre un OrderItem
         OrderItem orderItem = new OrderItem();
         when(orderItemRepository.findById(anyLong())).thenReturn(Optional.of(orderItem));
 
-        // Configurar el mock para que la reseña ya exista
         Review existingReview = new Review();
         when(reviewRepository.findByOrderItemAndUser(any(OrderItem.class), any(User.class)))
                 .thenReturn(existingReview);
@@ -136,7 +130,6 @@ public class ReviewServiceTest {
         User user = new User();
         user.setId(1L);
 
-        // Verificar que se lance IllegalArgumentException cuando ya existe una Review
         assertThrows(IllegalArgumentException.class, () -> {
             reviewService.addReview(reviewDTO, user);
         });
@@ -144,14 +137,12 @@ public class ReviewServiceTest {
 
     @Test
 void updateReview_ShouldThrowIllegalArgumentException_WhenOrderItemNotFound() {
-    // Configurar el mock para que no se encuentre el OrderItem
     when(orderItemRepository.findById(anyLong())).thenReturn(Optional.empty());
 
     ReviewDTO reviewDTO = new ReviewDTO(1L, 5, 1L);
     User user = new User();
     user.setId(1L);
 
-    // Verificar que se lance IllegalArgumentException cuando el OrderItem no se encuentra
     assertThrows(NoSuchElementException.class, () -> {
         reviewService.updateReview(reviewDTO, user);
     });
@@ -159,7 +150,6 @@ void updateReview_ShouldThrowIllegalArgumentException_WhenOrderItemNotFound() {
 
 @Test
 void getReviewByOrderItemIdAndUser_ShouldReturnNull_WhenReviewNotFound() {
-    // Configurar el mock para que no se encuentre la Review
     OrderItem orderItem = new OrderItem();
     when(orderItemRepository.findById(anyLong())).thenReturn(Optional.of(orderItem));
     when(reviewRepository.findByOrderItemAndUser(any(OrderItem.class), any(User.class)))
@@ -168,7 +158,6 @@ void getReviewByOrderItemIdAndUser_ShouldReturnNull_WhenReviewNotFound() {
     User user = new User();
     user.setId(1L);
 
-    // Verificar que el método devuelva null cuando no se encuentre la Review
     ReviewDTO result = reviewService.getReviewByOrderItemIdAndUser(1L, user);
     assertNull(result);
 }

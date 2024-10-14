@@ -35,7 +35,6 @@ public class ReviewControllerTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        // Simulación de la autenticación del usuario
         when(mockPrincipal.getName()).thenReturn("user@example.com");
         when(mockUser.getEmail()).thenReturn("user@example.com");
     }

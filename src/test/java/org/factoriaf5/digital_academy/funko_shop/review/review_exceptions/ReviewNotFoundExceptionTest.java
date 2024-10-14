@@ -11,10 +11,8 @@ class ReviewNotFoundExceptionTest {
     void constructor_ShouldSetMessage() {
         String message = "Review not found";
 
-        // Crear una instancia de ReviewNotFoundException usando el constructor con mensaje
         ReviewNotFoundException exception = new ReviewNotFoundException(message);
 
-        // Verificar que el mensaje de la excepción es el esperado
         assertEquals(message, exception.getMessage());
     }
 
@@ -23,17 +21,14 @@ class ReviewNotFoundExceptionTest {
         String message = "Review not found with cause";
         Throwable cause = new RuntimeException("This is the cause");
 
-        // Crear una instancia de ReviewNotFoundException usando el constructor con mensaje y causa
         ReviewNotFoundException exception = new ReviewNotFoundException(message, cause);
 
-        // Verificar que el mensaje y la causa son los esperados
         assertEquals(message, exception.getMessage());
         assertEquals(cause, exception.getCause());
     }
 
     @Test
     void shouldThrowReviewNotFoundException() {
-        // Verificar que se lanza ReviewNotFoundException con el mensaje correcto
         assertThrows(ReviewNotFoundException.class, () -> {
             throw new ReviewNotFoundException("Expected exception");
         });
