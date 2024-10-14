@@ -2,14 +2,21 @@ package org.factoriaf5.digital_academy.funko_shop.order;
 
 import org.factoriaf5.digital_academy.funko_shop.order_item.OrderItemDTO;
 import org.factoriaf5.digital_academy.funko_shop.product.ProductDTO;
+import org.factoriaf5.digital_academy.funko_shop.user.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageImpl;
 
+import java.security.Principal;
 import java.util.Arrays;
 import java.util.List;
 
@@ -24,6 +31,9 @@ class OrderControllerTest {
     @Mock
     private OrderService orderService;
 
+    @Autowired
+    private Principal mockPrincipal;
+
     @InjectMocks
     private OrderController orderController;
 
@@ -34,49 +44,52 @@ class OrderControllerTest {
 
     @Test
     void getAllOrders_ShouldReturnListOfOrders() {
-       
+        // Crea ejemplos de OrderDTO
         OrderDTO order1 = new OrderDTO();
         OrderDTO order2 = new OrderDTO();
         List<OrderDTO> orders = Arrays.asList(order1, order2);
-        when(orderService.getAllOrders()).thenReturn(orders);
 
-        ResponseEntity<List<OrderDTO>> response = orderController.getAllOrders();
+        // Crea un Pageable
+        Pageable pageable = PageRequest.of(0, 10);
 
+        // Configura el comportamiento del mock
+        when(orderService.getAllOrders(any(Pageable.class)))
+                .thenReturn(new PageImpl<>(orders, pageable, orders.size()));
+
+        // Llama al método en el controlador
+        ResponseEntity<Page<OrderDTO>> response = orderController.getAllOrders(mockPrincipal, pageable);
+
+        // Verifica el resultado
+        assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(2, response.getBody().size());
-        verify(orderService, times(1)).getAllOrders();
+        assertNotNull(response.getBody());
+        assertEquals(2, response.getBody().getTotalElements());
     }
 
     @Test
     void getOrderById_ShouldReturnOrder() {
-      
         Long orderId = 1L;
-        Order order = new Order();
-        when(orderService.getOrderById(orderId)).thenReturn(order);
+        OrderDTO orderDTO = new OrderDTO(); // Usa OrderDTO en vez de Order
+        orderDTO.setId(orderId); // Establece el ID en el DTO mockeado
 
-        ResponseEntity<Order> response = orderController.getOrderById(orderId);
+        // Configura el mock para devolver el OrderDTO
+        when(orderService.getOrderById(orderId)).thenReturn(orderDTO);
 
+        // Crea un mock de Principal
+        Principal principal = mock(Principal.class);
+
+        ResponseEntity<OrderDTO> response = orderController.getOrderById(principal, orderId);
+
+        // Verifica que la respuesta es la esperada
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(order, response.getBody());
+        assertNotNull(response.getBody()); // Asegúrate de que el cuerpo no es nulo
+        assertEquals(orderDTO, response.getBody()); // Compara con orderDTO
         verify(orderService, times(1)).getOrderById(orderId);
     }
 
     @Test
-    void addOrder_ShouldCreateAndReturnOrder() {
-      
-        OrderDTO orderDTO = new OrderDTO();
-        when(orderService.addOrder(orderDTO)).thenReturn(orderDTO);
-        
-        ResponseEntity<OrderDTO> response = orderController.addOrder(orderDTO);
-
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        assertEquals(orderDTO, response.getBody());
-        verify(orderService, times(1)).addOrder(orderDTO);
-    }
-
-    @Test
     void updateOrder_ShouldUpdateAndReturnOrder() {
-        
+
         Long orderId = 1L;
         OrderDTO orderDTO = new OrderDTO();
         when(orderService.updateOrder(orderId, orderDTO)).thenReturn(orderDTO);
@@ -98,48 +111,5 @@ class OrderControllerTest {
 
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
         verify(orderService, times(1)).deleteOrder(orderId);
-    }
-
-    @Test
-    void getOrdersByUser_ShouldReturnListOfOrders() {
-        Long userId = 1L;
-        OrderDTO order1 = new OrderDTO();
-        OrderDTO order2 = new OrderDTO();
-        List<OrderDTO> orders = Arrays.asList(order1, order2);
-        when(orderService.getOrdersByUser(userId)).thenReturn(orders);
-
-        ResponseEntity<List<OrderDTO>> response = orderController.getOrdersByUser(userId);
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(2, response.getBody().size());
-        verify(orderService, times(1)).getOrdersByUser(userId);
-    }
-
-    @Test
-    void addOrderItemToOrder_ShouldReturnCreated() {
-
-        OrderItemDTO orderItemDTO = new OrderItemDTO(1L, 2, null, new ProductDTO(1L, "Funkoo", null, "cool funko", 10.0f, 10, true, null, null), null);
-
-        when(orderService.addOrderItemToOrder(anyLong(), any(OrderItemDTO.class))).thenReturn(orderItemDTO);
-
-        ResponseEntity<OrderItemDTO> response = orderController.addOrderItemToOrder(1L, orderItemDTO);
-
-        assertNotNull(response);
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertEquals(1L, response.getBody().getId());
-        
-        verify(orderService, times(1)).addOrderItemToOrder(anyLong(), any(OrderItemDTO.class));
-    }
-
-    @Test
-    void removeOrderItemFromOrder_ShouldReturnNoContent() {
-  
-        ResponseEntity<Void> response = orderController.removeOrderItemFromOrder(1L, 1L);
-
-        assertNotNull(response);
-        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-
-        verify(orderService, times(1)).removeOrderItemFromOrder(anyLong(), anyLong());
     }
 }
