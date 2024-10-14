@@ -40,22 +40,17 @@ class OrderControllerTest {
 
     @Test
     void getAllOrders_ShouldReturnListOfOrders() {
-        // Crea ejemplos de OrderDTO
         OrderDTO order1 = new OrderDTO();
         OrderDTO order2 = new OrderDTO();
         List<OrderDTO> orders = Arrays.asList(order1, order2);
 
-        // Crea un Pageable
         Pageable pageable = PageRequest.of(0, 10);
 
-        // Configura el comportamiento del mock
         when(orderService.getAllOrders(any(Pageable.class)))
                 .thenReturn(new PageImpl<>(orders, pageable, orders.size()));
 
-        // Llama al método en el controlador
         ResponseEntity<Page<OrderDTO>> response = orderController.getAllOrders(mockPrincipal, pageable);
 
-        // Verifica el resultado
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
@@ -65,21 +60,18 @@ class OrderControllerTest {
     @Test
     void getOrderById_ShouldReturnOrder() {
         Long orderId = 1L;
-        OrderDTO orderDTO = new OrderDTO(); // Usa OrderDTO en vez de Order
-        orderDTO.setId(orderId); // Establece el ID en el DTO mockeado
+        OrderDTO orderDTO = new OrderDTO();
+        orderDTO.setId(orderId);
 
-        // Configura el mock para devolver el OrderDTO
         when(orderService.getOrderById(orderId)).thenReturn(orderDTO);
 
-        // Crea un mock de Principal
         Principal principal = mock(Principal.class);
 
         ResponseEntity<OrderDTO> response = orderController.getOrderById(principal, orderId);
 
-        // Verifica que la respuesta es la esperada
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody()); // Asegúrate de que el cuerpo no es nulo
-        assertEquals(orderDTO, response.getBody()); // Compara con orderDTO
+        assertNotNull(response.getBody());
+        assertEquals(orderDTO, response.getBody());
         verify(orderService, times(1)).getOrderById(orderId);
     }
 

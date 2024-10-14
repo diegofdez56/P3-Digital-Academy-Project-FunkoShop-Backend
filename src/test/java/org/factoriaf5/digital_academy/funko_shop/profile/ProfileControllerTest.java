@@ -1,6 +1,5 @@
 package org.factoriaf5.digital_academy.funko_shop.profile;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -36,7 +35,6 @@ public class ProfileControllerTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        // Configura un objeto User y ProfileDTO
         user = new User();
         user.setId(1L);
         user.setEmail("user@example.com");

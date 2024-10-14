@@ -61,13 +61,10 @@ class ProductServiceTest {
         List<Product> products = Collections.singletonList(product);
         Page<Product> productPage = new PageImpl<>(products);
 
-        // Simula el comportamiento del mock
         when(productRepository.findByNameContainingIgnoreCase("Laptop", pageable)).thenReturn(productPage);
 
-        // Llama al método que estás probando
         Page<ProductDTO> result = productService.searchProductsByKeyword("Laptop", pageable);
 
-        // Verifica los resultados
         assertNotNull(result);
         assertEquals(1, result.getTotalElements());
         assertEquals(productDTO.getId(), result.getContent().get(0).getId());
@@ -79,13 +76,10 @@ class ProductServiceTest {
         Pageable pageable = Pageable.unpaged();
         Page<Product> productPage = new PageImpl<>(Collections.emptyList());
 
-        // Simula el comportamiento del mock
         when(productRepository.findByNameContainingIgnoreCase("NonExistentProduct", pageable)).thenReturn(productPage);
 
-        // Llama al método que estás probando
         Page<ProductDTO> result = productService.searchProductsByKeyword("NonExistentProduct", pageable);
 
-        // Verifica que no hay resultados
         assertNotNull(result);
         assertEquals(0, result.getTotalElements());
         verify(productRepository).findByNameContainingIgnoreCase("NonExistentProduct", pageable);
@@ -105,7 +99,7 @@ class ProductServiceTest {
         category.setId(1L);
 
         Product product = new Product();
-        product.setId(1L); // Asignar ID al producto
+        product.setId(1L);
         product.setName("Funko Pop");
         product.setPrice(20.0f);
         product.setStock(10);

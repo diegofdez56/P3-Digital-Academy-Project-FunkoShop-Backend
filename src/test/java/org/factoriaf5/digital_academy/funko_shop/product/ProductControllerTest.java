@@ -42,8 +42,8 @@ class ProductControllerTest {
 
     @Test
     void createProduct_ShouldReturnCreatedProduct() {
-        ProductDTO productDto = new ProductDTO(); // Asegúrate de inicializar el DTO con datos de prueba
-        productDto.setCategory(new CategoryDTO(1L)); // Agregar un category ID válido
+        ProductDTO productDto = new ProductDTO();
+        productDto.setCategory(new CategoryDTO(1L));
         productDto.setImageHash(Optional.of("base64Image1"));
         productDto.setImageHash2(Optional.of("base64Image2"));
 
@@ -59,7 +59,7 @@ class ProductControllerTest {
     @Test
     void createProduct_ShouldThrowIllegalArgumentException_WhenCategoryIsNull() {
         ProductDTO productDto = new ProductDTO();
-        productDto.setCategory(null); // No asignar un category ID
+        productDto.setCategory(null);
 
         assertThrows(IllegalArgumentException.class, () -> productController.createProduct(productDto));
     }
@@ -67,7 +67,7 @@ class ProductControllerTest {
     @Test
     void getProductById_ShouldReturnProduct_WhenFound() {
         Long productId = 1L;
-        ProductDTO productDto = new ProductDTO(); // Inicializar el DTO con datos de prueba
+        ProductDTO productDto = new ProductDTO();
 
         when(productService.getProductById(productId)).thenReturn(productDto);
 
@@ -91,8 +91,8 @@ class ProductControllerTest {
     @Test
     void updateProduct_ShouldReturnUpdatedProduct1() {
         Long productId = 1L;
-        ProductDTO productDto = new ProductDTO(); // Inicializar el DTO con datos de prueba
-        productDto.setCategory(new CategoryDTO(1L)); // Asegúrate de tener un category ID
+        ProductDTO productDto = new ProductDTO();
+        productDto.setCategory(new CategoryDTO(1L));
 
         when(productService.updateProduct(eq(productId), any())).thenReturn(productDto);
 
@@ -115,8 +115,8 @@ class ProductControllerTest {
 
     @Test
     void getAllProducts_ShouldReturnPageOfProducts() {
-        ProductDTO productDto1 = new ProductDTO(); // Inicializa con datos de prueba
-        ProductDTO productDto2 = new ProductDTO(); // Inicializa con datos de prueba
+        ProductDTO productDto1 = new ProductDTO();
+        ProductDTO productDto2 = new ProductDTO();
         Page<ProductDTO> productPage = new PageImpl<>(Arrays.asList(productDto1, productDto2));
 
         when(productService.getAllProducts(any())).thenReturn(productPage);
@@ -131,20 +131,17 @@ class ProductControllerTest {
     void updateProduct_ShouldReturnUpdatedProduct() {
         Long productId = 1L;
         ProductDTO productDto = new ProductDTO();
-        productDto.setCategory(new CategoryDTO(1L)); // Asignar un category ID válido
+        productDto.setCategory(new CategoryDTO(1L));
         productDto.setImageHash(Optional.of("base64Image1"));
         productDto.setImageHash2(Optional.of("base64Image2"));
 
-        // Simular la respuesta de la carga de imágenes
         when(imageService.uploadBase64(any())).thenReturn(Optional.of("uploadedImageUrl"));
-        // Simular la actualización del producto en el servicio
         when(productService.updateProduct(eq(productId), any())).thenReturn(productDto);
 
         ResponseEntity<ProductDTO> response = productController.updateProduct(productId, productDto);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(productDto, response.getBody());
-        // Verificar que se llame al servicio para actualizar el producto
         verify(productService).updateProduct(eq(productId), any());
     }
 
@@ -152,7 +149,7 @@ class ProductControllerTest {
     void updateProduct_ShouldThrowIllegalArgumentException_WhenCategoryIsNull() {
         Long productId = 1L;
         ProductDTO productDto = new ProductDTO();
-        productDto.setCategory(null); // No asignar un category ID
+        productDto.setCategory(null);
 
         assertThrows(IllegalArgumentException.class, () -> productController.updateProduct(productId, productDto));
     }
@@ -164,7 +161,6 @@ class ProductControllerTest {
         productDto.setCategory(new CategoryDTO(1L));
         productDto.setImageHash(Optional.of("base64Image1"));
 
-        // Simular un fallo en la carga de la imagen
         when(imageService.uploadBase64(any())).thenThrow(new IllegalArgumentException("Failed to upload image 1"));
 
         ResponseEntity<ProductDTO> response = productController.updateProduct(productId, productDto);
@@ -177,9 +173,8 @@ class ProductControllerTest {
     void updateProduct_ShouldReturnBadRequest_WhenUpdateFails() {
         Long productId = 1L;
         ProductDTO productDto = new ProductDTO();
-        productDto.setCategory(new CategoryDTO(1L)); // Asignar un category ID válido
+        productDto.setCategory(new CategoryDTO(1L));
 
-        // Simular un fallo en el servicio al actualizar
         when(imageService.uploadBase64(any())).thenReturn(Optional.of("uploadedImageUrl"));
         when(productService.updateProduct(eq(productId), any())).thenThrow(new RuntimeException("Update failed"));
 
@@ -195,14 +190,12 @@ class ProductControllerTest {
         expectedProducts.add(new ProductDTO());
         expectedProducts.add(new ProductDTO());
 
-        // Simular la respuesta del servicio
         when(productService.getDiscountedProducts()).thenReturn(expectedProducts);
 
         ResponseEntity<List<ProductDTO>> response = productController.getDiscountedProducts();
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(expectedProducts, response.getBody());
-        // Verificar que se llame al servicio para obtener productos descontados
         verify(productService).getDiscountedProducts();
     }
 
@@ -212,14 +205,12 @@ class ProductControllerTest {
         expectedProducts.add(new ProductDTO());
         expectedProducts.add(new ProductDTO());
 
-        // Simular la respuesta del servicio
         when(productService.getNewProducts()).thenReturn(expectedProducts);
 
         ResponseEntity<List<ProductDTO>> response = productController.getNewProducts();
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(expectedProducts, response.getBody());
-        // Verificar que se llame al servicio para obtener productos nuevos
         verify(productService).getNewProducts();
     }
 
@@ -233,14 +224,12 @@ class ProductControllerTest {
 
         Page<ProductDTO> productPage = new PageImpl<>(expectedProducts, pageable, expectedProducts.size());
 
-        // Simular la respuesta del servicio
         when(productService.getProductsByCategory(categoryId, pageable)).thenReturn(productPage);
 
         ResponseEntity<Page<ProductDTO>> response = productController.getProductsByCategory(categoryId, pageable);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(productPage, response.getBody());
-        // Verificar que se llame al servicio para obtener productos por categoría
         verify(productService).getProductsByCategory(categoryId, pageable);
     }
 
@@ -254,14 +243,12 @@ class ProductControllerTest {
 
         Page<ProductDTO> productPage = new PageImpl<>(expectedProducts, pageable, expectedProducts.size());
 
-        // Simular la respuesta del servicio
         when(productService.searchProductsByKeyword(keyword, pageable)).thenReturn(productPage);
 
         ResponseEntity<Page<ProductDTO>> response = productController.getProductsByKeyword(keyword, pageable);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(productPage, response.getBody());
-        // Verificar que se llame al servicio para obtener productos por palabra clave
         verify(productService).searchProductsByKeyword(keyword, pageable);
     }
 }

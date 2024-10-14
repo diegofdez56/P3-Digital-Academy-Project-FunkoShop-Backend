@@ -2,7 +2,6 @@ package org.factoriaf5.digital_academy.funko_shop.review;
 
 import org.factoriaf5.digital_academy.funko_shop.order_item.OrderItem;
 import org.factoriaf5.digital_academy.funko_shop.order_item.OrderItemRepository;
-import org.factoriaf5.digital_academy.funko_shop.review.review_exceptions.ReviewNotFoundException;
 import org.factoriaf5.digital_academy.funko_shop.user.User;
 import org.factoriaf5.digital_academy.funko_shop.user.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
