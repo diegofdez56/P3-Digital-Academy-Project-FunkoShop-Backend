@@ -10,8 +10,6 @@ import org.factoriaf5.digital_academy.funko_shop.product.Product;
 import org.factoriaf5.digital_academy.funko_shop.product.ProductDTO;
 import org.factoriaf5.digital_academy.funko_shop.product.ProductRepository;
 import org.factoriaf5.digital_academy.funko_shop.product.product_exceptions.ProductNotFoundException;
-import org.factoriaf5.digital_academy.funko_shop.review.Review;
-import org.factoriaf5.digital_academy.funko_shop.tracking.Tracking;
 import org.factoriaf5.digital_academy.funko_shop.tracking.TrackingRepository;
 import org.factoriaf5.digital_academy.funko_shop.user.User;
 import org.junit.jupiter.api.BeforeEach;
