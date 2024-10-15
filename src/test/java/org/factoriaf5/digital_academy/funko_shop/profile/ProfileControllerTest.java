@@ -53,7 +53,7 @@ public class ProfileControllerTest {
         ResponseEntity<List<ProfileDTO>> response = profileController.getAllProfiles();
 
         assertNotNull(response);
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode().value());  
         assertEquals(1, response.getBody().size());
         verify(profileService).getAllProfiles();
     }
@@ -68,7 +68,7 @@ public class ProfileControllerTest {
         ResponseEntity<ProfileDTO> response = profileController.getProfileByUser(principal);
 
         assertNotNull(response);
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode().value()); 
         assertEquals(profileDTO, response.getBody());
         verify(profileService).getProfileByUser(user);
     }
@@ -83,7 +83,7 @@ public class ProfileControllerTest {
         ResponseEntity<ProfileDTO> response = profileController.getProfileByUser(principal);
 
         assertNotNull(response);
-        assertEquals(404, response.getStatusCodeValue());
+        assertEquals(404, response.getStatusCode().value());  
         verify(profileService).getProfileByUser(user);
     }
 
@@ -97,7 +97,7 @@ public class ProfileControllerTest {
         ResponseEntity<ProfileDTO> response = profileController.updateProfile(principal, profileDTO);
 
         assertNotNull(response);
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode().value());  
         assertEquals(profileDTO, response.getBody());
         verify(profileService).updateProfile(user, profileDTO);
     }
@@ -112,7 +112,7 @@ public class ProfileControllerTest {
         ResponseEntity<ProfileDTO> response = profileController.updateProfile(principal, profileDTO);
 
         assertNotNull(response);
-        assertEquals(404, response.getStatusCodeValue());
+        assertEquals(404, response.getStatusCode().value());  
         verify(profileService).updateProfile(user, profileDTO);
     }
 
@@ -123,7 +123,7 @@ public class ProfileControllerTest {
         ResponseEntity<Void> response = profileController.deleteProfile(1L);
 
         assertNotNull(response);
-        assertEquals(204, response.getStatusCodeValue());
+        assertEquals(204, response.getStatusCode().value());  
         verify(profileService).deleteProfile(1L);
     }
 
@@ -134,7 +134,7 @@ public class ProfileControllerTest {
         ResponseEntity<Void> response = profileController.deleteProfile(1L);
 
         assertNotNull(response);
-        assertEquals(404, response.getStatusCodeValue());
+        assertEquals(404, response.getStatusCode().value());  
         verify(profileService).deleteProfile(1L);
     }
 }
