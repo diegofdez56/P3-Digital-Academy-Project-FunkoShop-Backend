@@ -1,36 +1,33 @@
 package org.factoriaf5.digital_academy.funko_shop.order;
 
+import org.factoriaf5.digital_academy.funko_shop.category.Category;
+import org.factoriaf5.digital_academy.funko_shop.category.CategoryDTO;
 import org.factoriaf5.digital_academy.funko_shop.order.order_exceptions.OrderNotFoundException;
 import org.factoriaf5.digital_academy.funko_shop.order_item.OrderItem;
 import org.factoriaf5.digital_academy.funko_shop.order_item.OrderItemDTO;
 import org.factoriaf5.digital_academy.funko_shop.order_item.OrderItemRepository;
-import org.factoriaf5.digital_academy.funko_shop.order_item.order_item_exceptions.OrderItemNotFoundException;
 import org.factoriaf5.digital_academy.funko_shop.product.Product;
 import org.factoriaf5.digital_academy.funko_shop.product.ProductDTO;
 import org.factoriaf5.digital_academy.funko_shop.product.ProductRepository;
 import org.factoriaf5.digital_academy.funko_shop.product.product_exceptions.ProductNotFoundException;
+import org.factoriaf5.digital_academy.funko_shop.review.Review;
 import org.factoriaf5.digital_academy.funko_shop.tracking.Tracking;
 import org.factoriaf5.digital_academy.funko_shop.tracking.TrackingDTO;
 import org.factoriaf5.digital_academy.funko_shop.tracking.TrackingRepository;
 import org.factoriaf5.digital_academy.funko_shop.user.User;
-import org.factoriaf5.digital_academy.funko_shop.user.UserDTO;
-import org.factoriaf5.digital_academy.funko_shop.user.UserRepository;
-import org.factoriaf5.digital_academy.funko_shop.user.user_exceptions.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.Collections;
 
 @Service
 public class OrderService {
 
     @Autowired
     private OrderRepository orderRepository;
-
-    @Autowired
-    private UserRepository userRepository;
 
     @Autowired
     private OrderItemRepository orderItemRepository;
@@ -41,32 +38,39 @@ public class OrderService {
     @Autowired
     private TrackingRepository trackingRepository;
 
-    public OrderDTO addOrder(OrderDTO orderDTO) {
-        User user = userRepository.findById(orderDTO.getUser().getId())
-                .orElseThrow(() -> new UserNotFoundException("User not found with id: " + orderDTO.getUser().getId()));
+    public OrderDTO addOrder(Order order, User user) {
+        Order newOrder = new Order();
+        newOrder.setStatus(order.getStatus());
+        newOrder.setTotalPrice(order.getTotalPrice());
+        newOrder.setTotalItems(order.getTotalItems());
+        newOrder.setPaid(order.isPaid());
+        newOrder.setUser(user);
+        Order savedOrder = orderRepository.save(newOrder);
 
-        Order order = new Order();
-        order.setStatus(orderDTO.getStatus());
-        order.setTotalPrice(orderDTO.getTotalPrice());
-        order.setTotalItems(orderDTO.getTotalItems());
-        order.setPaid(orderDTO.isPaid());
-        order.setUser(user);
+        if (order.getOrderItems() != null) {
+            List<OrderItem> newOrderItems = order.getOrderItems().stream()
+                    .map(orderItem -> {
+                        OrderItem newOrderItem = new OrderItem();
+                        newOrderItem.setOrder(savedOrder);
+                        newOrderItem.setQuantity(orderItem.getQuantity());
 
-        Order savedOrder = orderRepository.save(order);
+                        Product product = productRepository.findById(orderItem.getId())
+                                .orElseThrow(() -> new IllegalArgumentException(
+                                        "Producto no encontrado: " + orderItem.getId()));
 
-        if (orderDTO.getOrderItems() != null) {
-            List<OrderItem> orderItems = orderDTO.getOrderItems().stream()
-                    .map(orderItemDTO -> mapToOrderItem(orderItemDTO, savedOrder))
-
+                        newOrderItem.setProduct(product);
+                        return newOrderItem;
+                    })
                     .collect(Collectors.toList());
-            orderItemRepository.saveAll(orderItems);
-            savedOrder.setOrderItems(orderItems);
+
+            orderItemRepository.saveAll(newOrderItems);
+            savedOrder.setOrderItems(newOrderItems);
         }
 
-        if (orderDTO.getTracking() != null) {
+        if (order.getTracking() != null) {
             Tracking tracking = new Tracking();
             tracking.setOrder(savedOrder);
-            tracking.setTrackingNumber(orderDTO.getTracking().getTrackingNumber());
+            tracking.setTrackingNumber(order.getTracking().getTrackingNumber());
             trackingRepository.save(tracking);
             savedOrder.setTracking(tracking);
         }
@@ -102,15 +106,15 @@ public class OrderService {
         return mapToDTO(orderRepository.save(order));
     }
 
-    public List<OrderDTO> getAllOrders() {
-        return orderRepository.findAll().stream()
-                .map(this::mapToDTO)
-                .collect(Collectors.toList());
+    public Page<OrderDTO> getAllOrders(Pageable pageable) {
+        return orderRepository.findAll(pageable)
+                .map(this::mapToDTO);
     }
 
-    public Order getOrderById(Long orderId) {
-        return orderRepository.findById(orderId)
+    public OrderDTO getOrderById(Long orderId) {
+        Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new OrderNotFoundException("Order not found with id: " + orderId));
+        return mapToDTO(order);
     }
 
     public void deleteOrder(Long orderId) {
@@ -128,18 +132,13 @@ public class OrderService {
         orderRepository.delete(order);
     }
 
-    public List<OrderDTO> getOrdersByUser(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("User not found with id: " + userId));
+    public Page<OrderDTO> getOrdersByUser(User user, Pageable pageable) {
 
-        List<Order> orders = orderRepository.findByUser(user);
-
-        return orders.stream()
-                .map(this::mapToDTO)
-                .collect(Collectors.toList());
+        return orderRepository.findByUser(user, pageable)
+                .map(this::mapToDTO);
     }
 
-    private OrderItem mapToOrderItem(OrderItemDTO dto, Order order) {
+    public OrderItem mapToOrderItem(OrderItemDTO dto, Order order) {
         OrderItem orderItem = new OrderItem();
         orderItem.setId(dto.getId());
         orderItem.setQuantity(dto.getQuantity());
@@ -154,8 +153,8 @@ public class OrderService {
         return orderItem;
     }
 
-    private OrderDTO mapToDTO(Order order) {
-        List<OrderItemDTO> orderItemsDTO = (order.getOrderItems() != null) ? order.getOrderItems().stream()
+    public OrderDTO mapToDTO(Order order) {
+        List<OrderItemDTO> orderItemsDTO = order.getOrderItems() != null ? order.getOrderItems().stream()
                 .map(this::mapToOrderItemDTO)
                 .collect(Collectors.toList()) : Collections.emptyList();
 
@@ -164,79 +163,71 @@ public class OrderService {
                 order.getTracking().getTrackingNumber(),
                 null) : null;
 
-        UserDTO userDTO = null;
-        if (order.getUser() != null) {
-            userDTO = new UserDTO(
-                    order.getUser().getId(),
-                    order.getUser().getEmail(),
-                    order.getUser().getPassword(),
-                    null, null, null, null, null, null);
-        }
-
         return new OrderDTO(
                 order.getId(),
                 order.getStatus(),
                 order.getTotalPrice(),
                 order.getTotalItems(),
                 order.isPaid(),
-                userDTO,
-                // new UserDTO(order.getUser().getId(),
-                // order.getUser().getEmail(),
-                // order.getUser().getPassword(),
-                // null,
-                // null, null, null, null, null),
                 orderItemsDTO,
                 trackingDTO);
     }
 
-    private OrderItemDTO mapToOrderItemDTO(OrderItem orderItem) {
+    public OrderItemDTO mapToOrderItemDTO(OrderItem orderItem) {
+        ProductDTO productDTO = mapToProductDTO(orderItem.getProduct());
+
         return new OrderItemDTO(
                 orderItem.getId(),
                 orderItem.getQuantity(),
                 null,
-                new ProductDTO(orderItem.getProduct().getId(), orderItem.getProduct().getName(),
-                        orderItem.getProduct().getImageHash(), orderItem.getProduct().getDescription(),
-                        orderItem.getProduct().getPrice(), orderItem.getProduct().getStock(),
-                        orderItem.getProduct().isAvailable(), orderItem.getProduct().isNew(), null, null),
-                null);
+                productDTO);
     }
 
-    // Order Item
-    public OrderItemDTO addOrderItemToOrder(Long orderId, OrderItemDTO orderItemDTO) {
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new OrderNotFoundException("Order not found"));
+    public ProductDTO mapToProductDTO(Product product) {
+        List<Review> reviews = product.getOrderItems().stream()
+                .map(OrderItem::getReview)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
 
-        Product product = productRepository.findById(orderItemDTO.getProduct().getId())
-                .orElseThrow(() -> new ProductNotFoundException("Product not found"));
+        int totalReviews = reviews.size();
+        double averageRating = totalReviews > 0 ? reviews.stream()
+                .mapToInt(Review::getRating)
+                .average()
+                .orElse(0.0) : 0.0;
 
-        OrderItem orderItem = new OrderItem();
-        orderItem.setOrder(order);
-        orderItem.setProduct(product);
-        orderItem.setQuantity(orderItemDTO.getQuantity());
-
-        OrderItem savedOrderItem = orderItemRepository.save(orderItem);
-
-        return mapToOrderItemDTO(savedOrderItem);
+        return new ProductDTO(
+                product.getId(),
+                product.getName(),
+                Optional.ofNullable(product.getImageHash()),
+                Optional.ofNullable(product.getImageHash()),
+                product.getDescription(),
+                product.getPrice(),
+                calculateDiscountedPrice(product.getPrice(), product.getDiscount()),
+                product.getStock(),
+                product.getCreatedAt(),
+                mapToCategoryDTO(product.getCategory()),
+                product.getDiscount(),
+                totalReviews,
+                averageRating);
     }
 
-    public void removeOrderItemFromOrder(Long orderId, Long orderItemId) {
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new OrderNotFoundException("Order not found"));
+    public float calculateDiscountedPrice(float price, int discount) {
+        if (discount > 0) {
+            return price - (price * discount / 100);
+        }
+        return price;
+    }
 
-                if (order.getOrderItems() == null) {
-                    order.setOrderItems(new ArrayList<>());
-                }
-
-        OrderItem orderItem = orderItemRepository.findById(orderItemId)
-                .orElseThrow(() -> new OrderItemNotFoundException("OrderItem not found"));
-
-        if (!order.getOrderItems().contains(orderItem)) {
-            throw new IllegalStateException("Order does not contain this item");
+    public CategoryDTO mapToCategoryDTO(Category category) {
+        if (category == null) {
+            return null;
         }
 
-        order.getOrderItems().remove(orderItem);
-        orderItemRepository.delete(orderItem);
-        orderRepository.save(order);
+        return new CategoryDTO(
+                category.getId(),
+                category.getName(),
+                category.getImageHash(),
+                category.isHighlights());
     }
 
 }

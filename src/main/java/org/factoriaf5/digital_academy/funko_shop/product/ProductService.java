@@ -1,21 +1,24 @@
 package org.factoriaf5.digital_academy.funko_shop.product;
 
-
 import org.factoriaf5.digital_academy.funko_shop.category.Category;
 import org.factoriaf5.digital_academy.funko_shop.category.CategoryDTO;
 import org.factoriaf5.digital_academy.funko_shop.category.CategoryRepository;
 import org.factoriaf5.digital_academy.funko_shop.category.category_exceptions.CategoryNotFoundException;
-import org.factoriaf5.digital_academy.funko_shop.discount.Discount;
-import org.factoriaf5.digital_academy.funko_shop.discount.DiscountDTO;
-import org.factoriaf5.digital_academy.funko_shop.discount.DiscountRepository;
-import org.factoriaf5.digital_academy.funko_shop.discount.discount_exceptions.DiscountNotFoundException;
+import org.factoriaf5.digital_academy.funko_shop.order_item.OrderItem;
 import org.factoriaf5.digital_academy.funko_shop.product.product_exceptions.ProductNotFoundException;
+import org.factoriaf5.digital_academy.funko_shop.review.Review;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.*;
+
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
 
 @Service
 @Transactional
@@ -23,22 +26,21 @@ public class ProductService {
 
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
-    private final DiscountRepository discountRepository;
 
-    public ProductService(ProductRepository productRepository, CategoryRepository categoryRepository,
-                          DiscountRepository discountRepository) {
+    public ProductService(ProductRepository productRepository, CategoryRepository categoryRepository) {
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
-        this.discountRepository = discountRepository;
     }
 
-    public ProductDTO createProduct(ProductDTO productDto, Long categoryId, Long discountId) {
+    public ProductDTO createProduct(ProductDTO productDto, Long categoryId) {
         Category category = getCategoryById(categoryId);
-        Discount discount = discountId != null ? getDiscountById(discountId) : null;
+
+        if (productDto.getStock() < 0) {
+            throw new IllegalArgumentException("Stock can't be negative");
+        }
 
         Product product = mapToEntity(productDto);
         product.setCategory(category);
-        product.setDiscount(discount);
 
         Product savedProduct = productRepository.save(product);
         return mapToDTO(savedProduct);
@@ -57,7 +59,6 @@ public class ProductService {
 
     public Page<ProductDTO> getProductsByCategory(Long categoryId, Pageable pageable) {
         Category category = getCategoryById(categoryId);
-
         return productRepository.findByCategory(category, pageable)
                 .map(this::mapToDTO);
     }
@@ -89,38 +90,54 @@ public class ProductService {
                 .orElseThrow(() -> new CategoryNotFoundException("Category not found with id: " + categoryId));
     }
 
-    private Discount getDiscountById(Long discountId) {
-        return discountRepository.findById(discountId)
-                .orElseThrow(() -> new DiscountNotFoundException("Discount not found with id: " + discountId));
+    public List<ProductDTO> getDiscountedProducts() {
+        List<Product> products = productRepository.findByDiscount();
+
+        return products.stream()
+                .map(this::mapToDTOWithDiscount)
+                .collect(Collectors.toList());
     }
 
-    public List<ProductDTO> getDiscountedProducts() {
-        List<Product> products = productRepository.findByDiscountIsActiveTrue();
-        return products.stream()
-                .map(this::mapToDTO)
-                .collect(Collectors.toList());
+    private ProductDTO mapToDTOWithDiscount(Product product) {
+        ProductDTO productDTO = mapToDTO(product);
+
+        if (product.getDiscount() > 0 && product.getDiscount() <= 100) {
+            float discountMultiplier = 1 - (product.getDiscount() / 100.0f);
+            float discountedPrice = product.getPrice() * discountMultiplier;
+            productDTO.setDiscountedPrice(discountedPrice);
+        } else {
+            productDTO.setDiscountedPrice(product.getPrice());
+        }
+
+        return productDTO;
     }
 
     private void updateProductFields(Product product, ProductDTO productDto) {
         product.setName(productDto.getName());
-        product.setImageHash(productDto.getImageHash());
+        if (productDto.getImageHash() != null && productDto.getImageHash().isPresent()
+                && productDto.getImageHash().get() != null) {
+            product.setImageHash(productDto.getImageHash().get());
+        }
+        if (productDto.getImageHash2() != null && productDto.getImageHash2().isPresent()
+                && productDto.getImageHash2().get() != null) {
+            product.setImageHash2(productDto.getImageHash2().get());
+        }
         product.setDescription(productDto.getDescription());
         product.setPrice(productDto.getPrice());
         product.setStock(productDto.getStock());
-        product.setAvailable(productDto.isAvailable());
+        product.setDiscount(productDto.getDiscount());
 
         if (productDto.getCategory() != null) {
             product.setCategory(getCategoryById(productDto.getCategory().getId()));
         }
-
-        if (productDto.getDiscount() != null) {
-            product.setDiscount(getDiscountById(productDto.getDiscount().getId()));
-        } else {
-            product.setDiscount(null); 
-        }
     }
-     public List<ProductDTO> getNewProducts() {
-        List<Product> newProducts = productRepository.findByIsNewTrue();
+
+    public List<ProductDTO> getNewProducts() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_YEAR, -30);
+        Date cutoffDate = calendar.getTime();
+
+        List<Product> newProducts = productRepository.findNewProducts(cutoffDate);
 
         return newProducts.stream()
                 .map(this::mapToDTO)
@@ -130,13 +147,13 @@ public class ProductService {
     private Product mapToEntity(ProductDTO dto) {
         Product product = new Product();
         product.setName(dto.getName());
-        product.setImageHash(dto.getImageHash());
+        product.setImageHash(dto.getImageHash().get());
+        product.setImageHash2(dto.getImageHash2().get());
         product.setDescription(dto.getDescription());
         product.setPrice(dto.getPrice());
         product.setStock(dto.getStock());
-        product.setAvailable(dto.isAvailable());
-        product.setNew(dto.isNew());
-        
+        product.setDiscount(dto.getDiscount());
+
         return product;
     }
 
@@ -146,32 +163,37 @@ public class ProductService {
             categoryDTO = new CategoryDTO(
                     product.getCategory().getId(),
                     product.getCategory().getName(),
-                    product.getCategory().getImageHash()
-            );
+                    product.getCategory().getImageHash(),
+                    product.getCategory().isHighlights());
         }
 
-        DiscountDTO discountDTO = null;
-        if (product.getDiscount() != null) {
-            discountDTO = new DiscountDTO(
-                    product.getDiscount().getId(),
-                    product.getDiscount().getPercentage(),
-                    product.getDiscount().isActive()
-            );
-        }
+        List<Review> reviews = Optional.ofNullable(product.getOrderItems())
+                .orElse(Collections.emptyList())
+                .stream()
+                .map(OrderItem::getReview)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+    
+        int totalReviews = reviews.size();
+        double averageRating = totalReviews > 0 ? reviews.stream()
+                .mapToInt(Review::getRating)
+                .average()
+                .orElse(0.0) : 0.0;
 
         return new ProductDTO(
                 product.getId(),
                 product.getName(),
-                product.getImageHash(),
+                Optional.ofNullable(product.getImageHash()),
+                Optional.ofNullable(product.getImageHash2()),
                 product.getDescription(),
                 product.getPrice(),
+                product.getPrice(),
                 product.getStock(),
-                product.isAvailable(),
-                product.isNew(),
-                
+                product.getCreatedAt(),
                 categoryDTO,
-                discountDTO
-        );
+                product.getDiscount(),
+                totalReviews,
+                averageRating);
     }
 
 }
